@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Throttle — cut inference costs without touching your code</title>
+<meta name="description" content="Throttle is a drop-in proxy for self-hosted LLM inference. Dynamic request batching, right-sized spot-aware instance allocation, and semantic caching — no code changes required." />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; background: #0a0b0d; }
+  * { box-sizing: border-box; }
+  a { color: #e8eaec; text-decoration: none; }
+  a:hover { color: #45e0a0; }
+  ::selection { background: #45e0a0; color: #0a0b0d; }
+  input::placeholder, textarea::placeholder { color: #565d66; }
+  @keyframes barGrow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+</style>
+</helmet>
+<div style="background:#0a0b0d; color:#e8eaec; font-family:'Space Grotesk',system-ui,sans-serif; min-height:100vh; -webkit-font-smoothing:antialiased">
+
+  <header style="position:sticky; top:0; z-index:20; display:flex; align-items:center; justify-content:space-between; gap:24px; padding:16px 32px; border-bottom:1px solid #1b1e23; background:rgba(10,11,13,0.82); backdrop-filter:blur(12px)">
+    <div style="display:flex; align-items:center; gap:10px">
+      <div style="width:11px; height:11px; background:#45e0a0; border-radius:2px; box-shadow:0 0 14px rgba(69,224,160,0.6)"></div>
+      <span style="font-size:16px; font-weight:600; letter-spacing:-0.02em">Throttle</span>
+      <span style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#6f767f; border:1px solid #23272d; border-radius:3px; padding:2px 6px; margin-left:4px">PRE-LAUNCH</span>
+    </div>
+    <nav style="display:flex; align-items:center; gap:28px; font-family:'JetBrains Mono',monospace; font-size:12px; color:#8b9199">
+      <a href="#benchmark" style="color:#8b9199">benchmark</a>
+      <a href="#how" style="color:#8b9199">how it works</a>
+      <a href="#levers" style="color:#8b9199">cost levers</a>
+      <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noreferrer" style="color:#e8eaec; border:1px solid #262a30; border-radius:4px; padding:7px 12px">GitHub ↗</a>
+    </nav>
+  </header>
+
+  <section style="position:relative; overflow:hidden; border-bottom:1px solid #1b1e23">
+    <div style="position:absolute; inset:0; background-image:linear-gradient(#12151a 1px, transparent 1px), linear-gradient(90deg, #12151a 1px, transparent 1px); background-size:64px 64px; mask-image:radial-gradient(ellipse 90% 70% at 50% 0%, #000 30%, transparent 75%)"></div>
+    <div style="position:relative; max-width:1160px; margin:0 auto; padding:96px 32px 80px; display:grid; grid-template-columns:1.05fr 1fr; gap:64px; align-items:center">
+      <div>
+        <div style="display:inline-flex; align-items:center; gap:8px; font-family:'JetBrains Mono',monospace; font-size:11px; color:#45e0a0; border:1px solid rgba(69,224,160,0.28); background:rgba(69,224,160,0.06); border-radius:999px; padding:5px 12px; margin-bottom:28px">
+          <span style="width:5px; height:5px; border-radius:50%; background:#45e0a0"></span>drop-in proxy · no code changes
+        </div>
+        <h1 style="font-size:60px; line-height:1.02; letter-spacing:-0.035em; font-weight:600; margin:0 0 22px; text-wrap:balance">Serve more tokens on the GPUs you already pay for.</h1>
+        <p style="font-size:18px; line-height:1.55; color:#9aa1a9; margin:0 0 34px; max-width:520px; text-wrap:pretty">Throttle sits in front of your self-hosted LLM inference stack and cuts cost three ways: dynamic request batching, right-sized and spot-aware instance allocation, and semantic caching. Point your traffic at it and nothing else changes.</p>
+        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:32px">
+          <a href="#contact" style="font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:500; color:#0a0b0d; background:#45e0a0; border-radius:5px; padding:13px 22px">Get early access</a>
+          <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noreferrer" style="font-family:'JetBrains Mono',monospace; font-size:13px; color:#e8eaec; border:1px solid #262a30; border-radius:5px; padding:13px 22px">View source</a>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:12.5px; color:#7c838b; border:1px solid #1b1e23; background:#0d0f12; border-radius:6px; padding:14px 16px; max-width:520px; overflow:auto; white-space:nowrap">
+          <span style="color:#4d545c">$ </span>export OPENAI_BASE_URL=<span style="color:#45e0a0">https://your-proxy.throttle.dev/v1</span>
+        </div>
+      </div>
+
+      <div id="benchmark" style="border:1px solid #1e2126; border-radius:10px; background:linear-gradient(180deg,#101317,#0c0e11); padding:26px 26px 22px; box-shadow:0 24px 60px -30px rgba(0,0,0,0.9)">
+        <div style="display:flex; align-items:baseline; justify-content:space-between; gap:16px; padding-bottom:16px; border-bottom:1px solid #1b1e23">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.08em; color:#8b9199">THROUGHPUT · BATCHING ON/OFF</div>
+          <div style="display:flex; align-items:center; gap:14px; font-family:'JetBrains Mono',monospace; font-size:11px; color:#5d646c">
+            <span style="display:inline-flex; align-items:center; gap:6px"><span style="width:6px; height:6px; border-radius:50%; background:#45e0a0; box-shadow:0 0 0 3px rgba(69,224,160,0.15)"></span>last run 2026-08-18 14:02 UTC</span>
+            <span>n=1,206</span>
+          </div>
+        </div>
+
+        <div style="padding:24px 0 8px; display:flex; flex-direction:column; gap:26px">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:baseline; font-family:'JetBrains Mono',monospace; font-size:12px; margin-bottom:9px">
+              <span style="color:#9aa1a9">max_num_seqs = 1</span>
+              <span style="color:#6f767f"><span style="color:#c8ccd1">312 tok/s</span> · 1.00× baseline</span>
+            </div>
+            <div style="height:26px; background:#14171b; border-radius:3px; overflow:hidden">
+              <div style="height:100%; width:31.5%; background:#2b3138; border-right:2px solid #454d56; transform-origin:left; animation:barGrow 700ms cubic-bezier(0.2,0.8,0.2,1) both"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:baseline; font-family:'JetBrains Mono',monospace; font-size:12px; margin-bottom:9px">
+              <span style="color:#e8eaec">max_num_seqs = 8</span>
+              <span style="color:#45e0a0">991 tok/s · 3.18×</span>
+            </div>
+            <div style="height:26px; background:#14171b; border-radius:3px; overflow:hidden">
+              <div style="height:100%; width:100%; background:linear-gradient(90deg, rgba(69,224,160,0.35), #45e0a0); transform-origin:left; animation:barGrow 900ms 120ms cubic-bezier(0.2,0.8,0.2,1) both"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:22px; padding:16px; border:1px solid #1b1e23; border-radius:7px; background:#0a0c0f">
+          <div style="display:flex; align-items:baseline; gap:12px; margin-bottom:14px">
+            <div style="font-family:'JetBrains Mono',monospace; font-size:34px; font-weight:600; color:#45e0a0; letter-spacing:-0.02em">+217.8%</div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#7c838b; line-height:1.4">312 tok/s → 991 tok/s (3.18×)<br />95% CI +189.5% … +246.2%</div>
+          </div>
+          <div style="position:relative; height:4px; background:#191d22; border-radius:2px">
+            <div style="position:absolute; left:14%; right:22%; top:0; bottom:0; background:rgba(69,224,160,0.3); border-radius:2px"></div>
+            <div style="position:absolute; left:52%; top:-4px; width:2px; height:12px; background:#45e0a0"></div>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-family:'JetBrains Mono',monospace; font-size:10px; color:#565d66; margin-top:7px">
+            <span>+189.5%</span><span>+246.2%</span>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:#1b1e23; border:1px solid #1b1e23; border-radius:7px; margin-top:16px; overflow:hidden">
+          <div style="background:#0d0f12; padding:11px 13px"><div style="font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:0.08em; color:#565d66">ENGINE</div><div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#c8ccd1; margin-top:3px">vLLM 0.16.0</div></div>
+          <div style="background:#0d0f12; padding:11px 13px"><div style="font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:0.08em; color:#565d66">HARDWARE</div><div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#c8ccd1; margin-top:3px">A100 80GB</div></div>
+          <div style="background:#0d0f12; padding:11px 13px"><div style="font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:0.08em; color:#565d66">MODEL</div><div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#c8ccd1; margin-top:3px">Qwen2.5-0.5B-Instruct</div></div>
+          <div style="background:#0d0f12; padding:11px 13px"><div style="font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:0.08em; color:#565d66">ERRORS</div><div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#45e0a0; margin-top:3px">0 / 1,206</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" style="border-bottom:1px solid #1b1e23">
+    <div style="max-width:1160px; margin:0 auto; padding:88px 32px">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.12em; color:#45e0a0; margin-bottom:14px">01 — INTEGRATION</div>
+      <h2 style="font-size:36px; letter-spacing:-0.03em; font-weight:600; margin:0 0 12px">Three steps, zero code changes.</h2>
+      <p style="color:#8b9199; font-size:16px; margin:0 0 48px; max-width:560px">Throttle speaks the OpenAI-compatible API your clients already use. Swap the base URL and you are done.</p>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:#1b1e23; border:1px solid #1b1e23; border-radius:10px; overflow:hidden">
+        <div style="background:#0d0f12; padding:30px 26px 34px">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#45e0a0; margin-bottom:20px">STEP 01</div>
+          <h3 style="font-size:19px; font-weight:600; margin:0 0 10px; letter-spacing:-0.015em">Point traffic at the proxy</h3>
+          <p style="color:#8b9199; font-size:14.5px; line-height:1.6; margin:0 0 18px">Change one environment variable. Throttle forwards every request to your existing inference endpoints unchanged.</p>
+          <div style="border:1px solid #23272d; border-radius:6px; background:#08090b; overflow:hidden">
+            <div style="display:flex; align-items:center; gap:6px; padding:8px 11px; border-bottom:1px solid #171a1e; background:#0b0d10">
+              <span style="width:7px; height:7px; border-radius:50%; background:#2b3138"></span>
+              <span style="width:7px; height:7px; border-radius:50%; background:#2b3138"></span>
+              <span style="width:7px; height:7px; border-radius:50%; background:#2b3138"></span>
+              <span style="font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:0.08em; color:#4d545c; margin-left:6px">SHELL</span>
+            </div>
+            <pre style="margin:0; padding:13px 14px; font-family:'JetBrains Mono',monospace; font-size:12px; line-height:1.6; color:#c8ccd1; overflow-x:auto"><span style="color:#454d56">$ </span><span style="color:#8ab4f8">export</span> <span style="color:#e8eaec">OPENAI_BASE_URL</span><span style="color:#6f767f">=</span><span style="color:#45e0a0">https://your-proxy.throttle.dev/v1</span></pre>
+          </div>
+        </div>
+        <div style="background:#0d0f12; padding:30px 26px 34px">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#45e0a0; margin-bottom:20px">STEP 02</div>
+          <h3 style="font-size:19px; font-weight:600; margin:0 0 10px; letter-spacing:-0.015em">It profiles your load</h3>
+          <p style="color:#8b9199; font-size:14.5px; line-height:1.6; margin:0">Arrival rate, sequence lengths, latency budget and cache hit potential are measured against live traffic.</p>
+        </div>
+        <div style="background:#0d0f12; padding:30px 26px 34px">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#45e0a0; margin-bottom:20px">STEP 03</div>
+          <h3 style="font-size:19px; font-weight:600; margin:0 0 10px; letter-spacing:-0.015em">Savings apply automatically</h3>
+          <p style="color:#8b9199; font-size:14.5px; line-height:1.6; margin:0">Batch windows, instance mix and cache policy adjust continuously. No redeploys, no tuning tickets.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="levers" style="border-bottom:1px solid #1b1e23">
+    <div style="max-width:1160px; margin:0 auto; padding:88px 32px">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.12em; color:#45e0a0; margin-bottom:14px">02 — COST LEVERS</div>
+      <h2 style="font-size:36px; letter-spacing:-0.03em; font-weight:600; margin:0 0 48px">Where the money comes back.</h2>
+      <div style="display:flex; flex-direction:column; gap:20px">
+        <div style="display:grid; grid-template-columns:200px 1fr; gap:40px; border:1px solid #1e2126; border-radius:10px; background:#0d0f12; padding:30px 32px">
+          <div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#565d66; margin-bottom:8px">LEVER 01</div>
+            <div style="font-size:20px; font-weight:600; letter-spacing:-0.015em">Dynamic batching</div>
+          </div>
+          <div>
+            <p style="color:#9aa1a9; font-size:15px; line-height:1.65; margin:0 0 16px; max-width:640px">Single-request serving leaves the GPU idle between forward passes. Throttle holds requests in a short adaptive window and hands the engine full batches, sized against your latency budget rather than a fixed config value.</p>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#7c838b; border-left:2px solid #45e0a0; padding-left:12px">Measured: 1 → 8 concurrent sequences, +217.8% throughput on the benchmark above.</div>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:200px 1fr; gap:40px; border:1px solid #1e2126; border-radius:10px; background:#0d0f12; padding:30px 32px">
+          <div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#565d66; margin-bottom:8px">LEVER 02</div>
+            <div style="font-size:20px; font-weight:600; letter-spacing:-0.015em">Instance right-sizing</div>
+          </div>
+          <div>
+            <p style="color:#9aa1a9; font-size:15px; line-height:1.65; margin:0 0 16px; max-width:640px">Most self-hosted fleets are provisioned for peak and billed for idle. Throttle matches instance class and count to observed load, and shifts eligible traffic onto spot capacity with on-demand fallback when the interruption signal arrives.</p>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#7c838b; border-left:2px solid #262a30; padding-left:12px">Spot-aware placement · graceful drain on interruption notice</div>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:200px 1fr; gap:40px; border:1px solid #1e2126; border-radius:10px; background:#0d0f12; padding:30px 32px">
+          <div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#565d66; margin-bottom:8px">LEVER 03</div>
+            <div style="font-size:20px; font-weight:600; letter-spacing:-0.015em">Semantic caching</div>
+          </div>
+          <div>
+            <p style="color:#9aa1a9; font-size:15px; line-height:1.65; margin:0 0 16px; max-width:640px">Production traffic repeats itself. Requests that are semantically equivalent to a recent completion are served from cache above a configurable similarity threshold, so the cheapest inference is the one that never reaches the GPU.</p>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#7c838b; border-left:2px solid #262a30; padding-left:12px">Configurable similarity threshold · per-route TTL · bypass header</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" style="border-bottom:1px solid #1b1e23">
+    <div style="max-width:1160px; margin:0 auto; padding:88px 32px; display:grid; grid-template-columns:1fr 1fr; gap:72px; align-items:start">
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.12em; color:#45e0a0; margin-bottom:14px">03 — GET IN TOUCH</div>
+        <h2 style="font-size:36px; letter-spacing:-0.03em; font-weight:600; margin:0 0 14px">Tell us what you are running.</h2>
+        <p style="color:#8b9199; font-size:16px; line-height:1.6; margin:0 0 24px; max-width:440px">Throttle is pre-launch and we are onboarding a small number of teams by hand. Engine, model and rough traffic shape are enough to start.</p>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:13px; color:#7c838b; line-height:2">
+          <div>github.com/KushagraKanaujia/throttle</div>
+          <div>hello@throttle.dev</div>
+        </div>
+      </div>
+      <form onSubmit="{{ onSubmit }}" style="border:1px solid #1e2126; border-radius:10px; background:#0d0f12; padding:28px; display:flex; flex-direction:column; gap:18px">
+        <div style="display:flex; flex-direction:column; gap:7px">
+          <label for="tf-name" style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.08em; color:#8b9199">NAME</label>
+          <input id="tf-name" name="name" type="text" required="required" placeholder="Ada Lovelace" style="background:#0a0c0f; border:1px solid #23272d; border-radius:5px; padding:12px 13px; color:#e8eaec; font-family:'Space Grotesk',sans-serif; font-size:15px; outline:none" style-focus="border-color:#45e0a0" />
+        </div>
+        <div style="display:flex; flex-direction:column; gap:7px">
+          <label for="tf-email" style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.08em; color:#8b9199">EMAIL</label>
+          <input id="tf-email" name="email" type="email" required="required" placeholder="ada@company.com" style="background:#0a0c0f; border:1px solid #23272d; border-radius:5px; padding:12px 13px; color:#e8eaec; font-family:'Space Grotesk',sans-serif; font-size:15px; outline:none" style-focus="border-color:#45e0a0" />
+        </div>
+        <div style="display:flex; flex-direction:column; gap:7px">
+          <label for="tf-stack" style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.08em; color:#8b9199">WHAT ARE YOU RUNNING?</label>
+          <textarea id="tf-stack" name="stack" rows="4" required="required" placeholder="vLLM 0.16, Llama-3.1-8B on 4× A10G, ~40 req/s peak" style="background:#0a0c0f; border:1px solid #23272d; border-radius:5px; padding:12px 13px; color:#e8eaec; font-family:'Space Grotesk',sans-serif; font-size:15px; outline:none; resize:vertical" style-focus="border-color:#45e0a0"></textarea>
+        </div>
+        <button type="submit" disabled="{{ busy }}" style="font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:500; color:#0a0b0d; background:#45e0a0; border:none; border-radius:5px; padding:14px; cursor:pointer" style-hover="background:#5ce9ad">{{ buttonLabel }}</button>
+        <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#45e0a0; border:1px solid rgba(69,224,160,0.3); background:rgba(69,224,160,0.07); border-radius:5px; padding:11px 13px; animation:fadeUp 300ms ease both">✓ Received. We will reply from hello@throttle.dev.</div>
+        </sc-if>
+        <sc-if value="{{ failed }}" hint-placeholder-val="{{ false }}">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#e0906a; border:1px solid rgba(224,144,106,0.3); background:rgba(224,144,106,0.07); border-radius:5px; padding:11px 13px">Could not send. Email hello@throttle.dev directly.</div>
+        </sc-if>
+      </form>
+    </div>
+  </section>
+
+  <footer style="max-width:1160px; margin:0 auto; padding:36px 32px 56px; display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap">
+    <div style="display:flex; align-items:center; gap:10px; font-family:'JetBrains Mono',monospace; font-size:12px; color:#565d66">
+      <div style="width:8px; height:8px; background:#2b3138; border-radius:2px"></div>Throttle · pre-launch
+    </div>
+    <div style="display:flex; gap:26px; font-family:'JetBrains Mono',monospace; font-size:12px">
+      <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noreferrer" style="color:#8b9199">github.com/KushagraKanaujia/throttle ↗</a>
+      <a href="mailto:hello@throttle.dev" style="color:#8b9199">hello@throttle.dev</a>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/mkjwyvjo";
+
+class Component extends DCLogic {
+  state = { status: "idle" };
+  renderVals() {
+    const s = this.state.status;
+    return {
+      sent: s === "sent",
+      failed: s === "error",
+      busy: s === "sending",
+      buttonLabel: s === "sending" ? "Sending…" : s === "sent" ? "Sent" : "Request access",
+      onSubmit: async (e) => {
+        e.preventDefault();
+        const form = e.currentTarget;
+        const data = new FormData(form);
+        this.setState({ status: "sending" });
+        try {
+          const res = await fetch(FORMSPREE_ENDPOINT, {
+            method: "POST",
+            body: data,
+            headers: { Accept: "application/json" },
+          });
+          if (!res.ok) throw new Error("bad status");
+          form.reset();
+          this.setState({ status: "sent" });
+        } catch (err) {
+          this.setState({ status: "error" });
+        }
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>
