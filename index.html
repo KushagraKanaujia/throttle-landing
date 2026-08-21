@@ -23,6 +23,42 @@
   input::placeholder, textarea::placeholder { color: #565d66; }
   @keyframes barGrow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  /* Mobile responsive styles */
+  html, body { overflow-x: hidden; }
+
+  @media (max-width: 768px) {
+    /* Prevent horizontal overflow */
+    body { max-width: 100vw; }
+
+    /* Mobile nav: wrap links */
+    header nav { flex-wrap: wrap; gap: 14px 20px !important; justify-content: center; }
+    header { padding: 16px 20px !important; }
+
+    /* Hero section: stack grid and responsive heading */
+    .hero-grid { grid-template-columns: 1fr !important; gap: 40px !important; padding: 60px 20px 48px !important; }
+    .hero-heading { font-size: clamp(32px, 8vw, 60px) !important; line-height: 1.1 !important; }
+    .hero-text { font-size: 16px !important; }
+    .hero-code { font-size: 11px !important; }
+
+    /* 3-column grids: stack to 1 column */
+    .grid-3-col { grid-template-columns: 1fr !important; }
+
+    /* 2-column grids: stack to 1 column */
+    .grid-2-col { grid-template-columns: 1fr !important; gap: 32px !important; }
+
+    /* Cost lever cards: stack label and content */
+    .lever-card { grid-template-columns: 1fr !important; gap: 16px !important; }
+
+    /* Contact section: stack */
+    .contact-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+
+    /* Footer: stack */
+    footer { flex-direction: column; align-items: flex-start !important; gap: 16px !important; }
+
+    /* Ensure all sections have proper padding */
+    section > div { padding-left: 20px !important; padding-right: 20px !important; }
+  }
 </style>
 </helmet>
 <div style="background:#0a0b0d; color:#e8eaec; font-family:'Space Grotesk',system-ui,sans-serif; min-height:100vh; -webkit-font-smoothing:antialiased">
@@ -43,18 +79,18 @@
 
   <section style="position:relative; overflow:hidden; border-bottom:1px solid #1b1e23">
     <div style="position:absolute; inset:0; background-image:linear-gradient(#12151a 1px, transparent 1px), linear-gradient(90deg, #12151a 1px, transparent 1px); background-size:64px 64px; mask-image:radial-gradient(ellipse 90% 70% at 50% 0%, #000 30%, transparent 75%)"></div>
-    <div style="position:relative; max-width:1160px; margin:0 auto; padding:96px 32px 80px; display:grid; grid-template-columns:1.05fr 1fr; gap:64px; align-items:center">
+    <div class="hero-grid" style="position:relative; max-width:1160px; margin:0 auto; padding:96px 32px 80px; display:grid; grid-template-columns:1.05fr 1fr; gap:64px; align-items:center">
       <div>
         <div style="display:inline-flex; align-items:center; gap:8px; font-family:'JetBrains Mono',monospace; font-size:11px; color:#45e0a0; border:1px solid rgba(69,224,160,0.28); background:rgba(69,224,160,0.06); border-radius:999px; padding:5px 12px; margin-bottom:28px">
           <span style="width:5px; height:5px; border-radius:50%; background:#45e0a0"></span>drop-in proxy · no code changes
         </div>
-        <h1 style="font-size:60px; line-height:1.02; letter-spacing:-0.035em; font-weight:600; margin:0 0 22px; text-wrap:balance">Serve more tokens on the GPUs you already pay for.</h1>
-        <p style="font-size:18px; line-height:1.55; color:#9aa1a9; margin:0 0 34px; max-width:520px; text-wrap:pretty">Throttle sits in front of your self-hosted LLM inference stack and cuts cost three ways: dynamic request batching, right-sized and spot-aware instance allocation, and semantic caching. Point your traffic at it and nothing else changes.</p>
+        <h1 class="hero-heading" style="font-size:60px; line-height:1.02; letter-spacing:-0.035em; font-weight:600; margin:0 0 22px; text-wrap:balance">Serve more tokens on the GPUs you already pay for.</h1>
+        <p class="hero-text" style="font-size:18px; line-height:1.55; color:#9aa1a9; margin:0 0 34px; max-width:520px; text-wrap:pretty">Throttle sits in front of your self-hosted LLM inference stack and cuts cost three ways: dynamic request batching, right-sized and spot-aware instance allocation, and semantic caching. Point your traffic at it and nothing else changes.</p>
         <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:32px">
           <a href="#contact" style="font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:500; color:#0a0b0d; background:#45e0a0; border-radius:5px; padding:13px 22px">Get early access</a>
           <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noreferrer" style="font-family:'JetBrains Mono',monospace; font-size:13px; color:#e8eaec; border:1px solid #262a30; border-radius:5px; padding:13px 22px">View source</a>
         </div>
-        <div style="font-family:'JetBrains Mono',monospace; font-size:12.5px; color:#7c838b; border:1px solid #1b1e23; background:#0d0f12; border-radius:6px; padding:14px 16px; max-width:520px; overflow:auto; white-space:nowrap">
+        <div class="hero-code" style="font-family:'JetBrains Mono',monospace; font-size:12.5px; color:#7c838b; border:1px solid #1b1e23; background:#0d0f12; border-radius:6px; padding:14px 16px; max-width:520px; overflow:auto; white-space:nowrap">
           <span style="color:#4d545c">$ </span>export OPENAI_BASE_URL=<span style="color:#45e0a0">https://your-proxy.throttle.dev/v1</span>
         </div>
       </div>
@@ -118,7 +154,7 @@
       <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.12em; color:#45e0a0; margin-bottom:14px">01 — INTEGRATION</div>
       <h2 style="font-size:36px; letter-spacing:-0.03em; font-weight:600; margin:0 0 12px">Three steps, zero code changes.</h2>
       <p style="color:#8b9199; font-size:16px; margin:0 0 48px; max-width:560px">Throttle speaks the OpenAI-compatible API your clients already use. Swap the base URL and you are done.</p>
-      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:#1b1e23; border:1px solid #1b1e23; border-radius:10px; overflow:hidden">
+      <div class="grid-3-col" style="display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:#1b1e23; border:1px solid #1b1e23; border-radius:10px; overflow:hidden">
         <div style="background:#0d0f12; padding:30px 26px 34px">
           <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#45e0a0; margin-bottom:20px">STEP 01</div>
           <h3 style="font-size:19px; font-weight:600; margin:0 0 10px; letter-spacing:-0.015em">Point traffic at the proxy</h3>
@@ -152,7 +188,7 @@
       <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.12em; color:#45e0a0; margin-bottom:14px">02 — COST LEVERS</div>
       <h2 style="font-size:36px; letter-spacing:-0.03em; font-weight:600; margin:0 0 48px">Where the money comes back.</h2>
       <div style="display:flex; flex-direction:column; gap:20px">
-        <div style="display:grid; grid-template-columns:200px 1fr; gap:40px; border:1px solid #1e2126; border-radius:10px; background:#0d0f12; padding:30px 32px">
+        <div class="lever-card" style="display:grid; grid-template-columns:200px 1fr; gap:40px; border:1px solid #1e2126; border-radius:10px; background:#0d0f12; padding:30px 32px">
           <div>
             <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#565d66; margin-bottom:8px">LEVER 01</div>
             <div style="font-size:20px; font-weight:600; letter-spacing:-0.015em">Dynamic batching</div>
@@ -162,7 +198,7 @@
             <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#7c838b; border-left:2px solid #45e0a0; padding-left:12px">Measured: 1 → 8 concurrent sequences, +217.8% throughput on the benchmark above.</div>
           </div>
         </div>
-        <div style="display:grid; grid-template-columns:200px 1fr; gap:40px; border:1px solid #1e2126; border-radius:10px; background:#0d0f12; padding:30px 32px">
+        <div class="lever-card" style="display:grid; grid-template-columns:200px 1fr; gap:40px; border:1px solid #1e2126; border-radius:10px; background:#0d0f12; padding:30px 32px">
           <div>
             <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#565d66; margin-bottom:8px">LEVER 02</div>
             <div style="font-size:20px; font-weight:600; letter-spacing:-0.015em">Instance right-sizing</div>
@@ -172,7 +208,7 @@
             <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#7c838b; border-left:2px solid #262a30; padding-left:12px">Spot-aware placement · graceful drain on interruption notice</div>
           </div>
         </div>
-        <div style="display:grid; grid-template-columns:200px 1fr; gap:40px; border:1px solid #1e2126; border-radius:10px; background:#0d0f12; padding:30px 32px">
+        <div class="lever-card" style="display:grid; grid-template-columns:200px 1fr; gap:40px; border:1px solid #1e2126; border-radius:10px; background:#0d0f12; padding:30px 32px">
           <div>
             <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#565d66; margin-bottom:8px">LEVER 03</div>
             <div style="font-size:20px; font-weight:600; letter-spacing:-0.015em">Semantic caching</div>
@@ -187,7 +223,7 @@
   </section>
 
   <section id="contact" style="border-bottom:1px solid #1b1e23">
-    <div style="max-width:1160px; margin:0 auto; padding:88px 32px; display:grid; grid-template-columns:1fr 1fr; gap:72px; align-items:start">
+    <div class="contact-grid" style="max-width:1160px; margin:0 auto; padding:88px 32px; display:grid; grid-template-columns:1fr 1fr; gap:72px; align-items:start">
       <div>
         <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.12em; color:#45e0a0; margin-bottom:14px">03 — GET IN TOUCH</div>
         <h2 style="font-size:36px; letter-spacing:-0.03em; font-weight:600; margin:0 0 14px">Tell us what you are running.</h2>
