@@ -275,23 +275,27 @@
     update();
   })();
 
-  /* ---------- early-access form (Formspree) ---------- */
+  /* ---------- early-access form (FormSubmit -> founder inbox) ---------- */
   (function form() {
     var f = $('#ea-form'); if (!f || !window.fetch || !window.FormData) return;
     var status = $('.form-status', f), btn = $('button[type=submit]', f), label = $('.btn-label', btn);
     f.addEventListener('submit', function (e) {
       e.preventDefault();
+      if (btn.disabled) return;
       status.className = 'form-status'; status.textContent = ''; btn.disabled = true; label.textContent = 'Sending…';
       fetch(f.action, { method: 'POST', body: new FormData(f), headers: { Accept: 'application/json' } })
-        .then(function (r) {
-          if (!r.ok) throw new Error('bad');
-          f.reset(); status.className = 'form-status ok';
-          status.textContent = "You're on the list at $5/month. We'll be in touch.";
-          label.textContent = 'Request sent';
+        .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { ok: r.ok, j: j }; }); })
+        .then(function (res) {
+          // FormSubmit answers 200 with success "false" (e.g. before the inbox is activated)
+          if (!res.ok || String(res.j.success) !== 'true') throw new Error(res.j.message || 'bad');
+          var email = ($('#f-email', f) || {}).value || '';
+          $$('label, input:not([type=hidden]), textarea, button', f).forEach(function (el) { el.hidden = true; });
+          status.className = 'form-status ok done';
+          status.textContent = "Request sent. You're on the list at $5/month" + (email ? ' as ' + email : '') + ". You'll hear from the founder directly.";
         })
         .catch(function () {
           status.className = 'form-status err';
-          status.textContent = 'Could not send. Please try again, or open an issue on GitHub.';
+          status.textContent = 'Could not send. Please try again, or email kushthrottle@gmail.com.';
           label.textContent = 'Request early access'; btn.disabled = false;
         });
     });
