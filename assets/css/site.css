@@ -501,3 +501,4 @@ h3 { font: 600 21px/1.2 var(--sans); letter-spacing: -.02em; margin: 0 0 12px; }
   .launch-badge img { height: clamp(22px, 6.6vw, 34px); }
 }
 @media (prefers-reduced-motion: reduce) { .launch-badge, .launch-badge img { transition: none; } .launch-badge:hover { transform: none; } }
+.price .p-was { font: 500 22px/1 var(--mono); color: var(--dim); text-decoration: line-through; text-decoration-thickness: 2px; margin-right: 10px; align-self: center; }
