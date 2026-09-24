@@ -24,9 +24,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/site.css?v=8755a666">
+<link rel="stylesheet" href="assets/css/site.css?v=32f55e3d">
 <script src="assets/js/runs.js?v=a3cf2cb8" defer></script>
-<script src="assets/js/site.js?v=a5a044e8" defer></script>
+<script src="assets/js/site.js?v=e4834dbe" defer></script>
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
@@ -49,7 +49,7 @@
       <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
       <span>GitHub</span>
     </a>
-    <a class="btn btn-accent btn-sm magnetic" href="#early-access">Pro · $5/mo</a>
+    <a class="btn btn-accent btn-sm magnetic" href="#early-access">Pro · $19/mo</a>
   </div>
 </header>
 
@@ -339,8 +339,8 @@
       <article class="plan plan-pro reveal">
         <div class="plan-ribbon">early access</div>
         <div class="plan-top"><h3>Pro</h3><span class="plan-sub">for what repeats</span></div>
-        <div class="price"><span class="p-num">$5</span><span class="p-per">/ month</span></div>
-        <p class="plan-honest"><span class="list-price">$20/month</span> list price when Pro launches. Early-access members keep <b>$5/month</b> for as long as they stay subscribed.</p>
+        <div class="price"><span class="p-was" aria-label="List price">$50</span><span class="p-num">$19</span><span class="p-per">/ month · launch price</span></div>
+        <p class="plan-honest"><span class="list-price">$50/month</span> list price once Pro fully launches. Sign up during launch and you keep <b>$19/month</b> for as long as you stay subscribed.</p>
         <ul>
           <li>Scheduled config-drift checks <span class="ea">early access</span></li>
           <li>Cost history across deploys <span class="ea">early access</span></li>
@@ -351,15 +351,15 @@
         <p class="plan-fine">These features are in progress. Tell us what you run and the first versions get built around it.</p>
       </article>
 
-      <article class="cheap reveal" aria-label="Why five dollars is cheap, illustrative arithmetic">
-        <span class="cheap-k">why $5 is cheap</span>
+      <article class="cheap reveal" aria-label="Why nineteen dollars is cheap, illustrative arithmetic">
+        <span class="cheap-k">why $19 is cheap</span>
         <div class="cheap-eq">
           <span>$1.39<small>/hr A100</small></span><span class="op">×</span>
           <span>24<small>hours</small></span><span class="op">×</span>
           <span>30<small>days</small></span><span class="op op-eq">=</span>
           <span class="cheap-total">$<span data-count="1000.80" data-decimals="2" data-sep="1">1,000.80</span><small>/month</small></span>
         </div>
-        <p>That’s the spend riding on one config for a single GPU running around the clock. One change that quietly makes you pay more can cost more than a year of Pro. <b>$5 is about 0.5% of it.</b></p>
+        <p>That’s the spend riding on one config for a single GPU running around the clock. One change that quietly makes you pay more can cost more than a year of Pro. <b>$19 is about 1.9% of it.</b></p>
         <p class="cheap-fine">Illustrative arithmetic, not a measurement or a savings claim. $1.39/hr is the A100 80GB PCIe rate from the golden run in RESULTS.md.</p>
       </article>
     </div>
@@ -371,7 +371,7 @@
   <div class="wrap cta-grid">
     <div class="reveal">
       <span class="sec-num">08 / early access</span>
-      <h2>Lock in <em>$5/month.</em></h2>
+      <h2>Lock in <em>$19/month.</em></h2>
       <p class="cta-p">Leave an email and what you run. You’ll hear from the person building it, and your setup shapes what ships first. No card today.</p>
       <div class="cta-links">
         <a class="btn btn-ghost magnetic" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">Star on GitHub</a>
@@ -380,8 +380,8 @@
     </div>
 
     <form class="form reveal" id="ea-form" action="https://formspree.io/f/mkjwyvjo" method="POST">
-      <input type="hidden" name="_subject" value="Throttle Pro early access ($5/mo)">
-      <input type="hidden" name="plan" value="pro-early-access-5">
+      <input type="hidden" name="_subject" value="Throttle Pro launch price ($19/mo)">
+      <input type="hidden" name="plan" value="pro-launch-19">
       <label for="f-email">Email</label>
       <input id="f-email" name="email" type="email" required autocomplete="email" placeholder="you@company.com">
       <label for="f-stack">What do you run?</label>

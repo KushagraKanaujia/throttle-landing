@@ -286,7 +286,7 @@
         .then(function (r) {
           if (!r.ok) throw new Error('bad');
           f.reset(); status.className = 'form-status ok';
-          status.textContent = "You're on the list at $5/month. We'll be in touch.";
+          status.textContent = "You're in at the $19/month launch price. You'll hear from the founder directly.";
           label.textContent = 'Request sent';
         })
         .catch(function () {
