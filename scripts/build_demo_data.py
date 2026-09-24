@@ -35,7 +35,9 @@ What is computed here (all shown on the page):
     (Throttle's own conditions[0].metrics.cost_per_million_output_tokens),
     e2e and TTFT mean/p50/p90/p95/p99, and each block's wall seconds
   * per side: arithmetic mean over positions of the above
-  * cost change = after $/M / before $/M - 1
+  * cost change = after $/M / before $/M - 1 (measured-blocks basis)
+  * the same on the run-level cost_summary basis (includes warm-up and
+    between-block time), shown as a footnote
   * $/M change range implied by the golden throughput CI: 1/(1+x) - 1
   * per-request latency sampling anchors for the illustrative request lines:
     the recorded p50/p90/p95/p99 plus a lower anchor at quantile 0 chosen
@@ -103,6 +105,12 @@ def run_summary(path: str) -> dict:
         "tok_per_s": m["output_tokens_per_second"],
         "block_mean_tok_per_s": m["block_mean_output_tokens_per_second"],
         "cost_per_m": m["cost_per_million_output_tokens"],
+        # Run-level basis (report's top-level cost_summary): includes warm-up and
+        # time between blocks, so it is higher than the measured-blocks basis.
+        "run_cost_per_m": d["cost_summary"]["cost_per_million_output_tokens"],
+        "run_cost_basis": d["cost_summary"]["basis"],
+        "run_total_cost": d["cost_summary"]["total_cost"],
+        "run_elapsed_s": d["run_totals"]["elapsed_seconds"],
         "e2e_ms": e2e,
         "ttft_ms": ttft,
         "e2e_q0_ms": lower_anchor(e2e),
@@ -143,6 +151,7 @@ def side(paths: list[str], label: str) -> dict:
             "tok_per_s": mean(r["tok_per_s"] for r in runs),
             "block_mean_tok_per_s": mean(r["block_mean_tok_per_s"] for r in runs),
             "cost_per_m": mean(r["cost_per_m"] for r in runs),
+            "run_cost_per_m": mean(r["run_cost_per_m"] for r in runs),
             "hourly_rate": mean(r["hourly_rate"] for r in runs),
             "e2e_ms": {k: mean(r["e2e_ms"][k] for r in runs) for k in PCTS},
             "ttft_ms": {k: mean(r["ttft_ms"][k] for r in runs) for k in PCTS},
@@ -184,6 +193,8 @@ def main() -> None:
         "after": after,
         "derived": {
             "cost_change": c["cost_per_m"] / b["cost_per_m"] - 1,
+            "run_cost_change": c["run_cost_per_m"] / b["run_cost_per_m"] - 1,
+            "six_run_total_cost": sum(r["run_total_cost"] for r in before["runs"] + after["runs"]),
             "cost_ratio_before_over_after": b["cost_per_m"] / c["cost_per_m"],
             "gpu_hours_ratio": b["wall_s"] / c["wall_s"],
             "pooled_tok_per_s_change": c["tok_per_s"] / b["tok_per_s"] - 1,

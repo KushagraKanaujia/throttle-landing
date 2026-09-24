@@ -32,7 +32,11 @@
     afterCpm: usd(cpmA, 4),
     costChange: pct(change, 1),
     e2eB: grp(B.mean.e2e_ms.p50) + " ms",
-    e2eA: grp(A.mean.e2e_ms.p50) + " ms"
+    e2eA: grp(A.mean.e2e_ms.p50) + " ms",
+    // run-level cost_summary basis (includes warm-up and between-block time)
+    runBeforeCpm: usd(B.mean.run_cost_per_m, 4),
+    runAfterCpm: usd(A.mean.run_cost_per_m, 4),
+    runChange: pct(D.derived.run_cost_change, 1)
   };
   if (G) {
     var ci = G.throughput_ci, cc = G.cost_change_from_ci;
@@ -40,6 +44,10 @@
     F.ciRange = F.ciLow + " to " + F.ciHigh;
     F.cmLow = pct(cc.worst); F.cmHigh = pct(cc.best);
     F.cmRange = F.cmLow + " to " + F.cmHigh;
+    // headline uses golden's order-balanced estimate, restated as $/M change
+    F.costEst = pct(cc.estimate, 1);
+    F.costPct = fx(-cc.estimate * 100, 1);
+    F.disclaimer = G.disclaimer;
   }
   document.querySelectorAll("[data-f]").forEach(function (el) {
     var v = F[el.getAttribute("data-f")];
@@ -53,8 +61,8 @@
     for (var i = 0; i < Math.max(B.runs.length, A.runs.length); i++) {
       [B.runs[i], A.runs[i]].forEach(function (r, j) {
         if (!r) return;
-        rows.push('<tr class="' + (j ? "ra" : "rb") + '"><td>' + (r.position || r.file) + "</td><td>" + r.max_num_seqs +
-          "</td><td>" + fx(r.wall_s, 2) + "</td><td>" + r.requests + "</td><td>" + fx(r.tok_per_s, 1) +
+        rows.push('<tr class="' + (j ? "ra" : "rb") + '"><td>' + (r.position || r.file) + "</td><td class=\"c-seq\">" + r.max_num_seqs +
+          "</td><td>" + fx(r.wall_s, 2) + "</td><td class=\"c-req\">" + r.requests + "</td><td>" + fx(r.block_mean_tok_per_s, 1) +
           "</td><td>" + usd(r.cost_per_m, 4) + "</td></tr>");
       });
     }
@@ -112,14 +120,18 @@
   }
 
   /* ---------- panes ---------- */
-  function Pane(el) {
+  function Pane(el, mini) {
     var q = function (k) { return el.querySelector('[data-k="' + k + '"]'); };
-    this.el = el;
+    this.el = el; this.mini = mini;
+    this.m = {};
+    if (mini) mini.querySelectorAll("[data-m]").forEach(function (x) { this.m[x.getAttribute("data-m")] = x; }, this);
     this.k = { state: q("state"), elapsed: q("elapsed"), tok: q("tok"), tokTotal: q("tokTotal"), spent: q("spent"), cpm: q("cpm"), prog: q("prog"), term: q("term"), done: q("done") };
     this.last = {};
     this.shown = -1;
   }
-  Pane.prototype.set = function (k, v) { if (this.last[k] !== v) { this.last[k] = v; this.k[k].textContent = v; } };
+  Pane.prototype.set = function (k, v) {
+    if (this.last[k] !== v) { this.last[k] = v; this.k[k].textContent = v; if (this.m[k]) this.m[k].textContent = v; }
+  };
   Pane.prototype.load = function (sc) {
     this.sc = sc; this.last = {}; this.shown = -1;
     this.set("tokTotal", grp(sc.tokens));
@@ -161,6 +173,7 @@
     this.k.prog.style.transform = "scaleX(" + (te / sc.wall).toFixed(4) + ")";
     this.el.classList.toggle("is-run", !done && started && t > 0);
     this.el.classList.toggle("is-done", done);
+    if (this.mini) { this.mini.classList.toggle("is-run", !done && started && t > 0); this.mini.classList.toggle("is-done", done); }
     this.k.done.hidden = !done;
     if (n !== this.shown) {
       var from = Math.max(0, n - VISIBLE), html = [];
@@ -174,14 +187,14 @@
     }
   };
 
-  var pB = new Pane(document.querySelector('.pane[data-side="before"]'));
-  var pA = new Pane(document.querySelector('.pane[data-side="after"]'));
+  var pB = new Pane(document.querySelector('.pane[data-side="before"]'), document.querySelector('.mini[data-side="before"]'));
+  var pA = new Pane(document.querySelector('.pane[data-side="after"]'), document.querySelector('.mini[data-side="after"]'));
   var scB = null, scA = null, Tmax = 1;
   var posSel = document.getElementById("rp-pos");
   var playBtn = document.getElementById("rp-play"), playL = playBtn.querySelector(".rp-play-l");
   var fill = document.getElementById("rp-fill"), markA = document.getElementById("rp-mark-a"), tLab = document.getElementById("rp-t");
   var speedL = document.getElementById("rp-speed-l"), vcard = document.getElementById("vcard");
-  var statusEl = document.getElementById("rp-status"), lastSt = null;
+  var statusEl = document.getElementById("rp-status"), lastSt = null, wasFin = false, litT = 0;
 
   var t = 0, speed = qs.get("speed") === "4" ? 4 : 1, playing = false, started = false, raf = 0, lastTs = 0;
 
@@ -202,7 +215,13 @@
     playBtn.classList.toggle("is-playing", playing);
     playBtn.classList.toggle("is-done", fin && !playing);
     playL.textContent = playing ? "Pause" : fin ? "Replay" : t > 0 ? "Resume" : "Play";
-    if (fin) vcard.classList.remove("pending");
+    // The verdict card is always fully visible; when a played replay ends it
+    // gets a brief highlight only.
+    if (fin && !wasFin && started && tParam == null && !reduce) {
+      vcard.classList.remove("lit"); void vcard.offsetWidth; vcard.classList.add("lit");
+      clearTimeout(litT); litT = setTimeout(function () { vcard.classList.remove("lit"); }, 1800);
+    }
+    wasFin = fin;
     var st = "";
     var costA = scA.rate * scA.wall / 3600, costB = scB.rate * scB.wall / 3600;
     if (fin) {
@@ -247,11 +266,14 @@
     if (was) play(); else paint();
   });
 
+  var nav = document.querySelector(".nav"), miniEl = document.querySelector(".rp-mini");
+  function navH() { if (nav && miniEl) miniEl.style.top = nav.offsetHeight + "px"; }
+  navH(); window.addEventListener("resize", navH);
+
   loadPos("mean");
   if (tParam != null) { t = Math.min(tParam, Tmax); started = t > 0; }
   else if (reduce) { t = Tmax; started = true; }
   else {
-    vcard.classList.add("pending");
     var target = document.querySelector(".panes");
     if ("IntersectionObserver" in window) {
       var io = new IntersectionObserver(function (es) {

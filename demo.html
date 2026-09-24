@@ -19,9 +19,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/site.css?v=32f55e3d">
-<link rel="stylesheet" href="assets/css/demo.css?v=1">
-<script src="assets/js/demo-data.js?v=1" defer></script>
-<script src="assets/js/demo.js?v=1" defer></script>
+<link rel="stylesheet" href="assets/css/demo.css?v=2">
+<script src="assets/js/demo-data.js?v=2" defer></script>
+<script src="assets/js/demo.js?v=2" defer></script>
 </head>
 <body class="demo">
 <div class="grain" aria-hidden="true"></div>
@@ -35,7 +35,7 @@
     <a href="/">← Home</a>
     <a href="#replay">Replay</a>
     <a href="#verdict">Verdict</a>
-    <a href="#bill">Your bill</a>
+    <a href="#bill">Cost math</a>
   </nav>
   <div class="nav-cta">
     <a class="nav-gh" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener" aria-label="Throttle on GitHub">
@@ -52,14 +52,15 @@
 <section class="d-hero">
   <div class="wrap">
     <p class="eyebrow"><span class="dot"></span> Replay of recorded measurements · golden live run, 17 Aug 2026</p>
-    <h1 class="d-h1">Same GPU. Same model. Same work. <span class="d-h1-b">One config costs <em><span data-f="costPct">68.6</span>% less</em> per token.</span></h1>
+    <h1 class="d-h1">Same GPU. Same model. Same work. <span class="d-h1-b">One config costs <em><span data-f="costPct">68.5</span>% less</em> per token.</span></h1>
     <p class="d-lede">Throttle measured two vLLM settings on one NVIDIA A100 80GB PCIe, six times in counterbalanced order, and verified the difference. It does not make the GPU faster. It tells you, with a confidence interval, which setting is cheaper and by how much.</p>
+    <p class="d-caveat"><b>Read this first.</b> The baseline, max_num_seqs=1, is deliberately simple: one sequence at a time, so no batching, far below vLLM&rsquo;s default. This was a first real-GPU test, not a typical production gain. Results apply to this model, engine, GPU and workload only.</p>
 
     <div class="d-kpis">
       <div class="kpi">
         <span class="kpi-l">Cost per million output tokens</span>
         <span class="kpi-v"><s class="c-exp" data-f="beforeCpm">$0.7459</s> <span class="kpi-arrow">→</span> <b class="c-cheap-l" data-f="afterCpm">$0.2342</b></span>
-        <span class="kpi-s">mean of 3 measured positions each · $1.39/hr × measured wall time ÷ tokens</span>
+        <span class="kpi-s">mean of 3 positions each (<span data-f="costChange">−68.6%</span>) · $1.39/hr × measured-block wall time ÷ tokens, excludes warm-up<sup>1</sup></span>
       </div>
       <div class="kpi">
         <span class="kpi-l">Throughput change, 95% CI (golden.json)</span>
@@ -69,7 +70,7 @@
       <div class="kpi">
         <span class="kpi-l">Equivalent $/M change, 1/(1+x) − 1</span>
         <span class="kpi-v"><b class="c-cheap-l" data-f="cmLow">−65.5%</b> <span class="kpi-to">to</span> <b class="c-cheap-l" data-f="cmHigh">−71.1%</b></span>
-        <span class="kpi-s">the throughput interval, restated as cost per token</span>
+        <span class="kpi-s">the throughput interval restated as cost per token · estimate <span data-f="costEst">−68.5%</span></span>
       </div>
     </div>
 
@@ -82,7 +83,9 @@
       <li><span>output</span>128 max tokens</li>
       <li><span>order</span>B1 C1 B2 C2 B3 C3</li>
       <li><span>decision_eligible</span><b class="c-cheap-l">true</b></li>
+      <li class="spec-warn"><span>baseline</span>max_num_seqs=1 <i>deliberately simple, no batching</i></li>
     </ul>
+    <p class="d-note"><sup>1</sup> $/M basis: measured blocks only, excluding warm-up and time between blocks (= <code>conditions[0].metrics.cost_per_million_output_tokens</code> in each report). Each report&rsquo;s run-level <code>cost_summary</code>, which includes warm-up and gaps, gives <span data-f="runBeforeCpm">$0.7784</span> → <span data-f="runAfterCpm">$0.2611</span> (<span data-f="runChange">−66.5%</span>) on the same three-position means.</p>
   </div>
 </section>
 
@@ -115,6 +118,17 @@
       <div class="rp-track"><i class="rp-fill" id="rp-fill"></i><i class="rp-mark rp-mark-a" id="rp-mark-a"></i><i class="rp-mark rp-mark-b" id="rp-mark-b"></i></div>
       <div class="rp-clock-l"><span>replay clock <b id="rp-t">0.00 s</b></span><span id="rp-speed-l">real time</span></div>
       <p class="rp-status" id="rp-status" aria-live="polite"></p>
+    </div>
+
+    <div class="rp-mini" aria-hidden="true">
+      <div class="mini mini-b" data-side="before">
+        <div class="mini-h"><i class="pdot"></i><b>Before <small>seqs=1</small></b><span data-m="state">READY</span></div>
+        <dl><div><dt>elapsed</dt><dd data-m="elapsed">0.00 s</dd></div><div><dt>tokens</dt><dd data-m="tok">0</dd></div><div><dt>GPU $</dt><dd class="c-exp-l" data-m="spent">$0.00000</dd></div><div><dt>$/M</dt><dd data-m="cpm">—</dd></div></dl>
+      </div>
+      <div class="mini mini-a" data-side="after">
+        <div class="mini-h"><i class="pdot"></i><b>After <small>seqs=8</small></b><span data-m="state">READY</span></div>
+        <dl><div><dt>elapsed</dt><dd data-m="elapsed">0.00 s</dd></div><div><dt>tokens</dt><dd data-m="tok">0</dd></div><div><dt>GPU $</dt><dd class="c-cheap-l" data-m="spent">$0.00000</dd></div><div><dt>$/M</dt><dd data-m="cpm">—</dd></div></dl>
+      </div>
     </div>
 
     <div class="panes">
@@ -172,27 +186,28 @@
             <span class="vbig-arrow">→</span>
             <div><small>after</small><b class="c-cheap-l" data-f="afterCpm">$0.2342</b></div>
           </div>
-          <div class="vbig-pct"><b data-f="costChange">−68.6%</b> per token</div>
+          <div class="vbig-pct"><b data-f="costEst">−68.5%</b> per token</div>
+          <div class="vbig-sub">golden.json order-balanced estimate · mean of measured $/M: <span data-f="costChange">−68.6%</span></div>
         </div>
       </div>
       <dl class="vgrid">
         <div><dt>Throughput, 95% CI</dt><dd><b data-f="ciRange">+189.5% to +246.2%</b><span>estimate <span data-f="ciEst">+217.8%</span> · order_balanced_phase_contrasts, n=2</span></dd></div>
         <div><dt>Same interval as $/M</dt><dd><b data-f="cmRange">−65.5% to −71.1%</b><span>1/(1+x) − 1 on each bound</span></dd></div>
         <div><dt>Protocol</dt><dd><b>decision_eligible: true</b><span>six-position counterbalanced B1 C1 B2 C2 B3 C3 · decision_state: supported</span></dd></div>
-        <div><dt>Latency, recorded p50 e2e</dt><dd><b><span data-f="e2eB">1,948 ms</span> → <span data-f="e2eA">519 ms</span></b><span>mean of 3 positions each; not part of the cost verdict</span></dd></div>
+        <div><dt>Latency, recorded p50 e2e</dt><dd><b><span data-f="e2eB">1,943 ms</span> → <span data-f="e2eA">518 ms</span></b><span>mean of 3 positions each; not part of the cost verdict</span></dd></div>
       </dl>
 
       <div class="vtable-wrap">
         <table class="vtable">
           <caption>All six recorded positions, in the order they ran</caption>
-          <thead><tr><th>pos</th><th>max_num_seqs</th><th>wall s</th><th>requests</th><th>output tok/s</th><th>$/M out</th></tr></thead>
+          <thead><tr><th>pos</th><th class="c-seq">max_num_seqs</th><th>wall s</th><th class="c-req">requests</th><th>block-mean tok/s</th><th>$/M out<sup>1</sup></th></tr></thead>
           <tbody id="vt-body"></tbody>
         </table>
       </div>
 
       <div class="vfoot">
         <a class="btn btn-ghost btn-sm" href="https://github.com/KushagraKanaujia/throttle/tree/main/validation/golden-live-20260817" target="_blank" rel="noopener">Raw JSON on GitHub <span class="arrow">→</span></a>
-        <p>Throttle labels this outcome <code>candidate_higher_throughput</code> in golden.json; at a fixed hourly rate higher throughput is the same thing as lower $/M. max_num_seqs=1 is a deliberately simple baseline for a first real-GPU test. Results apply to this model, engine, GPU and workload only.</p>
+        <p>Throttle labels this outcome <code>candidate_higher_throughput</code> in golden.json; at a fixed hourly rate higher throughput is the same thing as lower $/M. <b>max_num_seqs=1 is a deliberately simple baseline for a first real-GPU test. Results apply to this model, engine, GPU and workload only.</b> Block-mean tok/s matches RUN_AUDIT.md. <sup>1</sup> $/M out is measured blocks only; the run-level <code>cost_summary</code> (with warm-up) is <span data-f="runBeforeCpm">$0.7784</span> → <span data-f="runAfterCpm">$0.2611</span> (<span data-f="runChange">−66.5%</span>).</p>
       </div>
     </div>
   </div>
@@ -202,10 +217,11 @@
 <section class="d-bill" id="bill">
   <div class="wrap bill-grid">
     <div>
-      <span class="sec-num">What this means for your bill</span>
-      <h2>Same tokens, <em>about a third of the GPU.</em></h2>
-      <p class="bill-p">Pick a monthly volume of output tokens. Monthly GPU cost = tokens ÷ 1,000,000 × the measured $/M for each config.</p>
-      <p class="bill-fine"><b>Arithmetic on this measured workload, not a promise about yours.</b> Your model, prompts, load and GPU change $/M, which is why Throttle measures your stack instead of quoting ours.</p>
+      <span class="sec-num">Arithmetic at this measured rate</span>
+      <h2>Same tokens, <em>about a third of the GPU-hours.</em></h2>
+      <p class="bill-caveat">Against a deliberately simple max_num_seqs=1 baseline (no batching). Not a typical production gain.</p>
+      <p class="bill-p">Pick a monthly volume of output tokens. GPU cost = tokens ÷ 1,000,000 × the measured $/M for each config.</p>
+      <p class="bill-fine"><b>Assumes the GPU is kept busy at the tested load.</b> A dedicated GPU is billed per hour whether busy or idle, so savings appear only if you run fewer GPU-hours. Your model, prompts, load and GPU change $/M, which is why Throttle measures your stack instead of quoting ours.</p>
     </div>
     <div class="bc">
       <label class="calc-l" for="bill-in">Monthly output tokens</label>
@@ -222,9 +238,10 @@
         <div class="crow crow-b"><span>Before · max_num_seqs=1</span><b data-c="before">$745.89</b><i data-c="barB"></i></div>
         <div class="crow crow-a"><span>After · max_num_seqs=8</span><b data-c="after">$234.20</b><i data-c="barA"></i></div>
       </div>
-      <div class="calc-diff"><span>Difference per month</span><b data-c="diff">$511.69</b></div>
+      <div class="calc-diff"><span>Cost difference at 100% utilization</span><b data-c="diff">$511.69</b></div>
       <p class="calc-f" data-c="formula"></p>
       <p class="calc-g" data-c="gpuh"></p>
+      <blockquote class="calc-q"><p>&ldquo;<span data-f="disclaimer">This order-balanced live result applies only to the pinned manifest and tested workload; it is not a savings projection or universal causal claim.</span>&rdquo;</p><cite>golden.json, <code>disclaimer</code></cite></blockquote>
     </div>
   </div>
 </section>
@@ -241,13 +258,13 @@
         <a class="btn btn-ghost" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">Throttle on GitHub</a>
       </div>
     </div>
-    <pre class="cmd" aria-label="Example commands"><span class="cm"># 1. today's config, 3 times, changing nothing (noise)</span>
+    <pre class="cmd" aria-label="Example commands"><span class="cm"># 1. current config, 3 runs (noise)</span>
 <span class="pr">$</span> for i in 1 2 3; do
     throttle check --url http://localhost:8000 \
       --model Qwen/Qwen2.5-0.5B-Instruct \
       --gpu-hourly-rate 1.39 --label before
   done
-<span class="cm"># 2. restart vLLM with --max-num-seqs 8, then:</span>
+<span class="cm"># 2. restart with --max-num-seqs 8</span>
 <span class="pr">$</span> throttle check --url http://localhost:8000 \
     --model Qwen/Qwen2.5-0.5B-Instruct \
     --gpu-hourly-rate 1.39 --label after \
