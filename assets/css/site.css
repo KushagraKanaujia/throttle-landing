@@ -482,12 +482,18 @@ h3 { font: 600 21px/1.2 var(--sans); letter-spacing: -.02em; margin: 0 0 12px; }
 .plan-honest .list-price{color:var(--text,#e8eae6);font-family:"JetBrains Mono",ui-monospace,monospace;font-weight:600;white-space:nowrap}
 
 
-/* launched-on strip */
+/* launched-on strip: one horizontal row at every width; badges scale down on
+   small screens and the row scrolls sideways if more badges are added */
 .launch-strip { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: rgba(255,255,255,.015); }
-.launch-in { display: flex; align-items: center; gap: 28px; padding-top: 22px; padding-bottom: 22px; flex-wrap: wrap; }
-.launch-k { font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--dim); }
-.launch-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-.launch-badge { display: inline-block; line-height: 0; border-radius: 10px; opacity: .92; transition: transform .2s, opacity .2s; }
+.launch-in { display: flex; align-items: center; gap: 28px; padding-top: 22px; padding-bottom: 22px; }
+.launch-k { flex: none; font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--dim); }
+.launch-row { display: flex; flex-wrap: nowrap; align-items: center; gap: 14px; min-width: 0; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding: 4px 2px; }
+.launch-row::-webkit-scrollbar { display: none; }
+.launch-badge { flex: none; display: inline-block; line-height: 0; border-radius: 10px; opacity: .92; transition: transform .2s, opacity .2s; }
 .launch-badge:hover { opacity: 1; transform: translateY(-2px); }
-.launch-badge img { display: block; height: 54px; width: auto; max-width: 100%; }
-@media (max-width: 560px) { .launch-in { gap: 14px; justify-content: center; } .launch-k { width: 100%; text-align: center; } .launch-row { justify-content: center; } }
+.launch-badge img { display: block; height: 54px; width: auto; }
+@media (max-width: 720px) {
+  .launch-in { flex-direction: column; gap: 12px; }
+  .launch-row { gap: 10px; max-width: 100%; }
+  .launch-badge img { height: clamp(28px, 8.4vw, 54px); }
+}
