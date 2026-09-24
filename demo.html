@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>document.documentElement.classList.add("js")</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Throttle demo: same GPU, one config costs less per token</title>
+<meta name="description" content="A replay of recorded Throttle measurements on one NVIDIA A100 80GB PCIe: max_num_seqs=1 vs max_num_seqs=8 on vLLM 0.16.0 with Qwen2.5-0.5B-Instruct, six-position counterbalanced, decision_eligible.">
+<meta name="theme-color" content="#07080a">
+<link rel="canonical" href="https://www.throttle-pro.com/demo">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Same GPU. Same model. Same work. One config costs less per token.">
+<meta property="og:description" content="Replay of a recorded, six-position counterbalanced Throttle run on one A100 80GB PCIe.">
+<meta property="og:url" content="https://www.throttle-pro.com/demo">
+<meta property="og:image" content="https://www.throttle-pro.com/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/site.css?v=32f55e3d">
+<link rel="stylesheet" href="assets/css/demo.css?v=1">
+<script src="assets/js/demo-data.js?v=1" defer></script>
+<script src="assets/js/demo.js?v=1" defer></script>
+</head>
+<body class="demo">
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav scrolled">
+  <a class="brand" href="/" aria-label="Throttle home">
+    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg>
+    <span>throttle</span>
+  </a>
+  <nav class="nav-links demo-links" aria-label="Page">
+    <a href="/">← Home</a>
+    <a href="#replay">Replay</a>
+    <a href="#verdict">Verdict</a>
+    <a href="#bill">Your bill</a>
+  </nav>
+  <div class="nav-cta">
+    <a class="nav-gh" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener" aria-label="Throttle on GitHub">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      <span>GitHub</span>
+    </a>
+    <a class="btn btn-accent btn-sm" href="/#early-access">Early access</a>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- HERO -->
+<section class="d-hero">
+  <div class="wrap">
+    <p class="eyebrow"><span class="dot"></span> Replay of recorded measurements · golden live run, 17 Aug 2026</p>
+    <h1 class="d-h1">Same GPU. Same model. Same work. <span class="d-h1-b">One config costs <em><span data-f="costPct">68.6</span>% less</em> per token.</span></h1>
+    <p class="d-lede">Throttle measured two vLLM settings on one NVIDIA A100 80GB PCIe, six times in counterbalanced order, and verified the difference. It does not make the GPU faster. It tells you, with a confidence interval, which setting is cheaper and by how much.</p>
+
+    <div class="d-kpis">
+      <div class="kpi">
+        <span class="kpi-l">Cost per million output tokens</span>
+        <span class="kpi-v"><s class="c-exp" data-f="beforeCpm">$0.7459</s> <span class="kpi-arrow">→</span> <b class="c-cheap-l" data-f="afterCpm">$0.2342</b></span>
+        <span class="kpi-s">mean of 3 measured positions each · $1.39/hr × measured wall time ÷ tokens</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi-l">Throughput change, 95% CI (golden.json)</span>
+        <span class="kpi-v"><b data-f="ciLow">+189.5%</b> <span class="kpi-to">to</span> <b data-f="ciHigh">+246.2%</b></span>
+        <span class="kpi-s">order-balanced phase contrasts · estimate <span data-f="ciEst">+217.8%</span></span>
+      </div>
+      <div class="kpi">
+        <span class="kpi-l">Equivalent $/M change, 1/(1+x) − 1</span>
+        <span class="kpi-v"><b class="c-cheap-l" data-f="cmLow">−65.5%</b> <span class="kpi-to">to</span> <b class="c-cheap-l" data-f="cmHigh">−71.1%</b></span>
+        <span class="kpi-s">the throughput interval, restated as cost per token</span>
+      </div>
+    </div>
+
+    <ul class="d-spec" aria-label="Test context">
+      <li><span>GPU</span>1× NVIDIA A100 80GB PCIe</li>
+      <li><span>rate</span>$1.39/hr <i>assumed, from manifest</i></li>
+      <li><span>engine</span>vLLM 0.16.0</li>
+      <li><span>model</span>Qwen2.5-0.5B-Instruct</li>
+      <li><span>load</span>closed-loop concurrency 8</li>
+      <li><span>output</span>128 max tokens</li>
+      <li><span>order</span>B1 C1 B2 C2 B3 C3</li>
+      <li><span>decision_eligible</span><b class="c-cheap-l">true</b></li>
+    </ul>
+  </div>
+</section>
+
+<!-- REPLAY -->
+<section class="d-replay" id="replay">
+  <div class="wrap">
+    <div class="rp-bar">
+      <div class="rp-title">
+        <span class="sec-num">Replay · recorded, not live</span>
+        <h2 class="rp-h">Both configs serve the same 201 requests. Watch the meters.</h2>
+      </div>
+      <div class="rp-ctl" role="group" aria-label="Replay controls">
+        <button class="btn btn-accent btn-sm rp-play" type="button" id="rp-play"><span class="rp-ico" aria-hidden="true"></span><span class="rp-play-l">Play</span></button>
+        <div class="seg" role="radiogroup" aria-label="Playback speed">
+          <button type="button" role="radio" aria-checked="true" data-speed="1">1×</button>
+          <button type="button" role="radio" aria-checked="false" data-speed="4">4×</button>
+        </div>
+        <label class="rp-sel"><span>Position</span>
+          <select id="rp-pos" aria-label="Which recorded positions to replay">
+            <option value="mean">mean of 3</option>
+            <option value="0">B1 vs C1</option>
+            <option value="1">B2 vs C2</option>
+            <option value="2">B3 vs C3</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <div class="rp-clock" aria-hidden="true">
+      <div class="rp-track"><i class="rp-fill" id="rp-fill"></i><i class="rp-mark rp-mark-a" id="rp-mark-a"></i><i class="rp-mark rp-mark-b" id="rp-mark-b"></i></div>
+      <div class="rp-clock-l"><span>replay clock <b id="rp-t">0.00 s</b></span><span id="rp-speed-l">real time</span></div>
+      <p class="rp-status" id="rp-status" aria-live="polite"></p>
+    </div>
+
+    <div class="panes">
+      <article class="pane pane-b" data-side="before" aria-label="Before: max_num_seqs=1">
+        <header class="pane-h">
+          <div class="pane-id"><i class="pdot"></i><div><b>Before: max_num_seqs=1</b><span>A100 80GB PCIe · vLLM 0.16.0 · concurrency 8</span></div></div>
+          <span class="pane-st" data-k="state">READY</span>
+        </header>
+        <div class="pane-m">
+          <div><span>elapsed</span><b data-k="elapsed">0.00 s</b></div>
+          <div><span>output tokens</span><b><span data-k="tok">0</span><small> / <span data-k="tokTotal">25,728</span></small></b></div>
+          <div><span>GPU $ so far</span><b class="c-exp-l" data-k="spent">$0.00000</b></div>
+          <div><span>live $/M tokens</span><b data-k="cpm">—</b></div>
+        </div>
+        <div class="pane-prog"><i data-k="prog"></i></div>
+        <div class="tty" data-k="term" aria-live="off"></div>
+        <footer class="pane-done" data-k="done" hidden></footer>
+      </article>
+
+      <article class="pane pane-a" data-side="after" aria-label="After: max_num_seqs=8, verified by Throttle">
+        <header class="pane-h">
+          <div class="pane-id"><i class="pdot"></i><div><b>After: max_num_seqs=8, <em>verified by Throttle</em></b><span>A100 80GB PCIe · vLLM 0.16.0 · concurrency 8</span></div></div>
+          <span class="pane-st" data-k="state">READY</span>
+        </header>
+        <div class="pane-m">
+          <div><span>elapsed</span><b data-k="elapsed">0.00 s</b></div>
+          <div><span>output tokens</span><b><span data-k="tok">0</span><small> / <span data-k="tokTotal">25,728</span></small></b></div>
+          <div><span>GPU $ so far</span><b class="c-cheap-l" data-k="spent">$0.00000</b></div>
+          <div><span>live $/M tokens</span><b data-k="cpm">—</b></div>
+        </div>
+        <div class="pane-prog"><i data-k="prog"></i></div>
+        <div class="tty" data-k="term" aria-live="off"></div>
+        <footer class="pane-done" data-k="done" hidden></footer>
+      </article>
+    </div>
+
+    <p class="rp-note">Request lines are illustrative samples drawn from recorded latency percentiles; totals, rates and costs are recorded. Lines stream at each block’s recorded requests/s, three blocks of 67 requests per position. GPU $ = $1.39/hr × elapsed; live $/M = GPU $ ÷ output tokens so far.</p>
+  </div>
+</section>
+
+<!-- VERDICT -->
+<section class="d-verdict" id="verdict">
+  <div class="wrap">
+    <div class="vcard" id="vcard">
+      <div class="vcard-top">
+        <div>
+          <span class="sec-num">Throttle verdict · After vs Before</span>
+          <div class="vbadge">CHEAPER</div>
+          <p class="vsub">After (max_num_seqs=8) against Before (max_num_seqs=1), same GPU, model and workload.</p>
+        </div>
+        <div class="vbig">
+          <span class="vbig-l">cost per million output tokens</span>
+          <div class="vbig-row">
+            <div><small>before</small><b class="c-exp" data-f="beforeCpm">$0.7459</b></div>
+            <span class="vbig-arrow">→</span>
+            <div><small>after</small><b class="c-cheap-l" data-f="afterCpm">$0.2342</b></div>
+          </div>
+          <div class="vbig-pct"><b data-f="costChange">−68.6%</b> per token</div>
+        </div>
+      </div>
+      <dl class="vgrid">
+        <div><dt>Throughput, 95% CI</dt><dd><b data-f="ciRange">+189.5% to +246.2%</b><span>estimate <span data-f="ciEst">+217.8%</span> · order_balanced_phase_contrasts, n=2</span></dd></div>
+        <div><dt>Same interval as $/M</dt><dd><b data-f="cmRange">−65.5% to −71.1%</b><span>1/(1+x) − 1 on each bound</span></dd></div>
+        <div><dt>Protocol</dt><dd><b>decision_eligible: true</b><span>six-position counterbalanced B1 C1 B2 C2 B3 C3 · decision_state: supported</span></dd></div>
+        <div><dt>Latency, recorded p50 e2e</dt><dd><b><span data-f="e2eB">1,948 ms</span> → <span data-f="e2eA">519 ms</span></b><span>mean of 3 positions each; not part of the cost verdict</span></dd></div>
+      </dl>
+
+      <div class="vtable-wrap">
+        <table class="vtable">
+          <caption>All six recorded positions, in the order they ran</caption>
+          <thead><tr><th>pos</th><th>max_num_seqs</th><th>wall s</th><th>requests</th><th>output tok/s</th><th>$/M out</th></tr></thead>
+          <tbody id="vt-body"></tbody>
+        </table>
+      </div>
+
+      <div class="vfoot">
+        <a class="btn btn-ghost btn-sm" href="https://github.com/KushagraKanaujia/throttle/tree/main/validation/golden-live-20260817" target="_blank" rel="noopener">Raw JSON on GitHub <span class="arrow">→</span></a>
+        <p>Throttle labels this outcome <code>candidate_higher_throughput</code> in golden.json; at a fixed hourly rate higher throughput is the same thing as lower $/M. max_num_seqs=1 is a deliberately simple baseline for a first real-GPU test. Results apply to this model, engine, GPU and workload only.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BILL -->
+<section class="d-bill" id="bill">
+  <div class="wrap bill-grid">
+    <div>
+      <span class="sec-num">What this means for your bill</span>
+      <h2>Same tokens, <em>about a third of the GPU.</em></h2>
+      <p class="bill-p">Pick a monthly volume of output tokens. Monthly GPU cost = tokens ÷ 1,000,000 × the measured $/M for each config.</p>
+      <p class="bill-fine"><b>Arithmetic on this measured workload, not a promise about yours.</b> Your model, prompts, load and GPU change $/M, which is why Throttle measures your stack instead of quoting ours.</p>
+    </div>
+    <div class="bc">
+      <label class="calc-l" for="bill-in">Monthly output tokens</label>
+      <div class="calc-in">
+        <input id="bill-in" type="text" inputmode="decimal" value="1B" autocomplete="off" spellcheck="false" aria-describedby="bill-hint">
+        <div class="seg seg-p" role="group" aria-label="Presets">
+          <button type="button" data-tok="1e8">100M</button>
+          <button type="button" data-tok="1e9" aria-pressed="true">1B</button>
+          <button type="button" data-tok="1e10">10B</button>
+        </div>
+      </div>
+      <p class="calc-hint" id="bill-hint">Accepts 250M, 1.5B, 2e9 …</p>
+      <div class="calc-rows">
+        <div class="crow crow-b"><span>Before · max_num_seqs=1</span><b data-c="before">$745.89</b><i data-c="barB"></i></div>
+        <div class="crow crow-a"><span>After · max_num_seqs=8</span><b data-c="after">$234.20</b><i data-c="barA"></i></div>
+      </div>
+      <div class="calc-diff"><span>Difference per month</span><b data-c="diff">$511.69</b></div>
+      <p class="calc-f" data-c="formula"></p>
+      <p class="calc-g" data-c="gpuh"></p>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSE -->
+<section class="d-close">
+  <div class="wrap close-grid">
+    <div>
+      <span class="sec-num">How you get this on your stack</span>
+      <h2><code class="h2code">throttle check</code> before and after <em>each change.</em></h2>
+      <p class="close-p">Three checks to measure your noise, change one setting, check again. Throttle prints $/M tokens with a 95% interval and CHEAPER, MORE EXPENSIVE or NO WINNER, and says NOT CALIBRATED until it has enough repeats. For a decision-grade A/B, <code>throttle golden</code> runs the six-position protocol shown above.</p>
+      <div class="close-cta">
+        <a class="btn btn-accent" href="/#early-access">Get Pro early access <span class="arrow">→</span></a>
+        <a class="btn btn-ghost" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">Throttle on GitHub</a>
+      </div>
+    </div>
+    <pre class="cmd" aria-label="Example commands"><span class="cm"># 1. today's config, 3 times, changing nothing (noise)</span>
+<span class="pr">$</span> for i in 1 2 3; do
+    throttle check --url http://localhost:8000 \
+      --model Qwen/Qwen2.5-0.5B-Instruct \
+      --gpu-hourly-rate 1.39 --label before
+  done
+<span class="cm"># 2. restart vLLM with --max-num-seqs 8, then:</span>
+<span class="pr">$</span> throttle check --url http://localhost:8000 \
+    --model Qwen/Qwen2.5-0.5B-Instruct \
+    --gpu-hourly-rate 1.39 --label after \
+    --config max_num_seqs=8 --monthly-tokens 1B</pre>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <a class="brand" href="/"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg><span>throttle</span></a>
+    <p>Measures, caches and reports. Provisions nothing and never changes your server. This page replays recorded measurements; nothing on it is a live run.</p>
+    <nav aria-label="Footer">
+      <a href="/">Home</a>
+      <a href="https://github.com/KushagraKanaujia/throttle/tree/main/validation/golden-live-20260817" target="_blank" rel="noopener">Raw run</a>
+      <a href="https://github.com/KushagraKanaujia/throttle/blob/main/RESULTS.md" target="_blank" rel="noopener">Results</a>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>
