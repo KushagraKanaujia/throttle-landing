@@ -481,7 +481,13 @@ h3 { font: 600 21px/1.2 var(--sans); letter-spacing: -.02em; margin: 0 0 12px; }
 
 .plan-honest .list-price{color:var(--text,#e8eae6);font-family:"JetBrains Mono",ui-monospace,monospace;font-weight:600;white-space:nowrap}
 
-.ph-badge { display: inline-block; margin-top: 22px; line-height: 0; border-radius: 10px; transition: transform .2s, opacity .2s; }
-.ph-badge img { display: block; width: 250px; height: 54px; max-width: 100%; }
-.ph-badge:hover { transform: translateY(-2px); }
-.cta-links .ph-badge { margin-top: 0; }
+
+/* launched-on strip */
+.launch-strip { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: rgba(255,255,255,.015); }
+.launch-in { display: flex; align-items: center; gap: 28px; padding-top: 22px; padding-bottom: 22px; flex-wrap: wrap; }
+.launch-k { font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--dim); }
+.launch-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.launch-badge { display: inline-block; line-height: 0; border-radius: 10px; opacity: .92; transition: transform .2s, opacity .2s; }
+.launch-badge:hover { opacity: 1; transform: translateY(-2px); }
+.launch-badge img { display: block; height: 54px; width: auto; max-width: 100%; }
+@media (max-width: 560px) { .launch-in { gap: 14px; justify-content: center; } .launch-k { width: 100%; text-align: center; } .launch-row { justify-content: center; } }
