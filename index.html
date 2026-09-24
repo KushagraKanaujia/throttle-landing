@@ -1,396 +1,397 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
+<script>document.documentElement.classList.add("js")</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="./support.js"></script>
+<title>Throttle: what your LLM inference costs per million tokens</title>
+<meta name="description" content="Throttle measures what LLM inference actually costs in dollars per million tokens, re-measures after every config change, reports 95% intervals, and says inconclusive when the intervals overlap. Open-source CLI, MIT.">
+<meta name="theme-color" content="#07080a">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Throttle: every config change sends you a new bill">
+<meta property="og:description" content="Measure dollars per million tokens, re-check after every vLLM flag, batch size, model, quantization or GPU change, and get a verdict that refuses to lie. Open-source CLI.">
+<!-- SITE_URL: absolute URLs below assume the default GitHub Pages address for this repo. Replace with the real domain before launch. -->
+<link rel="canonical" href="https://kushagrakanaujia.github.io/throttle-landing/">
+<meta property="og:url" content="https://kushagrakanaujia.github.io/throttle-landing/">
+<meta property="og:image" content="https://kushagrakanaujia.github.io/throttle-landing/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Throttle: every config change sends you a new bill">
+<meta name="twitter:description" content="Dollars per million tokens, measured, with 95% confidence intervals. Overlap is reported as inconclusive.">
+<meta name="twitter:image" content="https://kushagrakanaujia.github.io/throttle-landing/assets/og.png">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/site.css">
+<script src="assets/js/runs.js" defer></script>
+<script src="assets/js/site.js" defer></script>
 </head>
 <body>
-<x-dc>
-<helmet>
-<title>Throttle — cut inference costs without touching your code</title>
-<meta name="description" content="Throttle is a drop-in proxy for self-hosted LLM inference. Dynamic request batching, right-sized spot-aware instance allocation, and semantic caching — no code changes required." />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-<style>
-  html, body { margin: 0; padding: 0; background: #0a0b0d; }
-  * { box-sizing: border-box; }
-  a { color: #e8eaec; text-decoration: none; }
-  a:hover { color: #45e0a0; }
-  ::selection { background: #45e0a0; color: #0a0b0d; }
-  input::placeholder, textarea::placeholder { color: #565d66; }
-  @keyframes barGrow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+<div class="grain" aria-hidden="true"></div>
+<div class="glow" aria-hidden="true"></div>
 
-  /* Mobile responsive styles */
-  html { overflow-x: hidden; width: 100%; }
-  body { overflow-x: hidden; width: 100%; max-width: 100vw; }
+<header class="nav">
+  <a class="brand" href="#top" aria-label="Throttle home">
+    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg>
+    <span>throttle</span>
+  </a>
+  <nav class="nav-links" aria-label="Sections">
+    <a href="#drift">Drift</a>
+    <a href="#runs">Real runs</a>
+    <a href="#calculator">Calculator</a>
+    <a href="#receipts">Receipts</a>
+    <a href="#pricing">Pricing</a>
+  </nav>
+  <div class="nav-cta">
+    <a class="nav-gh" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener" aria-label="Throttle on GitHub">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      <span>GitHub</span>
+    </a>
+    <a class="btn btn-accent btn-sm magnetic" href="#early-access">Pro · $5/mo</a>
+  </div>
+</header>
 
-  @media (max-width: 768px) {
-    /* Header mobile styles */
-    header {
-      padding: 12px 16px !important;
-      flex-wrap: wrap !important;
-    }
+<main id="top">
 
-    header nav {
-      flex-wrap: wrap !important;
-      gap: 12px !important;
-      justify-content: center !important;
-      width: 100% !important;
-      font-size: 11px !important;
-    }
-
-    /* Hero section mobile */
-    .hero-grid {
-      grid-template-columns: 1fr !important;
-      gap: 32px !important;
-      padding: 48px 16px 40px !important;
-    }
-
-    .hero-heading {
-      font-size: clamp(28px, 9vw, 60px) !important;
-      line-height: 1.15 !important;
-      word-wrap: break-word !important;
-      overflow-wrap: break-word !important;
-    }
-
-    .hero-text {
-      font-size: 15px !important;
-      max-width: 100% !important;
-    }
-
-    .hero-code {
-      font-size: 10px !important;
-      max-width: 100% !important;
-      word-break: break-all !important;
-    }
-
-    /* 3-column grids mobile */
-    .grid-3-col {
-      grid-template-columns: 1fr !important;
-      gap: 1px !important;
-    }
-
-    /* Cost lever cards mobile */
-    .lever-card {
-      grid-template-columns: 1fr !important;
-      gap: 20px !important;
-      padding: 24px 20px !important;
-    }
-
-    /* Contact section mobile */
-    .contact-grid {
-      grid-template-columns: 1fr !important;
-      gap: 32px !important;
-      padding: 56px 16px !important;
-    }
-
-    /* Footer mobile */
-    footer {
-      flex-direction: column !important;
-      align-items: flex-start !important;
-      gap: 16px !important;
-      padding: 32px 16px 48px !important;
-    }
-
-    /* All section containers */
-    section > div:first-child {
-      padding-left: 16px !important;
-      padding-right: 16px !important;
-      max-width: 100% !important;
-    }
-
-    /* Integration section mobile */
-    #how > div {
-      padding: 56px 16px !important;
-    }
-
-    /* Cost levers section mobile */
-    #levers > div {
-      padding: 56px 16px !important;
-    }
-
-    /* Ensure all max-width containers fit mobile */
-    div[style*="max-width:1160px"] {
-      max-width: 100% !important;
-      padding-left: 16px !important;
-      padding-right: 16px !important;
-    }
-
-    /* Fix any grid with 2 columns */
-    div[style*="grid-template-columns:1.05fr 1fr"],
-    div[style*="grid-template-columns:1fr 1fr"] {
-      grid-template-columns: 1fr !important;
-    }
-
-    /* Fix benchmark card on mobile */
-    #benchmark {
-      margin-top: 0 !important;
-    }
-
-    /* Buttons and links should wrap */
-    div[style*="flex-wrap:wrap"] {
-      gap: 10px !important;
-    }
-
-    /* Code blocks should not overflow */
-    pre, code, div[style*="white-space:nowrap"] {
-      white-space: pre-wrap !important;
-      word-break: break-all !important;
-      overflow-x: auto !important;
-    }
-
-    /* All text should wrap */
-    h1, h2, h3, p {
-      word-wrap: break-word !important;
-      overflow-wrap: break-word !important;
-    }
-  }
-</style>
-</helmet>
-<div style="background:#0a0b0d; color:#e8eaec; font-family:'Space Grotesk',system-ui,sans-serif; min-height:100vh; -webkit-font-smoothing:antialiased">
-
-  <header style="position:sticky; top:0; z-index:20; display:flex; align-items:center; justify-content:space-between; gap:24px; padding:16px 32px; border-bottom:1px solid #1b1e23; background:rgba(10,11,13,0.82); backdrop-filter:blur(12px)">
-    <div style="display:flex; align-items:center; gap:10px">
-      <div style="width:11px; height:11px; background:#45e0a0; border-radius:2px; box-shadow:0 0 14px rgba(69,224,160,0.6)"></div>
-      <span style="font-size:16px; font-weight:600; letter-spacing:-0.02em">Throttle</span>
-      <span style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#6f767f; border:1px solid #23272d; border-radius:3px; padding:2px 6px; margin-left:4px">PRE-LAUNCH</span>
+<!-- HERO -->
+<section class="hero">
+  <canvas class="stream" id="stream" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <p class="eyebrow reveal"><span class="dot"></span> open-source CLI · MIT · runs on your machine</p>
+      <h1 class="reveal">Every config change sends you a <em>new&nbsp;bill.</em></h1>
+      <p class="lede reveal">A vLLM flag. A batch size. A new model, a quantization, a different GPU. Any of them can quietly raise what you pay per million tokens, and you pay it again every hour the server runs. Throttle measures the dollars, measures again after the change, and puts a 95% interval on both. When the intervals overlap, it says the result is inconclusive instead of picking a winner.</p>
+      <div class="hero-actions reveal">
+        <button class="copy magnetic" type="button" data-copy="pipx install throttle-pro" aria-label="Copy install command">
+          <span class="prompt">$</span><code>pipx install throttle-pro</code><span class="copy-state" aria-live="polite">copy</span>
+        </button>
+        <a class="btn btn-accent magnetic" href="#early-access">Get Pro early access <span class="arrow">→</span></a>
+      </div>
     </div>
-    <nav style="display:flex; align-items:center; gap:28px; font-family:'JetBrains Mono',monospace; font-size:12px; color:#8b9199">
-      <a href="#benchmark" style="color:#8b9199">benchmark</a>
-      <a href="#how" style="color:#8b9199">how it works</a>
-      <a href="#levers" style="color:#8b9199">cost levers</a>
-      <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noreferrer" style="color:#e8eaec; border:1px solid #262a30; border-radius:4px; padding:7px 12px">GitHub ↗</a>
+
+    <aside class="meter reveal" aria-label="A real throttle cost measurement">
+      <div class="meter-head">
+        <span class="live"><i></i> throttle cost</span>
+        <span class="meter-src">recorded run</span>
+      </div>
+      <div class="meter-figure">
+        <span class="meter-cur">$</span><span class="meter-num">15.63</span>
+      </div>
+      <div class="meter-unit">per million <b>output</b> tokens</div>
+      <div class="meter-rows">
+        <div><span>input</span><b>$3.40 / M</b></div>
+        <div><span>GPU hours</span><b>0.001344</b></div>
+        <div><span>avg request, 95% CI</span><b>[0.714, 1.213] s</b></div>
+      </div>
+      <div class="meter-gauge" aria-hidden="true"><i></i></div>
+      <p class="meter-note">llama3.2:3b on local Ollama, MacBook. 5 requests. GPU rate <b>assumed</b> at $1.50/hr: a laptop has no real GPU price. Your number will differ, which is the point.</p>
+    </aside>
+  </div>
+
+  <div class="engines" aria-label="Measured end to end against">
+    <span class="engines-label">OpenAI-compatible · measured end to end on</span>
+    <span>vLLM</span><span>SGLang</span><span>Ollama</span><span>LMDeploy</span>
+  </div>
+</section>
+
+<!-- DRIFT -->
+<section class="section" id="drift">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">01 / drift</span>
+      <h2>You don’t pay for a config once. <em>You pay for it every hour.</em></h2>
+      <p>At a fixed hourly GPU price, cost per million tokens rises when tokens per second falls. Every change below moves tokens per second, and most teams check it by eye with a few curl requests before they deploy.</p>
+    </div>
+
+    <div class="formula reveal" aria-label="Cost formula">
+      <span class="f-out">$ / M tokens</span><span class="f-op">=</span>
+      <span class="f-frac"><span>GPU $/hour ÷ 3600</span><span>tokens / second</span></span>
+      <span class="f-op">×</span><span>1,000,000</span>
+    </div>
+
+    <ol class="levers">
+      <li class="lever reveal"><code>--max-num-seqs</code><span>vLLM flags change how many requests share the GPU at once.</span></li>
+      <li class="lever reveal"><code>batch size</code><span>Bigger batches can raise throughput or queue your users.</span></li>
+      <li class="lever reveal"><code>model</code><span>A new checkpoint or revision generates at a different speed.</span></li>
+      <li class="lever reveal"><code>quantization</code><span>Smaller weights, different kernels, different tokens per second.</span></li>
+      <li class="lever reveal"><code>GPU</code><span>A cheaper hourly rate is not a cheaper million tokens by default.</span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- VERDICT -->
+<section class="section section-alt" id="verdict">
+  <div class="wrap verdict-grid">
+    <div class="sec-head reveal">
+      <span class="sec-num">02 / the verdict</span>
+      <h2>Three answers. <em>One of them is “we can’t tell.”</em></h2>
+      <p>Throttle measures the baseline and the candidate in repeated blocks and puts a 95% interval on each. If the intervals separate, you get a direction. If they overlap, the golden protocol reports it as inconclusive, because a single lucky run on a quiet minute is not a result. The one-word <b class="c-cheap">CHEAPER</b> / <b class="c-exp">MORE EXPENSIVE</b> / <b class="c-nw">NO WINNER</b> labels come with <code>throttle check</code> <span class="ea">next release</span>.</p>
+      <ol class="steps">
+        <li><b>Measure</b> <code>throttle cost</code> against your live endpoint.</li>
+        <li><b>Change</b> one thing: a flag, the model, the GPU.</li>
+        <li><b>Re-check</b> with <code>throttle plan → smoke → benchmark → golden</code>. Scheduled <code>throttle check</code> runs are in Pro early access.</li>
+      </ol>
+    </div>
+
+    <div class="verdict reveal" data-state="cheaper" aria-label="How the verdict is decided (schematic)">
+      <div class="verdict-tabs" role="tablist">
+        <button role="tab" data-v="cheaper" aria-selected="true">cheaper</button>
+        <button role="tab" data-v="expensive" aria-selected="false">more expensive</button>
+        <button role="tab" data-v="none" aria-selected="false">no winner</button>
+      </div>
+      <div class="plot">
+        <div class="plot-axis"><span>lower $/M</span><span>higher $/M</span></div>
+        <div class="row row-a"><span class="row-label">baseline</span><div class="track"><div class="ci ci-a"><i></i></div></div></div>
+        <div class="row row-b"><span class="row-label">candidate</span><div class="track"><div class="ci ci-b"><i></i></div></div></div>
+        <div class="overlap" aria-hidden="true"></div>
+      </div>
+      <div class="verdict-out">
+        <span class="verdict-k">RESULT</span>
+        <span class="verdict-v" aria-live="polite">CHEAPER</span>
+      </div>
+      <p class="verdict-note">Schematic, no data. Bars are 95% confidence intervals on $/M tokens. Labels as <code>throttle check</code> will print them (next release).</p>
+    </div>
+  </div>
+</section>
+
+<!-- TERMINAL -->
+<section class="section" id="runs">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">03 / real runs</span>
+      <h2>Not a mockup. <em>Recorded runs, replayed line by line.</em></h2>
+      <p>Every line below is verbatim output from a recorded session, replayed with its original timing (long waits compressed). Hardware and assumptions are stated on each tab.</p>
+    </div>
+
+    <div class="term reveal" id="term">
+      <div class="term-bar">
+        <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
+        <div class="term-tabs" role="tablist" aria-label="Recorded runs"></div>
+        <button class="term-replay" type="button" aria-label="Replay this run">↻ replay</button>
+      </div>
+      <div class="term-note" aria-live="polite"></div>
+      <pre class="term-body" tabindex="0" aria-label="Terminal output"><code></code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- CALCULATOR -->
+<section class="section section-alt" id="calculator">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">04 / calculator</span>
+      <h2>Put your own numbers in. <em>Watch a config change get billed.</em></h2>
+      <p>This is a calculator, not a claim. It runs the same arithmetic Throttle uses. Throttle's job is to give you a <i>measured</i> tokens per second, with an interval, instead of a guess.</p>
+    </div>
+
+    <div class="calc reveal">
+      <div class="calc-side" data-side="a">
+        <div class="calc-title"><span class="tag">before</span> current config</div>
+        <label>GPU price <span>$/hour</span><input type="number" inputmode="decimal" min="0" step="0.01" id="rateA" value="1.50"></label>
+        <label>Measured throughput <span>tokens/sec</span><input type="number" inputmode="decimal" min="0" step="0.1" id="tpsA" value="42.0"></label>
+      </div>
+      <div class="calc-side" data-side="b">
+        <div class="calc-title"><span class="tag tag-b">after</span> after the change</div>
+        <label>GPU price <span>$/hour</span><input type="number" inputmode="decimal" min="0" step="0.01" id="rateB" value="1.50"></label>
+        <label>Measured throughput <span>tokens/sec</span><input type="number" inputmode="decimal" min="0" step="0.1" id="tpsB" value="36.0"></label>
+      </div>
+
+      <div class="calc-out">
+        <div class="calc-bars">
+          <div class="cbar"><span class="cbar-l">before</span><div class="cbar-t"><i id="barA"></i></div><b id="outA">$0.00</b></div>
+          <div class="cbar"><span class="cbar-l">after</span><div class="cbar-t"><i id="barB"></i></div><b id="outB">$0.00</b></div>
+        </div>
+        <div class="calc-delta"><span id="deltaLabel">change</span><b id="delta">+0.0%</b><span class="calc-per">per million tokens</span></div>
+        <p class="calc-math" id="math"></p>
+        <p class="calc-foot">Example inputs: $1.50/hr is the assumed rate from the recorded laptop run, 42.0 tok/s is what the session profiler observed during generation on that laptop, and 36.0 is a what-if. Replace all three with yours. A point estimate here has no interval; <code>throttle cost</code> gives you one.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RECEIPTS -->
+<section class="section" id="receipts">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">05 / receipts</span>
+      <h2>Every number has a source. <em>Here are all of them.</em></h2>
+      <p>From saved artifacts in the repo or recorded local runs. Nothing here is a projection, and the laptop numbers show how a mechanism works, not what it will do on your traffic.</p>
+    </div>
+
+    <div class="receipts">
+      <article class="receipt receipt-hero reveal">
+        <div class="r-top"><span class="r-kind">config decision · real GPU</span><span class="r-badge">decision_eligible: true</span></div>
+        <div class="r-big"><span>+189.5%</span><span class="r-to">to</span><span>+246.2%</span></div>
+        <p class="r-what">throughput, 95% CI (point estimate +217.8%) for <code>max_num_seqs</code> 1 → 8 on vLLM 0.16.0</p>
+        <p class="r-src">NVIDIA A100 80GB PCIe at $1.39/hr · Qwen2.5-0.5B-Instruct, pinned revision · six-position counterbalanced golden protocol · 1,206 valid requests, zero errors. The only decision-eligible result in the repo; it applies to that exact model, engine, GPU and workload and is not a savings projection.</p>
+      </article>
+
+      <article class="receipt reveal">
+        <div class="r-top"><span class="r-kind">proxy cache</span><span class="r-badge r-badge-dim">laptop</span></div>
+        <div class="r-big r-mid"><span>1.59 s</span><span class="r-to">→</span><span>0.0028 s</span></div>
+        <p class="r-what">cold call vs the exact same prompt served from cache</p>
+        <p class="r-src">Local Ollama llama3.2:3b on a MacBook (M3 Pro). No datacenter GPU. 4 requests, 2 backend calls.</p>
+      </article>
+
+      <article class="receipt reveal">
+        <div class="r-top"><span class="r-kind">agent session profile</span><span class="r-badge r-badge-dim">estimated</span></div>
+        <div class="r-big r-mid"><span>54.3%</span></div>
+        <p class="r-what">of prompt tokens were redundant prefill (424 tokens)</p>
+        <p class="r-src">Simulated 4-turn agent with scripted 1.5 s tool pauses, local Ollama on a MacBook. Estimated from message-level prefix overlap.</p>
+      </article>
+
+      <article class="receipt reveal">
+        <div class="r-top"><span class="r-kind">cache on realistic traffic</span><span class="r-badge r-badge-dim">laptop</span></div>
+        <div class="r-big r-mid"><span>39.46 s</span><span class="r-to">→</span><span>28.28 s</span></div>
+        <p class="r-what">total runtime, 27.0% hit rate</p>
+        <p class="r-src">Local Ollama llama3.2:1b, 73-prompt traffic sample.</p>
+      </article>
+
+      <article class="receipt reveal">
+        <div class="r-top"><span class="r-kind">cross-engine</span><span class="r-badge r-badge-dim">descriptive only</span></div>
+        <div class="r-big r-mid r-small"><span>4 engines</span></div>
+        <p class="r-what">vLLM, SGLang, Ollama and LMDeploy measured end to end</p>
+        <p class="r-src">RunPod RTX 4090 pod. Not decision-grade: condition-major sweeps, different models per engine, not comparable across engines.</p>
+      </article>
+    </div>
+    <p class="receipts-link reveal"><a href="https://github.com/KushagraKanaujia/throttle/blob/main/RESULTS.md" target="_blank" rel="noopener">Full evidence and limitations in RESULTS.md →</a></p>
+  </div>
+</section>
+
+<!-- OTHER LEVERS -->
+<section class="section section-alt" id="levers">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">06 / more levers</span>
+      <h2>Caching and agent profiling. <em>Useful, and off until you ask.</em></h2>
+      <p>Throttle is a cost meter first. The proxy can also cache and profile, and each lever still ends in the same place: a number you can hold against your bill.</p>
+    </div>
+
+    <div class="lever-grid">
+      <article class="card reveal">
+        <h3>Caching proxy <span class="pill">off by default</span></h3>
+        <p><code>throttle proxy --enable-cache</code> answers exact repeats from memory with no GPU call. Semantic matching is a separate opt-in <span class="nw">(<code>--enable-embeddings</code>),</span> because similar-sounding questions are not always the same question:</p>
+        <div class="sim">
+          <div class="sim-q"><span>"Is it safe to use eval"</span><span class="sim-vs">vs</span><span>"Is it dangerous to use eval"</span></div>
+          <div class="sim-score"><span>embedding similarity</span><b>0.9874</b></div>
+          <p>Opposite meanings, near-identical score. That is why it’s opt-in.</p>
+        </div>
+        <figure class="video">
+          <video src="assets/media/throttle-cache.mp4" poster="assets/media/throttle-cache-poster.jpg" muted playsinline loop preload="none" controls aria-label="Recorded terminal session of the Throttle caching proxy"></video>
+          <figcaption>Recorded caching-proxy run: local Ollama llama3.2:3b on a MacBook, 4 requests, 2 backend calls.</figcaption>
+        </figure>
+      </article>
+
+      <article class="card reveal">
+        <h3>Agent session profiler <span class="pill">opt-in</span> <span class="ea">next release</span></h3>
+        <p><code>--enable-session-tracking</code> plus <code>throttle sessions</code> splits each agent run into generation time and time spent waiting on tools, estimates how much history is being prefilled again, and names the backend flags to check, like vLLM <span class="nw"><code>--enable-prefix-caching</code>.</span></p>
+        <div class="prof" aria-label="Recorded session profile, simulated 4-turn agent">
+          <div class="prof-head"><code>throttle sessions demo-agent-run</code><span>4 turns · 11.0s</span></div>
+          <div class="prof-bar"><i class="pb-gen" style="--w:58.9%"><span>Generation 6.5s · 58.9%</span></i><i class="pb-wait" style="--w:41.1%"><span>Client wait 4.5s · 41.1%</span></i></div>
+          <div class="prof-find"><span class="pf-tag">[HIGH] Prefix Caching</span><p>54.3% of prompt tokens are redundant prefill (424 tokens across 4 turns)</p></div>
+          <p class="prof-fine">Recorded run: simulated 4-turn agent, scripted 1.5s tool pauses, local Ollama on a MacBook. Redundant tokens are an estimate.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="section" id="pricing">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">07 / pricing</span>
+      <h2>Measuring once is free. <em>Pro watches what repeats.</em></h2>
+      <p>Your cost doesn’t drift once. It drifts every deploy. The CLI will always be free and local. Pro is for the part that keeps happening, and it is being built with the people who sign up now.</p>
+    </div>
+
+    <div class="plans">
+      <article class="plan reveal">
+        <div class="plan-top"><h3>Free</h3><span class="plan-sub">open-source CLI</span></div>
+        <div class="price"><span class="p-num">$0</span><span class="p-per">forever · MIT</span></div>
+        <ul>
+          <li><code>throttle cost</code> and <code>watch</code>: $/M tokens from a live endpoint or vLLM <code>/metrics</code></li>
+          <li><code>plan → smoke → benchmark → golden</code>, capped traffic, 95% intervals</li>
+          <li>Caching proxy, off by default</li>
+          <li>Agent session profiler and <code>throttle check</code> verdicts <span class="ea">next release</span></li>
+          <li>Everything runs on your machine. Nothing leaves it.</li>
+        </ul>
+        <button class="copy copy-block magnetic" type="button" data-copy="pipx install throttle-pro" aria-label="Copy install command">
+          <span class="prompt">$</span><code>pipx install throttle-pro</code><span class="copy-state" aria-live="polite">copy</span>
+        </button>
+      </article>
+
+      <article class="plan plan-pro reveal">
+        <div class="plan-ribbon">early access</div>
+        <div class="plan-top"><h3>Pro</h3><span class="plan-sub">for what repeats</span></div>
+        <div class="price"><span class="p-num">$5</span><span class="p-per">/ month</span></div>
+        <p class="plan-honest"><span class="list-price">$20/month</span> list price when Pro launches. Early-access members keep <b>$5/month</b> for as long as they stay subscribed.</p>
+        <ul>
+          <li>Scheduled config-drift checks <span class="ea">early access</span></li>
+          <li>Cost history across deploys <span class="ea">early access</span></li>
+          <li>Alerts when a change makes you pay more <span class="ea">early access</span></li>
+          <li>Team sharing <span class="ea">early access</span></li>
+        </ul>
+        <a class="btn btn-accent btn-block magnetic" href="#early-access">Join Pro early access <span class="arrow">→</span></a>
+        <p class="plan-fine">These features are in progress. Tell us what you run and the first versions get built around it.</p>
+      </article>
+
+      <article class="cheap reveal" aria-label="Why five dollars is cheap, illustrative arithmetic">
+        <span class="cheap-k">why $5 is cheap</span>
+        <div class="cheap-eq">
+          <span>$1.39<small>/hr A100</small></span><span class="op">×</span>
+          <span>24<small>hours</small></span><span class="op">×</span>
+          <span>30<small>days</small></span><span class="op op-eq">=</span>
+          <span class="cheap-total">$<span data-count="1000.80" data-decimals="2" data-sep="1">1,000.80</span><small>/month</small></span>
+        </div>
+        <p>That’s the spend riding on one config for a single GPU running around the clock. One change that quietly makes you pay more can cost more than a year of Pro. <b>$5 is about 0.5% of it.</b></p>
+        <p class="cheap-fine">Illustrative arithmetic, not a measurement or a savings claim. $1.39/hr is the A100 80GB PCIe rate from the golden run in RESULTS.md.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- EARLY ACCESS -->
+<section class="section section-cta" id="early-access">
+  <div class="wrap cta-grid">
+    <div class="reveal">
+      <span class="sec-num">08 / early access</span>
+      <h2>Lock in <em>$5/month.</em></h2>
+      <p class="cta-p">Leave an email and what you run. You’ll hear from the person building it, and your setup shapes what ships first. No card today.</p>
+      <div class="cta-links">
+        <a class="btn btn-ghost magnetic" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">Star on GitHub</a>
+        <a class="btn btn-ghost magnetic" href="https://pypi.org/project/throttle-pro/" target="_blank" rel="noopener">PyPI: throttle-pro</a>
+      </div>
+    </div>
+
+    <form class="form reveal" id="ea-form" action="https://formspree.io/f/mkjwyvjo" method="POST">
+      <input type="hidden" name="_subject" value="Throttle Pro early access ($5/mo)">
+      <input type="hidden" name="plan" value="pro-early-access-5">
+      <label for="f-email">Email</label>
+      <input id="f-email" name="email" type="email" required autocomplete="email" placeholder="you@company.com">
+      <label for="f-stack">What do you run?</label>
+      <textarea id="f-stack" name="stack" rows="4" required placeholder="e.g. vLLM on 2× L40S, Llama 3.1 8B AWQ, ~30 req/s at peak"></textarea>
+      <button class="btn btn-accent btn-block magnetic" type="submit"><span class="btn-label">Request early access</span> <span class="arrow">→</span></button>
+      <p class="form-status" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <a class="brand" href="#top"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg><span>throttle</span></a>
+    <p>Measures, caches and reports. Provisions nothing and never changes your server.</p>
+    <nav aria-label="Footer">
+      <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://pypi.org/project/throttle-pro/" target="_blank" rel="noopener">PyPI</a>
+      <a href="https://github.com/KushagraKanaujia/throttle/blob/main/RESULTS.md" target="_blank" rel="noopener">Results</a>
+      <a href="https://github.com/KushagraKanaujia/throttle/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>
     </nav>
-  </header>
-
-  <section style="position:relative; overflow:hidden; border-bottom:1px solid #1b1e23">
-    <div style="position:absolute; inset:0; background-image:linear-gradient(#12151a 1px, transparent 1px), linear-gradient(90deg, #12151a 1px, transparent 1px); background-size:64px 64px; mask-image:radial-gradient(ellipse 90% 70% at 50% 0%, #000 30%, transparent 75%)"></div>
-    <div class="hero-grid" style="position:relative; max-width:1160px; margin:0 auto; padding:96px 32px 80px; display:grid; grid-template-columns:1.05fr 1fr; gap:64px; align-items:center">
-      <div>
-        <div style="display:inline-flex; align-items:center; gap:8px; font-family:'JetBrains Mono',monospace; font-size:11px; color:#45e0a0; border:1px solid rgba(69,224,160,0.28); background:rgba(69,224,160,0.06); border-radius:999px; padding:5px 12px; margin-bottom:28px">
-          <span style="width:5px; height:5px; border-radius:50%; background:#45e0a0"></span>drop-in proxy · no code changes
-        </div>
-        <h1 class="hero-heading" style="font-size:60px; line-height:1.02; letter-spacing:-0.035em; font-weight:600; margin:0 0 22px; text-wrap:balance">Serve more tokens on the GPUs you already pay for.</h1>
-        <p class="hero-text" style="font-size:18px; line-height:1.55; color:#9aa1a9; margin:0 0 34px; max-width:520px; text-wrap:pretty">Throttle sits in front of your self-hosted LLM inference stack and cuts cost three ways: dynamic request batching, right-sized and spot-aware instance allocation, and semantic caching. Point your traffic at it and nothing else changes.</p>
-        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:32px">
-          <a href="#contact" style="font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:500; color:#0a0b0d; background:#45e0a0; border-radius:5px; padding:13px 22px">Get early access</a>
-          <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noreferrer" style="font-family:'JetBrains Mono',monospace; font-size:13px; color:#e8eaec; border:1px solid #262a30; border-radius:5px; padding:13px 22px">View source</a>
-        </div>
-        <div class="hero-code" style="font-family:'JetBrains Mono',monospace; font-size:12.5px; color:#7c838b; border:1px solid #1b1e23; background:#0d0f12; border-radius:6px; padding:14px 16px; max-width:520px; overflow:auto; white-space:nowrap">
-          <span style="color:#4d545c">$ </span>export OPENAI_BASE_URL=<span style="color:#45e0a0">https://your-proxy.throttle.dev/v1</span>
-        </div>
-      </div>
-
-      <div id="benchmark" style="border:1px solid #1e2126; border-radius:10px; background:linear-gradient(180deg,#101317,#0c0e11); padding:26px 26px 22px; box-shadow:0 24px 60px -30px rgba(0,0,0,0.9)">
-        <div style="display:flex; align-items:baseline; justify-content:space-between; gap:16px; padding-bottom:16px; border-bottom:1px solid #1b1e23">
-          <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.08em; color:#8b9199">THROUGHPUT · BATCHING ON/OFF</div>
-          <div style="display:flex; align-items:center; gap:14px; font-family:'JetBrains Mono',monospace; font-size:11px; color:#5d646c">
-            <span style="display:inline-flex; align-items:center; gap:6px"><span style="width:6px; height:6px; border-radius:50%; background:#45e0a0; box-shadow:0 0 0 3px rgba(69,224,160,0.15)"></span>last run 2026-08-18 14:02 UTC</span>
-            <span>n=1,206</span>
-          </div>
-        </div>
-
-        <div style="padding:24px 0 8px; display:flex; flex-direction:column; gap:26px">
-          <div>
-            <div style="display:flex; justify-content:space-between; align-items:baseline; font-family:'JetBrains Mono',monospace; font-size:12px; margin-bottom:9px">
-              <span style="color:#9aa1a9">max_num_seqs = 1</span>
-              <span style="color:#6f767f"><span style="color:#c8ccd1">312 tok/s</span> · 1.00× baseline</span>
-            </div>
-            <div style="height:26px; background:#14171b; border-radius:3px; overflow:hidden">
-              <div style="height:100%; width:31.5%; background:#2b3138; border-right:2px solid #454d56; transform-origin:left; animation:barGrow 700ms cubic-bezier(0.2,0.8,0.2,1) both"></div>
-            </div>
-          </div>
-          <div>
-            <div style="display:flex; justify-content:space-between; align-items:baseline; font-family:'JetBrains Mono',monospace; font-size:12px; margin-bottom:9px">
-              <span style="color:#e8eaec">max_num_seqs = 8</span>
-              <span style="color:#45e0a0">991 tok/s · 3.18×</span>
-            </div>
-            <div style="height:26px; background:#14171b; border-radius:3px; overflow:hidden">
-              <div style="height:100%; width:100%; background:linear-gradient(90deg, rgba(69,224,160,0.35), #45e0a0); transform-origin:left; animation:barGrow 900ms 120ms cubic-bezier(0.2,0.8,0.2,1) both"></div>
-            </div>
-          </div>
-        </div>
-
-        <div style="margin-top:22px; padding:16px; border:1px solid #1b1e23; border-radius:7px; background:#0a0c0f">
-          <div style="display:flex; align-items:baseline; gap:12px; margin-bottom:14px">
-            <div style="font-family:'JetBrains Mono',monospace; font-size:34px; font-weight:600; color:#45e0a0; letter-spacing:-0.02em">+217.8%</div>
-            <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#7c838b; line-height:1.4">312 tok/s → 991 tok/s (3.18×)<br />95% CI +189.5% … +246.2%</div>
-          </div>
-          <div style="position:relative; height:4px; background:#191d22; border-radius:2px">
-            <div style="position:absolute; left:14%; right:22%; top:0; bottom:0; background:rgba(69,224,160,0.3); border-radius:2px"></div>
-            <div style="position:absolute; left:52%; top:-4px; width:2px; height:12px; background:#45e0a0"></div>
-          </div>
-          <div style="display:flex; justify-content:space-between; font-family:'JetBrains Mono',monospace; font-size:10px; color:#565d66; margin-top:7px">
-            <span>+189.5%</span><span>+246.2%</span>
-          </div>
-        </div>
-
-        <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:#1b1e23; border:1px solid #1b1e23; border-radius:7px; margin-top:16px; overflow:hidden">
-          <div style="background:#0d0f12; padding:11px 13px"><div style="font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:0.08em; color:#565d66">ENGINE</div><div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#c8ccd1; margin-top:3px">vLLM 0.16.0</div></div>
-          <div style="background:#0d0f12; padding:11px 13px"><div style="font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:0.08em; color:#565d66">HARDWARE</div><div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#c8ccd1; margin-top:3px">A100 80GB</div></div>
-          <div style="background:#0d0f12; padding:11px 13px"><div style="font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:0.08em; color:#565d66">MODEL</div><div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#c8ccd1; margin-top:3px">Qwen2.5-0.5B-Instruct</div></div>
-          <div style="background:#0d0f12; padding:11px 13px"><div style="font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:0.08em; color:#565d66">ERRORS</div><div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#45e0a0; margin-top:3px">0 / 1,206</div></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="how" style="border-bottom:1px solid #1b1e23">
-    <div style="max-width:1160px; margin:0 auto; padding:88px 32px">
-      <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.12em; color:#45e0a0; margin-bottom:14px">01 — INTEGRATION</div>
-      <h2 style="font-size:36px; letter-spacing:-0.03em; font-weight:600; margin:0 0 12px">Three steps, zero code changes.</h2>
-      <p style="color:#8b9199; font-size:16px; margin:0 0 48px; max-width:560px">Throttle speaks the OpenAI-compatible API your clients already use. Swap the base URL and you are done.</p>
-      <div class="grid-3-col" style="display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:#1b1e23; border:1px solid #1b1e23; border-radius:10px; overflow:hidden">
-        <div style="background:#0d0f12; padding:30px 26px 34px">
-          <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#45e0a0; margin-bottom:20px">STEP 01</div>
-          <h3 style="font-size:19px; font-weight:600; margin:0 0 10px; letter-spacing:-0.015em">Point traffic at the proxy</h3>
-          <p style="color:#8b9199; font-size:14.5px; line-height:1.6; margin:0 0 18px">Change one environment variable. Throttle forwards every request to your existing inference endpoints unchanged.</p>
-          <div style="border:1px solid #23272d; border-radius:6px; background:#08090b; overflow:hidden">
-            <div style="display:flex; align-items:center; gap:6px; padding:8px 11px; border-bottom:1px solid #171a1e; background:#0b0d10">
-              <span style="width:7px; height:7px; border-radius:50%; background:#2b3138"></span>
-              <span style="width:7px; height:7px; border-radius:50%; background:#2b3138"></span>
-              <span style="width:7px; height:7px; border-radius:50%; background:#2b3138"></span>
-              <span style="font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:0.08em; color:#4d545c; margin-left:6px">SHELL</span>
-            </div>
-            <pre style="margin:0; padding:13px 14px; font-family:'JetBrains Mono',monospace; font-size:12px; line-height:1.6; color:#c8ccd1; overflow-x:auto"><span style="color:#454d56">$ </span><span style="color:#8ab4f8">export</span> <span style="color:#e8eaec">OPENAI_BASE_URL</span><span style="color:#6f767f">=</span><span style="color:#45e0a0">https://your-proxy.throttle.dev/v1</span></pre>
-          </div>
-        </div>
-        <div style="background:#0d0f12; padding:30px 26px 34px">
-          <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#45e0a0; margin-bottom:20px">STEP 02</div>
-          <h3 style="font-size:19px; font-weight:600; margin:0 0 10px; letter-spacing:-0.015em">It profiles your load</h3>
-          <p style="color:#8b9199; font-size:14.5px; line-height:1.6; margin:0">Arrival rate, sequence lengths, latency budget and cache hit potential are measured against live traffic.</p>
-        </div>
-        <div style="background:#0d0f12; padding:30px 26px 34px">
-          <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#45e0a0; margin-bottom:20px">STEP 03</div>
-          <h3 style="font-size:19px; font-weight:600; margin:0 0 10px; letter-spacing:-0.015em">Savings apply automatically</h3>
-          <p style="color:#8b9199; font-size:14.5px; line-height:1.6; margin:0">Batch windows, instance mix and cache policy adjust continuously. No redeploys, no tuning tickets.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="levers" style="border-bottom:1px solid #1b1e23">
-    <div style="max-width:1160px; margin:0 auto; padding:88px 32px">
-      <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.12em; color:#45e0a0; margin-bottom:14px">02 — COST LEVERS</div>
-      <h2 style="font-size:36px; letter-spacing:-0.03em; font-weight:600; margin:0 0 48px">Where the money comes back.</h2>
-      <div style="display:flex; flex-direction:column; gap:20px">
-        <div class="lever-card" style="display:grid; grid-template-columns:200px 1fr; gap:40px; border:1px solid #1e2126; border-radius:10px; background:#0d0f12; padding:30px 32px">
-          <div>
-            <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#565d66; margin-bottom:8px">LEVER 01</div>
-            <div style="font-size:20px; font-weight:600; letter-spacing:-0.015em">Dynamic batching</div>
-          </div>
-          <div>
-            <p style="color:#9aa1a9; font-size:15px; line-height:1.65; margin:0 0 16px; max-width:640px">Single-request serving leaves the GPU idle between forward passes. Throttle holds requests in a short adaptive window and hands the engine full batches, sized against your latency budget rather than a fixed config value.</p>
-            <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#7c838b; border-left:2px solid #45e0a0; padding-left:12px">Measured: 1 → 8 concurrent sequences, +217.8% throughput on the benchmark above.</div>
-          </div>
-        </div>
-        <div class="lever-card" style="display:grid; grid-template-columns:200px 1fr; gap:40px; border:1px solid #1e2126; border-radius:10px; background:#0d0f12; padding:30px 32px">
-          <div>
-            <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#565d66; margin-bottom:8px">LEVER 02</div>
-            <div style="font-size:20px; font-weight:600; letter-spacing:-0.015em">Instance right-sizing</div>
-          </div>
-          <div>
-            <p style="color:#9aa1a9; font-size:15px; line-height:1.65; margin:0 0 16px; max-width:640px">Most self-hosted fleets are provisioned for peak and billed for idle. Throttle matches instance class and count to observed load, and shifts eligible traffic onto spot capacity with on-demand fallback when the interruption signal arrives.</p>
-            <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#7c838b; border-left:2px solid #262a30; padding-left:12px">Spot-aware placement · graceful drain on interruption notice</div>
-          </div>
-        </div>
-        <div class="lever-card" style="display:grid; grid-template-columns:200px 1fr; gap:40px; border:1px solid #1e2126; border-radius:10px; background:#0d0f12; padding:30px 32px">
-          <div>
-            <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#565d66; margin-bottom:8px">LEVER 03</div>
-            <div style="font-size:20px; font-weight:600; letter-spacing:-0.015em">Semantic caching</div>
-          </div>
-          <div>
-            <p style="color:#9aa1a9; font-size:15px; line-height:1.65; margin:0 0 16px; max-width:640px">Production traffic repeats itself. Requests that are semantically equivalent to a recent completion are served from cache above a configurable similarity threshold, so the cheapest inference is the one that never reaches the GPU.</p>
-            <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#7c838b; border-left:2px solid #262a30; padding-left:12px">Configurable similarity threshold · per-route TTL · bypass header</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="contact" style="border-bottom:1px solid #1b1e23">
-    <div class="contact-grid" style="max-width:1160px; margin:0 auto; padding:88px 32px; display:grid; grid-template-columns:1fr 1fr; gap:72px; align-items:start">
-      <div>
-        <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.12em; color:#45e0a0; margin-bottom:14px">03 — GET IN TOUCH</div>
-        <h2 style="font-size:36px; letter-spacing:-0.03em; font-weight:600; margin:0 0 14px">Tell us what you are running.</h2>
-        <p style="color:#8b9199; font-size:16px; line-height:1.6; margin:0 0 24px; max-width:440px">Throttle is pre-launch and we are onboarding a small number of teams by hand. Engine, model and rough traffic shape are enough to start.</p>
-        <div style="font-family:'JetBrains Mono',monospace; font-size:13px; color:#7c838b; line-height:2">
-          <div>github.com/KushagraKanaujia/throttle</div>
-          <div>hello@throttle.dev</div>
-        </div>
-      </div>
-      <form onSubmit="{{ onSubmit }}" style="border:1px solid #1e2126; border-radius:10px; background:#0d0f12; padding:28px; display:flex; flex-direction:column; gap:18px">
-        <div style="display:flex; flex-direction:column; gap:7px">
-          <label for="tf-name" style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.08em; color:#8b9199">NAME</label>
-          <input id="tf-name" name="name" type="text" required="required" placeholder="Ada Lovelace" style="background:#0a0c0f; border:1px solid #23272d; border-radius:5px; padding:12px 13px; color:#e8eaec; font-family:'Space Grotesk',sans-serif; font-size:15px; outline:none" style-focus="border-color:#45e0a0" />
-        </div>
-        <div style="display:flex; flex-direction:column; gap:7px">
-          <label for="tf-email" style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.08em; color:#8b9199">EMAIL</label>
-          <input id="tf-email" name="email" type="email" required="required" placeholder="ada@company.com" style="background:#0a0c0f; border:1px solid #23272d; border-radius:5px; padding:12px 13px; color:#e8eaec; font-family:'Space Grotesk',sans-serif; font-size:15px; outline:none" style-focus="border-color:#45e0a0" />
-        </div>
-        <div style="display:flex; flex-direction:column; gap:7px">
-          <label for="tf-stack" style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.08em; color:#8b9199">WHAT ARE YOU RUNNING?</label>
-          <textarea id="tf-stack" name="stack" rows="4" required="required" placeholder="vLLM 0.16, Llama-3.1-8B on 4× A10G, ~40 req/s peak" style="background:#0a0c0f; border:1px solid #23272d; border-radius:5px; padding:12px 13px; color:#e8eaec; font-family:'Space Grotesk',sans-serif; font-size:15px; outline:none; resize:vertical" style-focus="border-color:#45e0a0"></textarea>
-        </div>
-        <button type="submit" disabled="{{ busy }}" style="font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:500; color:#0a0b0d; background:#45e0a0; border:none; border-radius:5px; padding:14px; cursor:pointer" style-hover="background:#5ce9ad">{{ buttonLabel }}</button>
-        <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
-          <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#45e0a0; border:1px solid rgba(69,224,160,0.3); background:rgba(69,224,160,0.07); border-radius:5px; padding:11px 13px; animation:fadeUp 300ms ease both">✓ Received. We will reply from hello@throttle.dev.</div>
-        </sc-if>
-        <sc-if value="{{ failed }}" hint-placeholder-val="{{ false }}">
-          <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#e0906a; border:1px solid rgba(224,144,106,0.3); background:rgba(224,144,106,0.07); border-radius:5px; padding:11px 13px">Could not send. Email hello@throttle.dev directly.</div>
-        </sc-if>
-      </form>
-    </div>
-  </section>
-
-  <footer style="max-width:1160px; margin:0 auto; padding:36px 32px 56px; display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap">
-    <div style="display:flex; align-items:center; gap:10px; font-family:'JetBrains Mono',monospace; font-size:12px; color:#565d66">
-      <div style="width:8px; height:8px; background:#2b3138; border-radius:2px"></div>Throttle · pre-launch
-    </div>
-    <div style="display:flex; gap:26px; font-family:'JetBrains Mono',monospace; font-size:12px">
-      <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noreferrer" style="color:#8b9199">github.com/KushagraKanaujia/throttle ↗</a>
-      <a href="mailto:hello@throttle.dev" style="color:#8b9199">hello@throttle.dev</a>
-    </div>
-  </footer>
-</div>
-</x-dc>
-<script type="text/x-dc" data-dc-script data-props="{}">
-const FORMSPREE_ENDPOINT = "https://formspree.io/f/mkjwyvjo";
-
-class Component extends DCLogic {
-  state = { status: "idle" };
-  renderVals() {
-    const s = this.state.status;
-    return {
-      sent: s === "sent",
-      failed: s === "error",
-      busy: s === "sending",
-      buttonLabel: s === "sending" ? "Sending…" : s === "sent" ? "Sent" : "Request access",
-      onSubmit: async (e) => {
-        e.preventDefault();
-        const form = e.currentTarget;
-        const data = new FormData(form);
-        this.setState({ status: "sending" });
-        try {
-          const res = await fetch(FORMSPREE_ENDPOINT, {
-            method: "POST",
-            body: data,
-            headers: { Accept: "application/json" },
-          });
-          if (!res.ok) throw new Error("bad status");
-          form.reset();
-          this.setState({ status: "sent" });
-        } catch (err) {
-          this.setState({ status: "error" });
-        }
-      },
-    };
-  }
-}
-</script>
+  </div>
+</footer>
 </body>
 </html>
