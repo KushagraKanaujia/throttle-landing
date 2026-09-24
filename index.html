@@ -127,7 +127,7 @@
     <div class="sec-head reveal">
       <span class="sec-num">02 / the verdict</span>
       <h2>Three answers. <em>One of them is “we can’t tell.”</em></h2>
-      <p>Throttle measures the baseline and the candidate in repeated blocks and puts a 95% interval on each. If the intervals separate, you get a direction. If they overlap, the golden protocol reports it as inconclusive, because a single lucky run on a quiet minute is not a result. The one-word <b class="c-cheap">CHEAPER</b> / <b class="c-exp">MORE EXPENSIVE</b> / <b class="c-nw">NO WINNER</b> labels come with <code>throttle check</code> <span class="ea">next release</span>.</p>
+      <p>Throttle measures the baseline and the candidate in repeated blocks and puts a 95% interval on each. If the intervals separate, you get a direction. If they overlap, the golden protocol reports it as inconclusive, because a single lucky run on a quiet minute is not a result. <code>throttle check</code> prints <b class="c-cheap">CHEAPER</b> / <b class="c-exp">MORE EXPENSIVE</b> / <b class="c-nw">NO WINNER</b>, and <b class="c-nw">NOT CALIBRATED</b> until three repeat checks have measured your machine’s run-to-run noise, because two runs at different times can differ from load alone.</p>
       <ol class="steps">
         <li><b>Measure</b> <code>throttle cost</code> against your live endpoint.</li>
         <li><b>Change</b> one thing: a flag, the model, the GPU.</li>
@@ -151,7 +151,7 @@
         <span class="verdict-k">RESULT</span>
         <span class="verdict-v" aria-live="polite">CHEAPER</span>
       </div>
-      <p class="verdict-note">Schematic, no data. Bars are 95% confidence intervals on $/M tokens. Labels as <code>throttle check</code> will print them (next release).</p>
+      <p class="verdict-note">Schematic, no data. Bars are 95% confidence intervals on $/M tokens. Labels as <code>throttle check</code> prints them.</p>
     </div>
   </div>
 </section>
@@ -285,7 +285,7 @@
       </article>
 
       <article class="card reveal">
-        <h3>Agent session profiler <span class="pill">opt-in</span> <span class="ea">next release</span></h3>
+        <h3>Agent session profiler <span class="pill">opt-in</span></h3>
         <p><code>--enable-session-tracking</code> plus <code>throttle sessions</code> splits each agent run into generation time and time spent waiting on tools, estimates how much history is being prefilled again, and names the backend flags to check, like vLLM <span class="nw"><code>--enable-prefix-caching</code>.</span></p>
         <div class="prof" aria-label="Recorded session profile, simulated 4-turn agent">
           <div class="prof-head"><code>throttle sessions demo-agent-run</code><span>4 turns · 11.0s</span></div>
@@ -315,7 +315,8 @@
           <li><code>throttle cost</code> and <code>watch</code>: $/M tokens from a live endpoint or vLLM <code>/metrics</code></li>
           <li><code>plan → smoke → benchmark → golden</code>, capped traffic, 95% intervals</li>
           <li>Caching proxy, off by default</li>
-          <li>Agent session profiler and <code>throttle check</code> verdicts <span class="ea">next release</span></li>
+          <li><code>throttle check</code>: re-measure after every config change, with a calibrated verdict</li>
+          <li>Agent session profiler</li>
           <li>Everything runs on your machine. Nothing leaves it.</li>
         </ul>
         <button class="copy copy-block magnetic" type="button" data-copy="pipx install throttle-pro" aria-label="Copy install command">
