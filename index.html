@@ -24,9 +24,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/site.css?v=763a19b6">
+<link rel="stylesheet" href="assets/css/site.css?v=772d7327">
 <script src="assets/js/runs.js?v=5e8b1ef3" defer></script>
-<script src="assets/js/site.js?v=e4834dbe" defer></script>
+<script src="assets/js/site.js?v=1301ed8e" defer></script>
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
@@ -43,6 +43,7 @@
     <a href="#calculator">Calculator</a>
     <a href="#receipts">Receipts</a>
     <a href="#pricing">Pricing</a>
+    <a href="/audit">Audit</a>
     <a href="/blog">Blog</a>
   </nav>
   <div class="nav-cta">
@@ -95,6 +96,36 @@
   <div class="engines" aria-label="Measured end to end against">
     <span class="engines-label">OpenAI-compatible · measured end to end on</span>
     <span>vLLM</span><span>SGLang</span><span>Ollama</span><span>LMDeploy</span>
+  </div>
+</section>
+
+<!-- FILM -->
+<section class="film" id="film" aria-label="Throttle launch film">
+  <div class="wrap">
+    <figure class="film-frame reveal">
+      <div class="film-bar" aria-hidden="true"><i></i><i></i><i></i><span>throttle · 75 s</span></div>
+      <div class="film-stage">
+        <video id="film-video" muted playsinline loop preload="none" poster="assets/media/throttle-film-poster.jpg?v=6701dcc9" width="1920" height="1080"
+          data-src-hd="assets/media/throttle-film-1080.mp4?v=2eb4780b" data-src-sd="assets/media/throttle-film-720.mp4?v=a920afba"
+          aria-label="Throttle launch film: a measured cost check, a calibrated verdict, and a real A100 result"></video>
+        <noscript><video src="assets/media/throttle-film-720.mp4?v=a920afba" poster="assets/media/throttle-film-poster.jpg?v=6701dcc9" controls muted playsinline preload="none"></video></noscript>
+        <button class="film-play" type="button" aria-label="Play the film" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg>
+        </button>
+        <div class="film-ctrl">
+          <button class="film-btn" type="button" data-film="toggle" aria-label="Pause">
+            <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/></svg>
+            <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg>
+          </button>
+          <button class="film-btn" type="button" data-film="sound" aria-label="Turn sound on" aria-pressed="false">
+            <svg class="i-muted" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9.5l5 5M20.5 9.5l-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <svg class="i-sound" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a7.8 7.8 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span class="film-btn-label">Sound</span>
+          </button>
+        </div>
+      </div>
+      <figcaption>Real terminal runs of <code>throttle-pro 0.4.2</code> on a MacBook (GPU rate assumed at $1.50/hr), and the A100 result from the saved <a href="https://github.com/KushagraKanaujia/throttle/tree/main/validation/golden-live-20260817" target="_blank" rel="noopener">golden run</a>.</figcaption>
+    </figure>
   </div>
 </section>
 
@@ -353,6 +384,22 @@
         <p class="plan-fine">These features are in progress. Tell us what you run and the first versions get built around it.</p>
       </article>
 
+      <article class="plan plan-audit reveal" aria-labelledby="audit-h">
+        <div class="audit-main">
+          <div class="plan-top"><h3 id="audit-h">Cost Audit</h3><span class="plan-sub">done with you · 2 weeks</span></div>
+          <div class="price"><span class="p-num">$500</span><span class="p-per">one-time</span></div>
+          <p class="audit-note">No savings guarantee. What you get is a measurement you can trust, in dollars.</p>
+          <a class="btn btn-accent btn-block magnetic" href="mailto:kushthrottle@gmail.com?subject=Throttle%20Cost%20Audit">Book a 15-minute call <span class="arrow">→</span></a>
+          <p class="plan-fine">Or email <span class="mail">kushthrottle@gmail.com</span> · <a class="audit-more" href="/audit">What the audit covers</a></p>
+        </div>
+        <ul>
+          <li>Your true <b>$ per million tokens</b>, measured on your own stack with 95% confidence intervals</li>
+          <li>Calibrated verdicts on <b>up to 3 config changes</b> you choose: flags, quantization, engine or GPU</li>
+          <li>A <b>CI cost gate</b> wired into your pipeline, so a costlier deploy fails before production</li>
+          <li>A written <b>report in dollars</b>, with the raw results attached</li>
+        </ul>
+      </article>
+
       <article class="cheap reveal" aria-label="Why nineteen dollars is cheap, illustrative arithmetic">
         <span class="cheap-k">why $19 is cheap</span>
         <div class="cheap-eq">
@@ -401,6 +448,7 @@
     <a class="brand" href="#top"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg><span>throttle</span></a>
     <p>Measures, caches and reports. Provisions nothing and never changes your server.</p>
     <nav aria-label="Footer">
+      <a href="/audit">Cost Audit</a>
       <a href="/blog">Blog</a>
       <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a>
       <a href="https://pypi.org/project/throttle-pro/" target="_blank" rel="noopener">PyPI</a>

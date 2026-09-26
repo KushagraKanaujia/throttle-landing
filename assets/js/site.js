@@ -296,4 +296,58 @@
         });
     });
   })();
+
+  /* ---------- launch film: lazy source, autoplay in view, reduced-motion aware ---------- */
+  (function () {
+    var v = $('#film-video'); if (!v) return;
+    var frame = v.closest('.film-frame'), big = $('.film-play', frame);
+    var btnToggle = $('[data-film="toggle"]', frame), btnSound = $('[data-film="sound"]', frame);
+    var loaded = false, userPaused = reduce, inView = false;
+    var conn = navigator.connection || {};
+    var small = window.innerWidth < 900 || conn.saveData || /(^|-)(2g|3g)$/.test(conn.effectiveType || '');
+    function load() {
+      if (loaded) return; loaded = true;
+      v.preload = 'metadata';
+      v.src = small ? v.dataset.srcSd : v.dataset.srcHd;
+    }
+    function play() {
+      load();
+      var p = v.play();
+      if (p && p.catch) p.catch(function () { sync(); if (big) big.hidden = false; });
+    }
+    function sync() {
+      var paused = v.paused;
+      frame.classList.toggle('paused', paused);
+      btnToggle.setAttribute('aria-label', paused ? 'Play' : 'Pause');
+    }
+    v.addEventListener('play', function () { if (big) big.hidden = true; sync(); });
+    v.addEventListener('pause', sync);
+    btnToggle.addEventListener('click', function () {
+      if (v.paused) { userPaused = false; play(); } else { userPaused = true; v.pause(); }
+    });
+    btnSound.addEventListener('click', function () {
+      v.muted = !v.muted;
+      frame.classList.toggle('sound', !v.muted);
+      btnSound.setAttribute('aria-pressed', String(!v.muted));
+      btnSound.setAttribute('aria-label', v.muted ? 'Turn sound on' : 'Turn sound off');
+      if (!v.muted && v.paused) { userPaused = false; play(); }
+    });
+    if (big) big.addEventListener('click', function () { userPaused = false; play(); });
+    if (reduce) {
+      frame.classList.add('paused'); btnToggle.setAttribute('aria-label', 'Play');
+      if (big) big.hidden = false;
+      return;
+    }
+    if (io) {
+      new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          inView = e.isIntersecting;
+          if (inView && !userPaused) play();
+          else if (!inView && loaded && !v.paused) v.pause();
+        });
+      }, { threshold: 0.35 }).observe(v);
+    } else {
+      window.addEventListener('load', play);
+    }
+  })();
 })();
