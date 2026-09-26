@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+<channel>
+  <title>Throttle blog</title>
+  <link>https://www.throttle-pro.com/blog</link>
+  <description>Measuring what self-hosted LLM inference really costs.</description>
+  <language>en</language>
+  <item>
+    <title>I changed nothing and my LLM server got 27% more expensive</title>
+    <link>https://www.throttle-pro.com/blog/i-changed-nothing-27-percent-more-expensive</link>
+    <guid>https://www.throttle-pro.com/blog/i-changed-nothing-27-percent-more-expensive</guid>
+    <pubDate>Fri, 25 Sep 2026 16:00:00 +0000</pubDate>
+    <description>Four cost checks of the same untouched Ollama server came back at $8.77, $8.86, $11.26 and $10.02 per million output tokens. Why same-server runs swing, and the noise bound I now use before believing any before/after number.</description>
+  </item>
+  <item>
+    <title>How to measure cost per million tokens on a self-hosted LLM (vLLM, SGLang, Ollama)</title>
+    <link>https://www.throttle-pro.com/blog/cost-per-million-tokens-self-hosted-llm</link>
+    <guid>https://www.throttle-pro.com/blog/cost-per-million-tokens-self-hosted-llm</guid>
+    <pubDate>Fri, 25 Sep 2026 16:00:00 +0000</pubDate>
+    <description>A practical guide to turning GPU dollars per hour into dollars per million tokens for vLLM, SGLang and Ollama, the four pitfalls that make the number wrong, and how to re-check it after every config change and in CI.</description>
+  </item>
+  <item>
+    <title>One vLLM flag, −68.6% cost per token: what a counterbalanced benchmark looks like</title>
+    <link>https://www.throttle-pro.com/blog/one-vllm-flag-counterbalanced-benchmark</link>
+    <guid>https://www.throttle-pro.com/blog/one-vllm-flag-counterbalanced-benchmark</guid>
+    <pubDate>Fri, 25 Sep 2026 16:00:00 +0000</pubDate>
+    <description>A real A100 run where changing vLLM&#x27;s max_num_seqs from 1 to 8 took cost from $0.746 to $0.234 per million output tokens, measured with a six-position B-C-B / C-B-C protocol. How the protocol works, the raw numbers, and what the result does not mean.</description>
+  </item>
+</channel>
+</rss>

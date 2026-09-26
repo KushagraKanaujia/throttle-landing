@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>document.documentElement.classList.add("js")</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>I changed nothing and my LLM server got 27% more expensive · Throttle</title>
+<meta name="description" content="Four cost checks of the same untouched Ollama server came back at $8.77, $8.86, $11.26 and $10.02 per million output tokens. Why same-server runs swing, and the noise bound I now use before believing any before/after number.">
+<meta name="author" content="Kushagra Kanaujia">
+<meta name="theme-color" content="#07080a">
+<link rel="canonical" href="https://www.throttle-pro.com/blog/i-changed-nothing-27-percent-more-expensive">
+<link rel="alternate" type="application/rss+xml" title="Throttle blog" href="https://www.throttle-pro.com/blog/feed.xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Throttle">
+<meta property="og:title" content="I changed nothing and my LLM server got 27% more expensive · Throttle">
+<meta property="og:description" content="Four cost checks of the same untouched Ollama server came back at $8.77, $8.86, $11.26 and $10.02 per million output tokens. Why same-server runs swing, and the noise bound I now use before believing any before/after number.">
+<meta property="og:url" content="https://www.throttle-pro.com/blog/i-changed-nothing-27-percent-more-expensive">
+<meta property="og:image" content="https://www.throttle-pro.com/assets/media/blog/i-changed-nothing-27-percent-more-expensive.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="I changed nothing and my LLM server got 27% more expensive · Throttle">
+<meta name="twitter:description" content="Four cost checks of the same untouched Ollama server came back at $8.77, $8.86, $11.26 and $10.02 per million output tokens. Why same-server runs swing, and the noise bound I now use before believing any before/after number.">
+<meta name="twitter:image" content="https://www.throttle-pro.com/assets/media/blog/i-changed-nothing-27-percent-more-expensive.png">
+<meta property="article:published_time" content="2026-09-25">
+<meta property="article:author" content="Kushagra Kanaujia">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "I changed nothing and my LLM server got 27% more expensive", "description": "Four cost checks of the same untouched Ollama server came back at $8.77, $8.86, $11.26 and $10.02 per million output tokens. Why same-server runs swing, and the noise bound I now use before believing any before/after number.", "datePublished": "2026-09-25", "dateModified": "2026-09-25", "mainEntityOfPage": "https://www.throttle-pro.com/blog/i-changed-nothing-27-percent-more-expensive", "image": "https://www.throttle-pro.com/assets/media/blog/i-changed-nothing-27-percent-more-expensive.png", "wordCount": 1218, "keywords": "llm, ollama, benchmarking, opensource", "author": {"@type": "Person", "name": "Kushagra Kanaujia", "url": "https://github.com/KushagraKanaujia"}, "publisher": {"@type": "Organization", "name": "Throttle", "url": "https://www.throttle-pro.com/", "logo": {"@type": "ImageObject", "url": "https://www.throttle-pro.com/assets/favicon.svg"}}}</script>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/site.css?v=763a19b6">
+<link rel="stylesheet" href="/assets/css/blog.css?v=456496a4">
+<script src="/assets/js/site.js?v=e4834dbe" defer></script>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="glow" aria-hidden="true"></div>
+
+<header class="nav">
+  <a class="brand" href="/" aria-label="Throttle home">
+    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg>
+    <span>throttle</span>
+  </a>
+  <nav class="nav-links" aria-label="Sections">
+    <a href="/#drift">Drift</a>
+    <a href="/#runs">Real runs</a>
+    <a href="/#receipts">Receipts</a>
+    <a href="/#pricing">Pricing</a>
+    <a href="/blog" aria-current="page">Blog</a>
+  </nav>
+  <div class="nav-cta">
+    <a class="nav-gh" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener" aria-label="Throttle on GitHub">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      <span>GitHub</span>
+    </a>
+    <a class="btn btn-accent btn-sm magnetic" href="/#early-access">Pro · $19/mo</a>
+  </div>
+</header>
+
+<main id="top">
+  <article class="post-wrap">
+    <header class="post-head">
+      <a class="crumb" href="/blog"><span aria-hidden="true">←</span> All posts</a>
+      <span class="kicker">Measurement</span>
+      <h1>I changed nothing and my LLM server got 27% more expensive</h1>
+      <p class="post-lede">Four cost checks of the same untouched Ollama server came back at $8.77, $8.86, $11.26 and $10.02 per million output tokens. Why same-server runs swing, and the noise bound I now use before believing any before/after number.</p>
+      <div class="byline"><b>Kushagra Kanaujia</b><span class="sep"></span><span>Founder, Throttle</span><span class="sep"></span><time datetime="2026-09-25">Sep 25, 2026</time><span class="sep"></span><span>7 min read</span></div>
+    </header>
+    <div class="prose">
+<p>I ran the same cost check four times in a row against a server I didn't touch. Same model, same machine, same prompts, same settings. This is what came back, in dollars per million output tokens:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Run</th>
+<th style="text-align: right;">$/M output tokens</th>
+<th>95% CI</th>
+<th style="text-align: right;">Change vs previous run</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td style="text-align: right;">$8.77</td>
+<td>$8.19 to $9.35</td>
+<td style="text-align: right;"></td>
+</tr>
+<tr>
+<td>2</td>
+<td style="text-align: right;">$8.86</td>
+<td>$7.80 to $9.93</td>
+<td style="text-align: right;">+1.0%</td>
+</tr>
+<tr>
+<td>3</td>
+<td style="text-align: right;">$11.26</td>
+<td>$10.31 to $12.21</td>
+<td style="text-align: right;"><strong>+27.1%</strong></td>
+</tr>
+<tr>
+<td>4</td>
+<td style="text-align: right;">$10.02</td>
+<td>$7.41 to $12.62</td>
+<td style="text-align: right;"><strong>−11.0%</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p>Run 3 says the server got 27% more expensive. Run 4 says it then got 11% cheaper. Nothing changed.</p>
+<p>If I had changed a flag between run 2 and run 3, I would have blamed the flag and rolled it back. If I had changed one between run 3 and run 4, I would have posted an 11% saving in Slack. Both would have been wrong, and both would have looked like data.</p>
+<p>This post is about why that happens and the rule I now apply before believing any before/after cost number. The tool in the output below is <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">Throttle</a>, an open-source CLI I'm building, but the rule doesn't depend on it.</p>
+<h2 id="the-setup">The setup</h2>
+<p>A MacBook running Ollama locally with <code>llama3.2:3b</code>. Each check sent 3 blocks of 4 requests at concurrency 2, capped at 64 output tokens, temperature 0, with the same 8 built-in prompts and one warm-up request. All four checks finished within about 70 seconds of each other.</p>
+<pre class="lang-sh"><code>throttle check --url http://localhost:11434 --model llama3.2:3b \
+  --gpu-hourly-rate 1.50 --label same \
+  --blocks 3 --requests-per-block 4 --concurrency 2 --max-tokens 64
+</code></pre>
+<p>The $1.50/hour GPU rate is an assumption. A laptop has no GPU invoice, so I picked a round number and Throttle labels it ASSUMED everywhere it appears. Tokens and time are measured.</p>
+<p>The cost math is simple:</p>
+<pre class="lang-formula"><code>$/M output tokens = hourly rate × wall-clock hours ÷ output tokens × 1,000,000
+</code></pre>
+<p>Every block in all four runs produced exactly 256 output tokens (4 requests × 64 tokens). So the only thing that moved the price was time. The three blocks of run 1 took 5.53 s, 5.24 s and 5.40 s. The blocks of run 3 took 7.09 s, 7.02 s and 6.65 s. Same tokens, about 30% more seconds, about 27% more dollars per token.</p>
+<h2 id="why-the-same-server-swings">Why the same server swings</h2>
+<p>A cost measurement is a timing measurement, and timing on a real machine depends on everything else the machine is doing: other processes, background indexing, thermal state and clock speed, memory pressure, OS scheduling. On a shared cloud node you can add noisy neighbours and other tenants on the same host or network.</p>
+<p>I didn't instrument the laptop during these runs, so I can't tell you which of those it was. That's the point. Most of the time you won't know either, and a single before/after pair can't tell load from a real change.</p>
+<h2 id="why-the-confidence-interval-didnt-save-me">Why the confidence interval didn't save me</h2>
+<p>Each check reports a 95% confidence interval across its blocks. Look at runs 1 and 3: $8.19 to $9.35, then $10.31 to $12.21. The intervals don't overlap. The common rule of thumb ("non-overlapping intervals means a real difference") would call run 3 a real 27% regression.</p>
+<p>The interval answers a narrower question than it looks like. It's computed from the blocks inside one run, so it describes the wobble over about 20 seconds. It can't see drift between runs, because every block in a run shares the same conditions. If the whole machine is 30% slower for a minute, all three blocks are slower together and the interval stays tight around the wrong number.</p>
+<h2 id="measure-the-noise-you-are-actually-exposed-to">Measure the noise you are actually exposed to</h2>
+<p>The fix is to measure run-to-run noise directly: run the unchanged config a few times, and see how much whole checks disagree with each other.</p>
+<p>Say the relative standard deviation between repeat checks of one config is SD. The difference between two single checks then has a standard deviation of √2 × SD, because each check carries its own noise. With only a handful of repeats you use Student's t instead of 1.96, with degrees of freedom from the repeats. That gives a 95% bound on how far apart two checks of the <strong>same</strong> config can land:</p>
+<pre class="lang-formula"><code>noise bound = t(0.975, df) × √2 × SD
+</code></pre>
+<p>Here, runs 1 to 3 were three checks of the unchanged config: $8.77, $8.86, $11.26. Their relative SD is 14.6%, with 2 degrees of freedom, where t is 4.303:</p>
+<pre class="lang-formula"><code>4.303 × 1.414 × 14.6% ≈ 89%
+</code></pre>
+<p>Throttle prints 89.1% because it uses the unrounded SD. Run 4 came in 11.0% below run 3. That's well inside ±89.1%, and the two intervals overlap as well, so this is the verdict:</p>
+<pre class="lang-text"><code>before: $11.26/M output tokens (95% CI $10.31 to $12.21)
+after:  $10.02/M output tokens (95% CI $7.41 to $12.62)
+change: -11.0%
+noise floor: calibrated: bound 89.1% (t x sqrt(2) x 14.6% run-to-run SD, 2 df)
+Verdict: NO WINNER, the change (-11.0%) is not larger than the run-to-run
+noise bound (89.1% = t x sqrt(2) x 14.6% run-to-run SD, 2 df); and the 95%
+confidence intervals overlap, so the difference is within measurement noise
+</code></pre>
+<p>What about the +27.1% at run 3? Throttle didn't call it anything. With fewer than three earlier checks of the same config there's no noise estimate at all, so runs 2 and 3 both came back as:</p>
+<pre class="lang-text"><code>Verdict: NOT CALIBRATED — run-to-run noise unknown. Two checks at different
+times can differ from load alone. Run 'throttle check' at least 3 times without
+changing anything (within 24 h) to measure your noise, or use 'throttle golden'
+for a counterbalanced decision.
+</code></pre>
+<p>I built it that way because refusing to answer beats a confident wrong answer.</p>
+<h2 id="an-89-bound-looks-bad-and-its-still-the-honest-answer">An 89% bound looks bad, and it's still the honest answer</h2>
+<p>A bound of ±89% means these three repeats can't resolve any realistic config change, and that's true. One slow run out of three blew the SD up, and with 2 degrees of freedom t is large. The bound is saying: on this machine, right now, you don't know enough to judge a change.</p>
+<p>You can tighten it in two ways:</p>
+<ul>
+<li><strong>More repeats.</strong> t falls quickly with degrees of freedom: 4.30 at 2, 2.57 at 5, 2.23 at 10. More checks also give a better SD estimate, so one slow run matters less.</li>
+<li><strong>A quieter, longer measurement.</strong> Close what else is running, use longer blocks, and measure at the concurrency you run in production. Noise you remove is noise you don't have to bound.</li>
+</ul>
+<p>For a decision you'll act on, like which config goes to production, don't compare two sequential runs at all. Interleave them (baseline, candidate, baseline, candidate, baseline, candidate) so drift hits both sides equally. I wrote up a real six-run example on an A100 in <a href="/blog/one-vllm-flag-counterbalanced-benchmark">One vLLM flag, −68.6% cost per token</a>.</p>
+<h2 id="what-i-do-now">What I do now</h2>
+<ol>
+<li>Run the unchanged config at least three times first, within the same day.</li>
+<li>Change one thing.</li>
+<li>Believe the change only if it's larger than the run-to-run noise bound <strong>and</strong> the 95% intervals don't overlap.</li>
+<li>Otherwise it's NO WINNER. Don't write the Slack message.</li>
+</ol>
+<h2 id="caveats">Caveats</h2>
+<p>This was a laptop, a 3B model, a short workload and an assumed GPU rate. The size of the swing is specific to that machine on that morning. Your servers will have their own noise, which is exactly why you have to measure it rather than borrow mine.</p>
+<p>These runs used Throttle 0.4.0, which repeats identical prompts, so the prompt cache was warm in all four runs. That rules out the cache as the cause of the swing, since it was the same in every run. Since 0.4.1, Throttle tags every request so a prefix cache can't make later checks look cheaper, and <code>--warm-cache</code> measures a warm cache on purpose.</p>
+<h2 id="try-it">Try it</h2>
+<pre class="lang-sh"><code>pipx install throttle-pro
+throttle demo      # no GPU needed; every number is SIMULATED
+</code></pre>
+<p>Then point <code>throttle check</code> at your own vLLM, SGLang or Ollama endpoint and run it three times before you change anything. If you get an interesting result, <code>throttle check --share</code> prints a sanitized summary you can post as a <a href="https://github.com/KushagraKanaujia/throttle/issues/new?template=share-results.yml" target="_blank" rel="noopener">results issue</a>. I'm collecting what real serving changes actually do to cost, and I read every one.</p>
+    </div>
+    <aside class="post-cta" aria-label="Try Throttle">
+      <h2>Measure your own server</h2>
+      <p>Throttle is an open-source CLI (MIT) for any OpenAI-compatible endpoint: vLLM, SGLang, Ollama, LMDeploy. It runs on your machine, and the only traffic it sends goes to your own endpoint.</p>
+      <div class="cta-row">
+        <button class="copy magnetic" type="button" data-copy="pipx install throttle-pro" aria-label="Copy install command">
+          <span class="prompt">$</span><code>pipx install throttle-pro</code><span class="copy-state" aria-live="polite">copy</span>
+        </button>
+        <a class="btn btn-ghost magnetic" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">Star on GitHub</a>
+      </div>
+    </aside>
+    <section class="more" aria-label="More posts">
+      <h2>Keep reading</h2>
+      <div class="cards">
+    <a class="post-card" href="/blog/cost-per-million-tokens-self-hosted-llm">
+      <span class="kicker">Guide</span>
+      <h3>How to measure cost per million tokens on a self-hosted LLM (vLLM, SGLang, Ollama)</h3>
+      <p>A practical guide to turning GPU dollars per hour into dollars per million tokens for vLLM, SGLang and Ollama, the four pitfalls that make the number wrong, and how to re-check it after every config change and in CI.</p>
+      <span class="meta"><time datetime="2026-09-25">Sep 25, 2026</time><span>6 min read</span><span class="arrow">→</span></span>
+    </a>
+    <a class="post-card" href="/blog/one-vllm-flag-counterbalanced-benchmark">
+      <span class="kicker">Case study</span>
+      <h3>One vLLM flag, −68.6% cost per token: what a counterbalanced benchmark looks like</h3>
+      <p>A real A100 run where changing vLLM&#x27;s max_num_seqs from 1 to 8 took cost from $0.746 to $0.234 per million output tokens, measured with a six-position B&#8209;C&#8209;B / C&#8209;B&#8209;C protocol. How the protocol works, the raw numbers, and what the result does not mean.</p>
+      <span class="meta"><time datetime="2026-09-25">Sep 25, 2026</time><span>6 min read</span><span class="arrow">→</span></span>
+    </a>
+      </div>
+    </section>
+  </article>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <a class="brand" href="/"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg><span>throttle</span></a>
+    <p>Measures, caches and reports. Provisions nothing and never changes your server.</p>
+    <nav aria-label="Footer">
+      <a href="/blog">Blog</a>
+      <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://pypi.org/project/throttle-pro/" target="_blank" rel="noopener">PyPI</a>
+      <a href="https://github.com/KushagraKanaujia/throttle/blob/main/RESULTS.md" target="_blank" rel="noopener">Results</a>
+      <a href="https://github.com/KushagraKanaujia/throttle/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>

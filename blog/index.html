@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>document.documentElement.classList.add("js")</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blog · Throttle: measuring LLM inference cost</title>
+<meta name="description" content="Field notes on measuring what self-hosted LLM inference really costs: dollars per million tokens, run-to-run noise, and config changes on vLLM, SGLang and Ollama. Real runs only.">
+<meta name="author" content="Kushagra Kanaujia">
+<meta name="theme-color" content="#07080a">
+<link rel="canonical" href="https://www.throttle-pro.com/blog">
+<link rel="alternate" type="application/rss+xml" title="Throttle blog" href="https://www.throttle-pro.com/blog/feed.xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Throttle">
+<meta property="og:title" content="Blog · Throttle: measuring LLM inference cost">
+<meta property="og:description" content="Field notes on measuring what self-hosted LLM inference really costs: dollars per million tokens, run-to-run noise, and config changes on vLLM, SGLang and Ollama. Real runs only.">
+<meta property="og:url" content="https://www.throttle-pro.com/blog">
+<meta property="og:image" content="https://www.throttle-pro.com/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Blog · Throttle: measuring LLM inference cost">
+<meta name="twitter:description" content="Field notes on measuring what self-hosted LLM inference really costs: dollars per million tokens, run-to-run noise, and config changes on vLLM, SGLang and Ollama. Real runs only.">
+<meta name="twitter:image" content="https://www.throttle-pro.com/assets/og.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Blog", "name": "Throttle blog", "url": "https://www.throttle-pro.com/blog", "blogPost": [{"@type": "BlogPosting", "headline": "I changed nothing and my LLM server got 27% more expensive", "url": "https://www.throttle-pro.com/blog/i-changed-nothing-27-percent-more-expensive", "datePublished": "2026-09-25"}, {"@type": "BlogPosting", "headline": "How to measure cost per million tokens on a self-hosted LLM (vLLM, SGLang, Ollama)", "url": "https://www.throttle-pro.com/blog/cost-per-million-tokens-self-hosted-llm", "datePublished": "2026-09-25"}, {"@type": "BlogPosting", "headline": "One vLLM flag, −68.6% cost per token: what a counterbalanced benchmark looks like", "url": "https://www.throttle-pro.com/blog/one-vllm-flag-counterbalanced-benchmark", "datePublished": "2026-09-25"}]}</script>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/site.css?v=763a19b6">
+<link rel="stylesheet" href="/assets/css/blog.css?v=456496a4">
+<script src="/assets/js/site.js?v=e4834dbe" defer></script>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="glow" aria-hidden="true"></div>
+
+<header class="nav">
+  <a class="brand" href="/" aria-label="Throttle home">
+    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg>
+    <span>throttle</span>
+  </a>
+  <nav class="nav-links" aria-label="Sections">
+    <a href="/#drift">Drift</a>
+    <a href="/#runs">Real runs</a>
+    <a href="/#receipts">Receipts</a>
+    <a href="/#pricing">Pricing</a>
+    <a href="/blog" aria-current="page">Blog</a>
+  </nav>
+  <div class="nav-cta">
+    <a class="nav-gh" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener" aria-label="Throttle on GitHub">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      <span>GitHub</span>
+    </a>
+    <a class="btn btn-accent btn-sm magnetic" href="/#early-access">Pro · $19/mo</a>
+  </div>
+</header>
+
+<main id="top">
+  <div class="post-wrap">
+    <header class="blog-head">
+      <span class="kicker">Blog</span>
+      <h1>Notes from <em>real runs.</em></h1>
+      <p>What self-hosted LLM inference actually costs, why the number moves when nothing changed, and how to tell a real saving from noise. Every figure comes from a recorded run.</p>
+    </header>
+    <div class="cards">
+    <a class="post-card" href="/blog/i-changed-nothing-27-percent-more-expensive">
+      <span class="kicker">Measurement</span>
+      <h2>I changed nothing and my LLM server got 27% more expensive</h2>
+      <p>Four cost checks of the same untouched Ollama server came back at $8.77, $8.86, $11.26 and $10.02 per million output tokens. Why same-server runs swing, and the noise bound I now use before believing any before/after number.</p>
+      <span class="meta"><time datetime="2026-09-25">Sep 25, 2026</time><span>7 min read</span><span class="arrow">→</span></span>
+    </a>
+    <a class="post-card" href="/blog/cost-per-million-tokens-self-hosted-llm">
+      <span class="kicker">Guide</span>
+      <h2>How to measure cost per million tokens on a self-hosted LLM (vLLM, SGLang, Ollama)</h2>
+      <p>A practical guide to turning GPU dollars per hour into dollars per million tokens for vLLM, SGLang and Ollama, the four pitfalls that make the number wrong, and how to re-check it after every config change and in CI.</p>
+      <span class="meta"><time datetime="2026-09-25">Sep 25, 2026</time><span>6 min read</span><span class="arrow">→</span></span>
+    </a>
+    <a class="post-card" href="/blog/one-vllm-flag-counterbalanced-benchmark">
+      <span class="kicker">Case study</span>
+      <h2>One vLLM flag, −68.6% cost per token: what a counterbalanced benchmark looks like</h2>
+      <p>A real A100 run where changing vLLM&#x27;s max_num_seqs from 1 to 8 took cost from $0.746 to $0.234 per million output tokens, measured with a six-position B&#8209;C&#8209;B / C&#8209;B&#8209;C protocol. How the protocol works, the raw numbers, and what the result does not mean.</p>
+      <span class="meta"><time datetime="2026-09-25">Sep 25, 2026</time><span>6 min read</span><span class="arrow">→</span></span>
+    </a>
+    </div>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <a class="brand" href="/"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg><span>throttle</span></a>
+    <p>Measures, caches and reports. Provisions nothing and never changes your server.</p>
+    <nav aria-label="Footer">
+      <a href="/blog">Blog</a>
+      <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://pypi.org/project/throttle-pro/" target="_blank" rel="noopener">PyPI</a>
+      <a href="https://github.com/KushagraKanaujia/throttle/blob/main/RESULTS.md" target="_blank" rel="noopener">Results</a>
+      <a href="https://github.com/KushagraKanaujia/throttle/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>

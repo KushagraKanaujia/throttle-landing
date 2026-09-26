@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>document.documentElement.classList.add("js")</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One vLLM flag, −68.6% cost per token: what a counterbalanced benchmark looks like · Throttle</title>
+<meta name="description" content="A real A100 run where changing vLLM&#x27;s max_num_seqs from 1 to 8 took cost from $0.746 to $0.234 per million output tokens, measured with a six-position B-C-B / C-B-C protocol. How the protocol works, the raw numbers, and what the result does not mean.">
+<meta name="author" content="Kushagra Kanaujia">
+<meta name="theme-color" content="#07080a">
+<link rel="canonical" href="https://www.throttle-pro.com/blog/one-vllm-flag-counterbalanced-benchmark">
+<link rel="alternate" type="application/rss+xml" title="Throttle blog" href="https://www.throttle-pro.com/blog/feed.xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Throttle">
+<meta property="og:title" content="One vLLM flag, −68.6% cost per token: what a counterbalanced benchmark looks like · Throttle">
+<meta property="og:description" content="A real A100 run where changing vLLM&#x27;s max_num_seqs from 1 to 8 took cost from $0.746 to $0.234 per million output tokens, measured with a six-position B-C-B / C-B-C protocol. How the protocol works, the raw numbers, and what the result does not mean.">
+<meta property="og:url" content="https://www.throttle-pro.com/blog/one-vllm-flag-counterbalanced-benchmark">
+<meta property="og:image" content="https://www.throttle-pro.com/assets/media/blog/one-vllm-flag-counterbalanced-benchmark.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="One vLLM flag, −68.6% cost per token: what a counterbalanced benchmark looks like · Throttle">
+<meta name="twitter:description" content="A real A100 run where changing vLLM&#x27;s max_num_seqs from 1 to 8 took cost from $0.746 to $0.234 per million output tokens, measured with a six-position B-C-B / C-B-C protocol. How the protocol works, the raw numbers, and what the result does not mean.">
+<meta name="twitter:image" content="https://www.throttle-pro.com/assets/media/blog/one-vllm-flag-counterbalanced-benchmark.png">
+<meta property="article:published_time" content="2026-09-25">
+<meta property="article:author" content="Kushagra Kanaujia">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "One vLLM flag, −68.6% cost per token: what a counterbalanced benchmark looks like", "description": "A real A100 run where changing vLLM's max_num_seqs from 1 to 8 took cost from $0.746 to $0.234 per million output tokens, measured with a six-position B-C-B / C-B-C protocol. How the protocol works, the raw numbers, and what the result does not mean.", "datePublished": "2026-09-25", "dateModified": "2026-09-25", "mainEntityOfPage": "https://www.throttle-pro.com/blog/one-vllm-flag-counterbalanced-benchmark", "image": "https://www.throttle-pro.com/assets/media/blog/one-vllm-flag-counterbalanced-benchmark.png", "wordCount": 1107, "keywords": "vllm, gpu, benchmarking, llm", "author": {"@type": "Person", "name": "Kushagra Kanaujia", "url": "https://github.com/KushagraKanaujia"}, "publisher": {"@type": "Organization", "name": "Throttle", "url": "https://www.throttle-pro.com/", "logo": {"@type": "ImageObject", "url": "https://www.throttle-pro.com/assets/favicon.svg"}}}</script>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/site.css?v=763a19b6">
+<link rel="stylesheet" href="/assets/css/blog.css?v=456496a4">
+<script src="/assets/js/site.js?v=e4834dbe" defer></script>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="glow" aria-hidden="true"></div>
+
+<header class="nav">
+  <a class="brand" href="/" aria-label="Throttle home">
+    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg>
+    <span>throttle</span>
+  </a>
+  <nav class="nav-links" aria-label="Sections">
+    <a href="/#drift">Drift</a>
+    <a href="/#runs">Real runs</a>
+    <a href="/#receipts">Receipts</a>
+    <a href="/#pricing">Pricing</a>
+    <a href="/blog" aria-current="page">Blog</a>
+  </nav>
+  <div class="nav-cta">
+    <a class="nav-gh" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener" aria-label="Throttle on GitHub">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      <span>GitHub</span>
+    </a>
+    <a class="btn btn-accent btn-sm magnetic" href="/#early-access">Pro · $19/mo</a>
+  </div>
+</header>
+
+<main id="top">
+  <article class="post-wrap">
+    <header class="post-head">
+      <a class="crumb" href="/blog"><span aria-hidden="true">←</span> All posts</a>
+      <span class="kicker">Case study</span>
+      <h1>One vLLM flag, −68.6% cost per token: what a counterbalanced benchmark looks like</h1>
+      <p class="post-lede">A real A100 run where changing vLLM&#x27;s max_num_seqs from 1 to 8 took cost from $0.746 to $0.234 per million output tokens, measured with a six-position B&#8209;C&#8209;B / C&#8209;B&#8209;C protocol. How the protocol works, the raw numbers, and what the result does not mean.</p>
+      <div class="byline"><b>Kushagra Kanaujia</b><span class="sep"></span><span>Founder, Throttle</span><span class="sep"></span><time datetime="2026-09-25">Sep 25, 2026</time><span class="sep"></span><span>6 min read</span></div>
+    </header>
+    <div class="prose">
+<p>On a rented A100, one vLLM flag took the cost of serving a small model from <strong>$0.746 to $0.234 per million output tokens</strong>, a 68.6% drop. Before anything else, the honest part: the baseline was deliberately bad. <code>max_num_seqs=1</code> makes vLLM process one sequence at a time, and nobody should run production that way.</p>
+<p>So this post isn't "use this flag". It's about the method: how to measure a before/after change so the answer holds up, with every raw number from the run. The protocol is the one Throttle's <code>golden</code> command implements, and the artifacts are <a href="https://github.com/KushagraKanaujia/throttle/tree/main/validation/golden-live-20260817" target="_blank" rel="noopener">in the repo</a>.</p>
+<h2 id="the-setup">The setup</h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GPU</td>
+<td>1× NVIDIA A100 80GB PCIe (RunPod, $1.39/hour)</td>
+</tr>
+<tr>
+<td>Engine</td>
+<td>vLLM 0.16.0, Torch 2.9.1 / CUDA 12.8</td>
+</tr>
+<tr>
+<td>Model</td>
+<td>Qwen/Qwen2.5-0.5B-Instruct, pinned revision</td>
+</tr>
+<tr>
+<td>Load</td>
+<td>closed-loop, 8 concurrent requests</td>
+</tr>
+<tr>
+<td>Requests</td>
+<td>streaming, temperature 0, <code>max_tokens=128</code></td>
+</tr>
+<tr>
+<td>Prefix caching</td>
+<td>disabled (<code>enable_prefix_caching=False</code> in the runtime logs)</td>
+</tr>
+<tr>
+<td>Baseline (B)</td>
+<td><code>--max-num-seqs 1</code></td>
+</tr>
+<tr>
+<td>Candidate (C)</td>
+<td><code>--max-num-seqs 8</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Chunked prefill was on in both variants, so it can't take credit for the difference. The client always offered 8 concurrent requests, enough to exercise the candidate's limit, so the only thing that changed was how many sequences the server was allowed to run together.</p>
+<h2 id="why-not-just-run-before-then-after">Why not just run before, then after?</h2>
+<p>Because the machine drifts. In <a href="/blog/i-changed-nothing-27-percent-more-expensive">a separate test on my laptop</a>, four back-to-back checks of an unchanged server swung +27% and then −11%. If the GPU host gets slower over the session (a noisy neighbour, thermal state, anything), "baseline first, candidate second" hands the whole drift to the candidate.</p>
+<h2 id="the-protocol-six-positions-interleaved">The protocol: six positions, interleaved</h2>
+<p>The run has six positions on the same physical GPU, in this order:</p>
+<pre class="lang-formula"><code>B1  C1  B2  C2  B3  C3
+</code></pre>
+<p>Before each position, Throttle stops and tells the operator which config it needs. The operator restarts vLLM with that flag in another terminal, verifies the effective setting, and confirms before any traffic is sent. Throttle never touches the server itself. Each position runs three warm-up requests, then three measured blocks of 67 requests.</p>
+<p>The analysis uses two <strong>phase contrasts</strong>, each bracketing one variant with the other:</p>
+<ul>
+<li><strong>Phase one:</strong> C1 against the average of B1 and B2, which run on either side of it.</li>
+<li><strong>Phase two:</strong> the average of C2 and C3 against B3, which runs between them.</li>
+</ul>
+<p>If the machine drifts linearly over the session, each bracket cancels it: the bracketing pair averages out to the same moment in time as the thing it's compared with. One phase is B&#8209;C&#8209;B, the other C&#8209;B&#8209;C, so a drift that favours one variant in one phase favours the other in the next.</p>
+<h2 id="the-raw-numbers">The raw numbers</h2>
+<p>Every position produced exactly 25,728 completion tokens (201 valid responses, zero errors), so both variants did the same amount of work.</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Position</th>
+<th style="text-align: right;">max_num_seqs</th>
+<th style="text-align: right;">Output tok/s (block mean)</th>
+<th>95% CI</th>
+<th style="text-align: right;">$/M output tokens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>B1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">516.55</td>
+<td>506.8 to 526.3</td>
+<td style="text-align: right;">$0.7475</td>
+</tr>
+<tr>
+<td>C1</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">1,632.41</td>
+<td>1,390.6 to 1,874.2</td>
+<td style="text-align: right;">$0.2371</td>
+</tr>
+<tr>
+<td>B2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">517.89</td>
+<td>510.6 to 525.2</td>
+<td style="text-align: right;">$0.7456</td>
+</tr>
+<tr>
+<td>C2</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">1,688.40</td>
+<td>1,578.3 to 1,798.5</td>
+<td style="text-align: right;">$0.2288</td>
+</tr>
+<tr>
+<td>B3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">518.55</td>
+<td>517.4 to 519.7</td>
+<td style="text-align: right;">$0.7446</td>
+</tr>
+<tr>
+<td>C3</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">1,631.16</td>
+<td>1,570.9 to 1,691.4</td>
+<td style="text-align: right;">$0.2367</td>
+</tr>
+</tbody>
+</table></div>
+<p>The three baseline positions agree within 0.4%, even though they were spread across the whole session. That's what you want to see: little drift, and the protocol would have caught it if there were.</p>
+<p>The dollar figures follow directly from throughput:</p>
+<pre class="lang-formula"><code>$/M = 1.39 ÷ (3,600 × 516.55) × 1,000,000 = $0.7475
+</code></pre>
+<h2 id="the-result">The result</h2>
+<p>The two phase contrasts, computed on throughput:</p>
+<pre class="lang-formula"><code>phase one:  C1 vs mean(B1, B2)
+            1,632.41 vs 517.22   → +215.6%
+phase two:  mean(C2, C3) vs B3
+            1,659.78 vs 518.55   → +220.1%
+</code></pre>
+<p>The order-balanced estimate is their mean: <strong>+217.8% throughput, 95% interval +189.5% to +246.2%</strong>. With only two contrasts, the interval uses t with 1 degree of freedom (12.71), which is why it's that wide even though the two phases agree within 5 points. The whole interval is far from zero, and Throttle marked the result <code>decision_eligible: true</code>.</p>
+<p>In cost terms, the mean of the three baseline positions is $0.746 per million output tokens and the mean of the three candidates is $0.234: <strong>−68.6%</strong>.</p>
+<p>One detail if you check the files yourself: each position also records a whole-run cost summary that charges the GPU for the full elapsed time, including warm-up and gaps between blocks. On that basis the numbers are $0.778 → $0.261, or −66.5%. Both are real. They answer slightly different questions, and I quote the measured-block figure because it matches how the throughput was measured.</p>
+<h2 id="what-this-does-and-doesnt-show">What this does and doesn't show</h2>
+<p>It shows that on this GPU, engine version, model and workload, letting vLLM batch up to 8 sequences instead of 1 roughly tripled output throughput, and so cut the cost per token by about two-thirds, with drift controlled for.</p>
+<p>It does <strong>not</strong> show:</p>
+<ul>
+<li><strong>A saving you should expect.</strong> Your baseline almost certainly isn't <code>max_num_seqs=1</code>. Going from a sane default to a tuned value moves much less.</li>
+<li><strong>Anything about bigger models.</strong> A 0.5B model leaves a lot of an A100 unused. Larger models change where the bottleneck is.</li>
+<li><strong>Your traffic.</strong> This is closed-loop load at concurrency 8 with 128-token completions. Open-loop traffic, long prompts or long outputs can behave differently.</li>
+<li><strong>Quality.</strong> Same model, same revision, temperature 0, identical token counts: nothing here trades quality for speed. With a quantization or a smaller model, that would be a separate question you'd have to test.</li>
+</ul>
+<h2 id="what-it-cost-to-find-out">What it cost to find out</h2>
+<p>The six measurement windows used $0.08 of GPU time. Including startup, model download, restarts, validation and a first GPU that never came up, the whole session was at most about $0.74 (an elapsed-time estimate, not an invoice). Measuring a config change properly is cheap. Running the wrong config for a month isn't.</p>
+<h2 id="run-it-on-your-own-server">Run it on your own server</h2>
+<p>Preview the full six-position plan first. This sends no traffic and needs no key:</p>
+<pre class="lang-sh"><code>throttle golden --dry-run \
+  --model Qwen/Qwen2.5-0.5B-Instruct \
+  --url https://inference.example/v1 \
+  --api-key-env VLLM_API_KEY \
+  --baseline-config max_num_seqs=1 \
+  --candidate-config max_num_seqs=8 \
+  --concurrency 8 \
+  --cost-model dedicated-hourly --gpus 1 --total-hourly-price 1.39 \
+  --cache-policy disabled
+</code></pre>
+<p>The plan prints the sequence, the request and token ceilings, and a spend cap. It also lists what a decision-grade run still needs from you, such as a pinned model revision and runtime-verified engine flags. <code>golden</code> currently supports <code>max_num_seqs</code> as the treatment. For quick day-to-day re-checks after any config change, use <code>throttle check</code>, which calibrates against run-to-run noise instead of interleaving (<a href="/blog/cost-per-million-tokens-self-hosted-llm">how that works</a>).</p>
+<pre class="lang-sh"><code>pipx install throttle-pro
+</code></pre>
+<p>The code is MIT-licensed: <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">github.com/KushagraKanaujia/throttle</a>. If you run a counterbalanced comparison on your own hardware, I'd love to see it: <code>throttle check --share</code> prints a sanitized summary for a <a href="https://github.com/KushagraKanaujia/throttle/issues/new?template=share-results.yml" target="_blank" rel="noopener">results issue</a>.</p>
+    </div>
+    <aside class="post-cta" aria-label="Try Throttle">
+      <h2>Measure your own server</h2>
+      <p>Throttle is an open-source CLI (MIT) for any OpenAI-compatible endpoint: vLLM, SGLang, Ollama, LMDeploy. It runs on your machine, and the only traffic it sends goes to your own endpoint.</p>
+      <div class="cta-row">
+        <button class="copy magnetic" type="button" data-copy="pipx install throttle-pro" aria-label="Copy install command">
+          <span class="prompt">$</span><code>pipx install throttle-pro</code><span class="copy-state" aria-live="polite">copy</span>
+        </button>
+        <a class="btn btn-ghost magnetic" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">Star on GitHub</a>
+      </div>
+    </aside>
+    <section class="more" aria-label="More posts">
+      <h2>Keep reading</h2>
+      <div class="cards">
+    <a class="post-card" href="/blog/i-changed-nothing-27-percent-more-expensive">
+      <span class="kicker">Measurement</span>
+      <h3>I changed nothing and my LLM server got 27% more expensive</h3>
+      <p>Four cost checks of the same untouched Ollama server came back at $8.77, $8.86, $11.26 and $10.02 per million output tokens. Why same-server runs swing, and the noise bound I now use before believing any before/after number.</p>
+      <span class="meta"><time datetime="2026-09-25">Sep 25, 2026</time><span>7 min read</span><span class="arrow">→</span></span>
+    </a>
+    <a class="post-card" href="/blog/cost-per-million-tokens-self-hosted-llm">
+      <span class="kicker">Guide</span>
+      <h3>How to measure cost per million tokens on a self-hosted LLM (vLLM, SGLang, Ollama)</h3>
+      <p>A practical guide to turning GPU dollars per hour into dollars per million tokens for vLLM, SGLang and Ollama, the four pitfalls that make the number wrong, and how to re-check it after every config change and in CI.</p>
+      <span class="meta"><time datetime="2026-09-25">Sep 25, 2026</time><span>6 min read</span><span class="arrow">→</span></span>
+    </a>
+      </div>
+    </section>
+  </article>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <a class="brand" href="/"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg><span>throttle</span></a>
+    <p>Measures, caches and reports. Provisions nothing and never changes your server.</p>
+    <nav aria-label="Footer">
+      <a href="/blog">Blog</a>
+      <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://pypi.org/project/throttle-pro/" target="_blank" rel="noopener">PyPI</a>
+      <a href="https://github.com/KushagraKanaujia/throttle/blob/main/RESULTS.md" target="_blank" rel="noopener">Results</a>
+      <a href="https://github.com/KushagraKanaujia/throttle/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>
