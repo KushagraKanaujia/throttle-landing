@@ -333,6 +333,16 @@
       if (!v.muted && v.paused) { userPaused = false; play(); }
     });
     if (big) big.addEventListener('click', function () { userPaused = false; play(); });
+    document.querySelectorAll('[data-film-open]').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        frame.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+        userPaused = false; v.muted = false;
+        frame.classList.add('sound'); btnSound.setAttribute('aria-pressed', 'true'); btnSound.setAttribute('aria-label', 'Turn sound off');
+        try { v.currentTime = 0; } catch (err) {}
+        play();
+      });
+    });
     if (reduce) {
       frame.classList.add('paused'); btnToggle.setAttribute('aria-label', 'Play');
       if (big) big.hidden = false;
