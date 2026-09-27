@@ -82,6 +82,7 @@ em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spa
 .btn-accent:hover { box-shadow: 0 0 0 4px rgba(198,255,52,.16), 0 14px 40px -12px rgba(198,255,52,.7); }
 .btn-ghost { border-color: var(--line-2); color: var(--text); background: rgba(255,255,255,.02); }
 .btn-ghost:hover { border-color: var(--muted); }
+.btn .play-dot { font-size: 11px; color: var(--accent); margin-right: 2px; }
 .btn-sm { padding: 10px 14px; font-size: 13.5px; border-radius: 9px; }
 .btn-block { width: 100%; }
 .arrow { transition: transform .25s var(--ease); display: inline-block; }
