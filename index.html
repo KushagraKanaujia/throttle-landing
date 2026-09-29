@@ -24,9 +24,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/site.css?v=b10df688">
+<link rel="stylesheet" href="assets/css/site.css?v=a54ae2d5">
 <script src="assets/js/runs.js?v=5e8b1ef3" defer></script>
-<script src="assets/js/site.js?v=150cf95e" defer></script>
+<script src="assets/js/site.js?v=dd1c358f" defer></script>
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
@@ -40,6 +40,7 @@
   <nav class="nav-links" aria-label="Sections">
     <a href="#drift">Drift</a>
     <a href="#runs">Real runs</a>
+    <a href="#console">Console</a>
     <a href="#calculator">Calculator</a>
     <a href="#receipts">Receipts</a>
     <a href="#pricing">Pricing</a>
@@ -62,7 +63,7 @@
   <canvas class="stream" id="stream" aria-hidden="true"></canvas>
   <div class="hero-inner">
     <div class="hero-copy">
-      <p class="eyebrow reveal"><span class="dot"></span> open-source CLI · MIT · runs on your machine</p>
+      <p class="eyebrow reveal"><span class="dot"></span> open-source CLI · MIT · runs on your machine <a class="eyebrow-new" href="#console">New: throttle ui <span aria-hidden="true">→</span></a></p>
       <h1 class="reveal">Every config change sends you a <em>new&nbsp;bill.</em></h1>
       <p class="lede reveal">A vLLM flag. A batch size. A new model, a quantization, a different GPU. Any of them can quietly raise what you pay per million tokens, and you pay it again every hour the server runs. Throttle measures the dollars, measures again after the change, and puts a 95% interval on both. When the intervals overlap, it says the result is inconclusive instead of picking a winner.</p>
       <div class="hero-actions reveal">
@@ -223,11 +224,67 @@
   </div>
 </section>
 
-<!-- CALCULATOR -->
-<section class="section section-alt" id="calculator">
+<!-- CONSOLE -->
+<section class="section section-alt" id="console">
   <div class="wrap">
     <div class="sec-head reveal">
-      <span class="sec-num">04 / calculator</span>
+      <span class="sec-num">04 / console</span>
+      <h2>Your checks, in a console <em>that never leaves your machine.</em></h2>
+      <p>Run <code>throttle ui</code> and your check history opens in the browser: what you measured, what changed, and whether it was real. The verdicts are the same ones <code>throttle check</code> prints, from the same code.</p>
+    </div>
+
+    <div class="console-grid">
+      <ul class="console-points reveal">
+        <li><b>Quickstart progress.</b> Four steps, from connecting a server to gating CI, each ticked off from the checks you've already run.</li>
+        <li><b>Every check, judged.</b> $ per million tokens with its 95% interval, the change, a CHEAPER / NO WINNER / NOT CALIBRATED verdict, and what changed in the config.</li>
+        <li><b>Compare any two.</b> Both intervals and the run-to-run noise band on one chart, with the reason for the verdict in plain words.</li>
+        <li class="console-private"><span class="dot" aria-hidden="true"></span> Listens on 127.0.0.1 only and makes no network requests. Your prompts, endpoints and numbers stay on your machine.</li>
+        <li class="console-cmd">
+          <button class="copy magnetic" type="button" data-copy="throttle ui" aria-label="Copy console command">
+            <span class="prompt">$</span><code>throttle ui</code><span class="copy-state" aria-live="polite">copy</span>
+          </button>
+          <span class="console-note">requires throttle-pro 0.5.0+ · <a href="https://github.com/KushagraKanaujia/throttle/releases/tag/v0.5.0" target="_blank" rel="noopener">release notes</a></span>
+        </li>
+      </ul>
+
+      <figure class="console-frame reveal">
+        <div class="console-bar">
+          <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
+          <div class="console-tabs" role="tablist" aria-label="Console pages">
+          <button type="button" class="console-tab" role="tab" aria-selected="false" data-shot="quickstart">Quickstart</button>
+          <button type="button" class="console-tab" role="tab" aria-selected="false" data-shot="checks">Checks</button>
+          <button type="button" class="console-tab" role="tab" aria-selected="true" data-shot="compare">Compare</button>
+          </div>
+          <span class="console-host">127.0.0.1:8787</span>
+        </div>
+        <div class="console-stage">
+        <picture class="console-shot" data-shot="quickstart" hidden>
+          <source media="(max-width: 600px)" srcset="assets/media/console/console-quickstart-m.webp?v=aee587bf" type="image/webp" width="390" height="844">
+          <source srcset="assets/media/console/console-quickstart.webp?v=6f555f86" type="image/webp">
+          <img src="assets/media/console/console-quickstart.jpg?v=115996ab" width="1440" height="900" loading="lazy" decoding="async" alt="Throttle Console, Quickstart page: quickstart progress, ticked off from your own history">
+        </picture>
+        <picture class="console-shot" data-shot="checks" hidden>
+          <source media="(max-width: 600px)" srcset="assets/media/console/console-checks-m.webp?v=90ddaea5" type="image/webp" width="390" height="844">
+          <source srcset="assets/media/console/console-checks.webp?v=51b74454" type="image/webp">
+          <img src="assets/media/console/console-checks.jpg?v=c14fa1dd" width="1440" height="900" loading="lazy" decoding="async" alt="Throttle Console, Checks page: every check with its 95% interval and verdict">
+        </picture>
+        <picture class="console-shot" data-shot="compare">
+          <source media="(max-width: 600px)" srcset="assets/media/console/console-compare-m.webp?v=5a8fcff9" type="image/webp" width="390" height="844">
+          <source srcset="assets/media/console/console-compare.webp?v=e7266bc0" type="image/webp">
+          <img src="assets/media/console/console-compare.jpg?v=2cdd524f" width="1440" height="900" loading="lazy" decoding="async" alt="Throttle Console, Compare page: two checks, both intervals and the noise band">
+        </picture>
+        </div>
+        <figcaption>Real screenshots of <code>throttle ui</code> over six real checks on a MacBook (llama3.2:3b, then a switch to 1b; GPU rate assumed at $1.50/hr).</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- CALCULATOR -->
+<section class="section" id="calculator">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">05 / calculator</span>
       <h2>Put your own numbers in. <em>Watch a config change get billed.</em></h2>
       <p>This is a calculator, not a claim. It runs the same arithmetic Throttle uses. Throttle's job is to give you a <i>measured</i> tokens per second, with an interval, instead of a guess.</p>
     </div>
@@ -258,10 +315,10 @@
 </section>
 
 <!-- RECEIPTS -->
-<section class="section" id="receipts">
+<section class="section section-alt" id="receipts">
   <div class="wrap">
     <div class="sec-head reveal">
-      <span class="sec-num">05 / receipts</span>
+      <span class="sec-num">06 / receipts</span>
       <h2>Every number has a source. <em>Here are all of them.</em></h2>
       <p>From saved artifacts in the repo or recorded local runs. Nothing here is a projection, and the laptop numbers show how a mechanism works, not what it will do on your traffic.</p>
     </div>
@@ -307,10 +364,10 @@
 </section>
 
 <!-- OTHER LEVERS -->
-<section class="section section-alt" id="levers">
+<section class="section" id="levers">
   <div class="wrap">
     <div class="sec-head reveal">
-      <span class="sec-num">06 / more levers</span>
+      <span class="sec-num">07 / more levers</span>
       <h2>Caching and agent profiling. <em>Useful, and off until you ask.</em></h2>
       <p>Throttle is a cost meter first. The proxy can also cache and profile, and each lever still ends in the same place: a number you can hold against your bill.</p>
     </div>
@@ -345,10 +402,10 @@
 </section>
 
 <!-- PRICING -->
-<section class="section" id="pricing">
+<section class="section section-alt" id="pricing">
   <div class="wrap">
     <div class="sec-head reveal">
-      <span class="sec-num">07 / pricing</span>
+      <span class="sec-num">08 / pricing</span>
       <h2>Measuring once is free. <em>Pro watches what repeats.</em></h2>
       <p>Your cost doesn’t drift once. It drifts every deploy. The CLI will always be free and local. Pro is for the part that keeps happening, and it is being built with the people who sign up now.</p>
     </div>
@@ -420,7 +477,7 @@
 <section class="section section-cta" id="early-access">
   <div class="wrap cta-grid">
     <div class="reveal">
-      <span class="sec-num">08 / early access</span>
+      <span class="sec-num">09 / early access</span>
       <h2>Lock in <em>$19/month.</em></h2>
       <p class="cta-p">Leave an email and what you run. You’ll hear from the person building it, and your setup shapes what ships first. No card today.</p>
       <div class="cta-links">
