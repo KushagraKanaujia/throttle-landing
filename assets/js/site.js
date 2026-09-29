@@ -297,6 +297,18 @@
     });
   })();
 
+  /* ---------- console screenshots: tabs ---------- */
+  (function () {
+    var frame = $('.console-frame'); if (!frame) return;
+    var tabs = $$('.console-tab', frame), shots = $$('.console-shot', frame);
+    tabs.forEach(function (t) {
+      t.addEventListener('click', function () {
+        tabs.forEach(function (x) { x.setAttribute('aria-selected', String(x === t)); });
+        shots.forEach(function (sh) { sh.hidden = sh.dataset.shot !== t.dataset.shot; });
+      });
+    });
+  })();
+
   /* ---------- launch film: lazy source, autoplay in view, reduced-motion aware ---------- */
   (function () {
     var v = $('#film-video'); if (!v) return;
