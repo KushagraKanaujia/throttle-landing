@@ -32,5 +32,17 @@
         }
       ]
     }
+  ],
+  "redirects": [
+    {
+      "source": "/upgrade",
+      "destination": "/#early-access",
+      "statusCode": 302
+    },
+    {
+      "source": "/audit/book",
+      "destination": "/audit#book",
+      "statusCode": 302
+    }
   ]
 }
