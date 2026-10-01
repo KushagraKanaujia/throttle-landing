@@ -1,6 +1,6 @@
 {
  "title": "The Throttle Index: what tokens really cost",
- "generated_at": "2026-10-01",
+ "generated_at": "",
  "method": "$/M output tokens = measured wall-clock time x the GPU's hourly price / measured output tokens. Tokens and time are MEASURED; the $/hr is ASSUMED (a list price or a stated assumption, never a bill). CHEAPER / MORE EXPENSIVE only when the change beats a run-to-run noise bound measured from repeat checks and the 95% confidence intervals do not overlap. OUTPUT CHANGED when the same prompts at temperature 0 come back >10% longer/shorter or many more hit max tokens: the $/M difference is then not a verified saving.",
  "rows": [
   {
@@ -680,6 +680,122 @@
    "caveat": "A deliberately bad setting for this load: shows what a harmless-looking flag costs.",
    "episode": "",
    "share_markdown": "## Throttle check: Qwen/Qwen2.5-7B-Instruct\n\n| | |\n|---|---|\n| Throttle version | 0.5.1 |\n| Engine | vllm-rocm (from --config) |\n| GPU | MI300X |\n| Model | Qwen/Qwen2.5-7B-Instruct |\n| GPU hourly rate | $2.99/hr (ASSUMED, user-supplied) |\n| Workload | 5 blocks x 32 requests, concurrency 32, max 256 output tokens, temperature 0, 8 built-in prompts (sha256 787fc93d62e1) |\n| Prompt cache | cold (unique prompt per request) |\n| Label | seqs8 |\n| Check | 20261001T055720Z-7973bb09 (2026-10-01) |\n\n**Result:** $0.6998 per million output tokens (95% CI $0.6839 to $0.7158, 5 blocks) [MEASURED]\n\n**Compared with** check 20261001T054905Z-0f15c02b:\n\n- before: $0.2272/M output tokens (95% CI $0.2217 to $0.2327)\n- after: $0.6998/M output tokens (95% CI $0.6839 to $0.7158)\n- change: +208.0%\n- noise floor: calibrated: bound 2.8% (t x sqrt(2) x 0.8% run-to-run SD, 5 df)\n- **Verdict: MORE EXPENSIVE**, the +208.0% change is larger than the run-to-run noise bound (2.8% = t x sqrt(2) x 0.8% run-to-run SD, 5 df) and the 95% confidence intervals do not overlap\n\n**What changed in config:**\n\n- `config.max_num_seqs`: default -> 8\n- `label`: baseline -> seqs8\n- `vllm.cache_config.num_gpu_blocks`: 186542 -> 187972\n\n_Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are included; config values that look like secrets are masked._"
+  },
+  {
+   "id": "mi300x-qwen72b-tp1-vs-tp2",
+   "model": "Qwen2.5-72B-Instruct",
+   "gpu": "1x vs 2x AMD MI300X (Hot Aisle)",
+   "engine": "vLLM 0.23.1 (ROCm)",
+   "change": "1 GPU (TP1, $2.99/hr) \u2192 2 GPUs (--tensor-parallel-size 2, $5.98/hr), same BF16 weights",
+   "metric": "$ per million output tokens",
+   "baseline": {
+    "mean": 1.6638579330652963,
+    "ci_low": 1.660338929790593,
+    "ci_high": 1.6673769363399995
+   },
+   "baseline_repeats": [
+    1.6705266804949268,
+    1.6699867830509807,
+    1.6641164250956664,
+    1.6638579330652963
+   ],
+   "changed": {
+    "mean": 2.131786960312532,
+    "ci_low": 2.1264543538571616,
+    "ci_high": 2.1371195667679026
+   },
+   "verdict": "MORE EXPENSIVE",
+   "verdict_count": "3 of 3",
+   "change_percent_range": [
+    28.123135872855354,
+    28.816539597114943
+   ],
+   "noise_bound_percent": 0.8047454190856227,
+   "checks": [
+    {
+     "id": "20261001T192537Z-5e84bc2d",
+     "created_at": "2026-10-01T19:25:37.039262Z",
+     "baseline_id": "20261001T192145Z-38a09569",
+     "baseline": {
+      "mean": 1.6638579330652963,
+      "ci_low": 1.660338929790593,
+      "ci_high": 1.6673769363399995
+     },
+     "cost": {
+      "mean": 2.1433242131867956,
+      "ci_low": 2.1335544377457647,
+      "ci_high": 2.1530939886278264
+     },
+     "verdict": "MORE EXPENSIVE",
+     "change_percent": 28.816539597114943,
+     "noise_bound_percent": 0.9792897088321432,
+     "noise_df": 3,
+     "output_length_change_percent": -0.14212171935698015,
+     "reason": "in real dollars (GPU count and price changed) the +28.8% change is larger than the run-to-run noise bound (1.0%) and the 95% confidence intervals do not overlap",
+     "throttle_verdict": "CHEAPER"
+    },
+    {
+     "id": "20261001T192618Z-c00f5d81",
+     "created_at": "2026-10-01T19:26:18.759902Z",
+     "baseline_id": "20261001T192145Z-38a09569",
+     "baseline": {
+      "mean": 1.6638579330652963,
+      "ci_low": 1.660338929790593,
+      "ci_high": 1.6673769363399995
+     },
+     "cost": {
+      "mean": 2.13844193339851,
+      "ci_low": 2.1312442675265157,
+      "ci_high": 2.145639599270504
+     },
+     "verdict": "MORE EXPENSIVE",
+     "change_percent": 28.5231083076243,
+     "noise_bound_percent": 0.9792897088321432,
+     "noise_df": 3,
+     "output_length_change_percent": -0.15475476107760233,
+     "reason": "in real dollars (GPU count and price changed) the +28.5% change is larger than the run-to-run noise bound (1.0%) and the 95% confidence intervals do not overlap",
+     "throttle_verdict": "CHEAPER"
+    },
+    {
+     "id": "20261001T192700Z-d565005e",
+     "created_at": "2026-10-01T19:27:00.402521Z",
+     "baseline_id": "20261001T192145Z-38a09569",
+     "baseline": {
+      "mean": 1.6638579330652963,
+      "ci_low": 1.660338929790593,
+      "ci_high": 1.6673769363399995
+     },
+     "cost": {
+      "mean": 2.131786960312532,
+      "ci_low": 2.1264543538571616,
+      "ci_high": 2.1371195667679026
+     },
+     "verdict": "MORE EXPENSIVE",
+     "change_percent": 28.123135872855354,
+     "noise_bound_percent": 0.8047454190856227,
+     "noise_df": 4,
+     "output_length_change_percent": -0.041057385592024875,
+     "reason": "in real dollars (GPU count and price changed) the +28.1% change is larger than the run-to-run noise bound (0.8%) and the 95% confidence intervals do not overlap",
+     "throttle_verdict": "CHEAPER"
+    }
+   ],
+   "gpu_hourly_rate_usd": 5.98,
+   "rate_label": "ASSUMED",
+   "rate_source": "Hot Aisle on-demand list price $2.99 per MI300X GPU x GPUs used",
+   "date": "2026-10-01",
+   "workload": {
+    "concurrency": 32,
+    "max_tokens": 256,
+    "requests_per_block": 32,
+    "blocks": 5,
+    "cache": "cold",
+    "temperature": 0
+   },
+   "tool": "throttle check (throttle-pro 0.5.1), re-judged with the OUTPUT CHANGED rule",
+   "quality": "Output per block identical (6,320\u20136,333 tokens); 6-prompt sample identical on 5 of 6, sixth differs in wording only.",
+   "caveat": "Throttle 0.5.1 prints CHEAPER here because its verdict rescales to the baseline's GPU rate; this row judges real dollars with the same rule (2 GPUs: 1.56x the speed, 2x the price).",
+   "episode": "",
+   "share_markdown": "## Throttle check: Qwen/Qwen2.5-72B-Instruct\n\n| | |\n|---|---|\n| Throttle version | 0.5.1 |\n| Engine | vllm (from --config) |\n| GPU | MI300X |\n| Model | Qwen/Qwen2.5-72B-Instruct |\n| GPU hourly rate | $5.98/hr (ASSUMED, user-supplied) |\n| Workload | 5 blocks x 32 requests, concurrency 32, max 256 output tokens, temperature 0, 8 built-in prompts (sha256 787fc93d62e1) |\n| Prompt cache | cold (unique prompt per request) |\n| Label | tp2 |\n| Check | 20261001T192700Z-d565005e (2026-10-01) |\n\n**Result:** $2.13 per million output tokens (95% CI $2.13 to $2.14, 5 blocks) [MEASURED]\n\n**Compared with** check 20261001T192145Z-38a09569:\n\n- before: $1.66/M output tokens (95% CI $1.66 to $1.67)\n- after: $2.13/M output tokens (95% CI $2.13 to $2.14)\n- change: +28.1% at the GPU rates as typed\n- measured change at the baseline's GPU rate: +28.1%\n- noise floor: calibrated: bound 0.8% (t x sqrt(2) x 0.2% run-to-run SD, 4 df)\n- **Verdict: MORE EXPENSIVE**, in real dollars (GPU count and price changed) the +28.1% change is larger than the run-to-run noise bound (0.8%) and the 95% confidence intervals do not overlap\n\n**What changed in config:**\n\n- `config.gpus`: 1 -> 2\n- `config.tensor_parallel`: 1 -> 2\n- `gpu_hourly_rate_usd (ASSUMED)`: 2.9900 -> 5.9800\n- `label`: tp1 -> tp2\n- `vllm.cache_config.num_gpu_blocks`: 7776 -> 43167\n\n_Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are included; config values that look like secrets are masked._"
   },
   {
    "id": "m3pro-llama1b-ollama-num-parallel-4",

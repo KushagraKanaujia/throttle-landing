@@ -62,7 +62,7 @@
 <main id="top">
   <section class="ix-wrap">
     <header class="ix-head">
-      <span class="kicker">The Throttle Index · 10 changes · updated 2026-10-01</span>
+      <span class="kicker">The Throttle Index · 11 changes · updated </span>
       <h1>What tokens <em>really</em> cost.</h1>
       <p class="post-lede">Real serving changes on real hardware, measured in dollars per million output tokens. A change only counts as <b class="v-cheap">CHEAPER</b> or <b class="v-exp">MORE EXPENSIVE</b> when it beats run-to-run noise measured from repeat checks. When the answers change shape, it's flagged <b class="v-flag">OUTPUT CHANGED</b>: a cheaper token isn't a saving if the answers broke.</p>
       <div class="ix-legend">
@@ -422,6 +422,63 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
 
 _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are included; config values that look like secrets are masked._</pre>
 </div></td></tr>
+<tr class="ix-row" data-verdict="MORE EXPENSIVE" data-gpu="MI300X"
+    data-change="28.470" data-before="1.663858" data-after="2.131787" data-date="2026-10-01">
+  <td class="ix-model"><b>Qwen2.5-72B-Instruct</b><span class="ix-sub">vLLM 0.23.1 (ROCm)</span></td>
+  <td class="ix-gpu" data-label="GPU">1x vs 2x AMD MI300X (Hot Aisle)</td>
+  <td class="ix-change" data-label="Change">1 GPU (TP1, $2.99/hr) → 2 GPUs (<code>--tensor-parallel-size 2</code>, $5.98/hr), same BF16 weights</td>
+  <td class="num" data-label="Before $/M">$1.66<span class="ix-sub">$1.66–$1.67</span></td>
+  <td class="num ix-after" data-label="After $/M"><span class="ix-val">$2.13<span class="ix-sub">$2.13–$2.14</span></span></td>
+  <td class="num ix-pct v-exp" data-label="Change"><span class="ix-val">+28.1 to +28.8%</span></td>
+  <td class="ix-v" data-label="Verdict"><span class="ix-verdict v-exp">MORE EXPENSIVE</span><span class="ix-sub">3 of 3</span></td>
+  <td class="ix-btn"><button class="ix-more" type="button" aria-expanded="false" aria-controls="ix-d6">Details</button></td>
+</tr>
+<tr class="ix-detail" id="ix-d6"><td colspan="8"><div class="ix-detail-in">
+  <p class="ix-caveat">Throttle 0.5.1 prints CHEAPER here because its verdict rescales to the baseline&#x27;s GPU rate; this row judges real dollars with the same rule (2 GPUs: 1.56x the speed, 2x the price).</p>
+  <dl class="ix-facts">
+    <div><dt>Answers</dt><dd>Output per block identical (6,320–6,333 tokens); 6-prompt sample identical on 5 of 6, sixth differs in wording only.</dd></div>
+    <div><dt>GPU price</dt><dd>$5.98/hr <b class="tag">ASSUMED</b> Hot Aisle on-demand list price $2.99 per MI300X GPU x GPUs used. Tokens and time are <b class="tag tag-b">MEASURED</b>.</dd></div>
+    <div><dt>Workload</dt><dd>5 blocks × 32 requests, concurrency 32, max 256 output tokens, temperature 0, cache: cold</dd></div>
+    <div><dt>Baseline repeats</dt><dd>$1.67, $1.67, $1.66, $1.66 (noise bound 0.8%)</dd></div>
+    <div><dt>Method</dt><dd>throttle check (throttle-pro 0.5.1), re-judged with the OUTPUT CHANGED rule. Date: 2026-10-01.</dd></div>
+    <div><dt>Source</dt><dd>the saved check history (summary below is Throttle's own sanitized <code>--share-id</code> output)</dd></div>
+  </dl>
+  <p class="ix-checks-h">Every check of this change</p><ul class="ix-checks"><li><code>20261001T192537Z-5e84bc2d</code> $2.14 ($2.13–$2.15) vs $1.66: <b class='v-exp'>MORE EXPENSIVE</b> +28.8%, noise bound 1.0%, output length -0.1%</li><li><code>20261001T192618Z-c00f5d81</code> $2.14 ($2.13–$2.15) vs $1.66: <b class='v-exp'>MORE EXPENSIVE</b> +28.5%, noise bound 1.0%, output length -0.2%</li><li><code>20261001T192700Z-d565005e</code> $2.13 ($2.13–$2.14) vs $1.66: <b class='v-exp'>MORE EXPENSIVE</b> +28.1%, noise bound 0.8%, output length -0.0%</li></ul>
+  <pre class='ix-share'>## Throttle check: Qwen/Qwen2.5-72B-Instruct
+
+| | |
+|---|---|
+| Throttle version | 0.5.1 |
+| Engine | vllm (from --config) |
+| GPU | MI300X |
+| Model | Qwen/Qwen2.5-72B-Instruct |
+| GPU hourly rate | $5.98/hr (ASSUMED, user-supplied) |
+| Workload | 5 blocks x 32 requests, concurrency 32, max 256 output tokens, temperature 0, 8 built-in prompts (sha256 787fc93d62e1) |
+| Prompt cache | cold (unique prompt per request) |
+| Label | tp2 |
+| Check | 20261001T192700Z-d565005e (2026-10-01) |
+
+**Result:** $2.13 per million output tokens (95% CI $2.13 to $2.14, 5 blocks) [MEASURED]
+
+**Compared with** check 20261001T192145Z-38a09569:
+
+- before: $1.66/M output tokens (95% CI $1.66 to $1.67)
+- after: $2.13/M output tokens (95% CI $2.13 to $2.14)
+- change: +28.1% at the GPU rates as typed
+- measured change at the baseline&#x27;s GPU rate: +28.1%
+- noise floor: calibrated: bound 0.8% (t x sqrt(2) x 0.2% run-to-run SD, 4 df)
+- **Verdict: MORE EXPENSIVE**, in real dollars (GPU count and price changed) the +28.1% change is larger than the run-to-run noise bound (0.8%) and the 95% confidence intervals do not overlap
+
+**What changed in config:**
+
+- `config.gpus`: 1 -&gt; 2
+- `config.tensor_parallel`: 1 -&gt; 2
+- `gpu_hourly_rate_usd (ASSUMED)`: 2.9900 -&gt; 5.9800
+- `label`: tp1 -&gt; tp2
+- `vllm.cache_config.num_gpu_blocks`: 7776 -&gt; 43167
+
+_Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are included; config values that look like secrets are masked._</pre>
+</div></td></tr>
 <tr class="ix-row" data-verdict="CHEAPER" data-gpu="Apple M3 Pro"
     data-change="-63.909" data-before="5.928474" data-after="2.010928" data-date="2026-09-30">
   <td class="ix-model"><b>llama3.2:1b</b><span class="ix-sub">Ollama 0.32.5</span></td>
@@ -431,9 +488,9 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
   <td class="num ix-after" data-label="After $/M"><span class="ix-val">$2.01<span class="ix-sub">$1.96–$2.06</span></span></td>
   <td class="num ix-pct v-cheap" data-label="Change"><span class="ix-val">-66.1 to -61.7%</span></td>
   <td class="ix-v" data-label="Verdict"><span class="ix-verdict v-cheap">CHEAPER</span><span class="ix-sub">2 of 2</span></td>
-  <td class="ix-btn"><button class="ix-more" type="button" aria-expanded="false" aria-controls="ix-d6">Details</button></td>
+  <td class="ix-btn"><button class="ix-more" type="button" aria-expanded="false" aria-controls="ix-d7">Details</button></td>
 </tr>
-<tr class="ix-detail" id="ix-d6"><td colspan="8"><div class="ix-detail-in">
+<tr class="ix-detail" id="ix-d7"><td colspan="8"><div class="ix-detail-in">
   <p class="ix-caveat">Laptop; the $/hr is an assumed rate for illustration.</p>
   <dl class="ix-facts">
     <div><dt>Answers</dt><dd>Not sampled.</dd></div>
@@ -484,9 +541,9 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
   <td class="num ix-after" data-label="After $/M"><span class="ix-val">$4.70<span class="ix-sub">$4.53–$4.87</span></span></td>
   <td class="num ix-pct v-cheap" data-label="Change"><span class="ix-val">-10.3 to -9.2%</span></td>
   <td class="ix-v" data-label="Verdict"><span class="ix-verdict v-cheap">CHEAPER</span><span class="ix-sub">3 of 3</span></td>
-  <td class="ix-btn"><button class="ix-more" type="button" aria-expanded="false" aria-controls="ix-d7">Details</button></td>
+  <td class="ix-btn"><button class="ix-more" type="button" aria-expanded="false" aria-controls="ix-d8">Details</button></td>
 </tr>
-<tr class="ix-detail" id="ix-d7"><td colspan="8"><div class="ix-detail-in">
+<tr class="ix-detail" id="ix-d8"><td colspan="8"><div class="ix-detail-in">
   <p class="ix-caveat">Laptop; the $/hr is an assumed rate. Q4/Q8 order was interleaved to rule out drift.</p>
   <dl class="ix-facts">
     <div><dt>Answers</dt><dd>Not sampled.</dd></div>
@@ -538,9 +595,9 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
   <td class="num ix-after" data-label="After $/M"><span class="ix-val">$5.91<span class="ix-sub">$4.85–$6.97</span></span></td>
   <td class="num ix-pct v-cheap" data-label="Change"><span class="ix-val">-35.9 to -31.6%</span></td>
   <td class="ix-v" data-label="Verdict"><span class="ix-verdict v-cheap">CHEAPER</span><span class="ix-sub">2 of 2</span></td>
-  <td class="ix-btn"><button class="ix-more" type="button" aria-expanded="false" aria-controls="ix-d8">Details</button></td>
+  <td class="ix-btn"><button class="ix-more" type="button" aria-expanded="false" aria-controls="ix-d9">Details</button></td>
 </tr>
-<tr class="ix-detail" id="ix-d8"><td colspan="8"><div class="ix-detail-in">
+<tr class="ix-detail" id="ix-d9"><td colspan="8"><div class="ix-detail-in">
   <p class="ix-caveat">Laptop; the $/hr is an assumed rate.</p>
   <dl class="ix-facts">
     <div><dt>Answers</dt><dd>Not sampled. A smaller model is a quality trade-off Throttle does not judge.</dd></div>
@@ -591,9 +648,9 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
   <td class="num ix-after" data-label="After $/M"><span class="ix-val">$0.234<span class="ix-sub"></span></span></td>
   <td class="num ix-pct v-cheap" data-label="Change"><span class="ix-val">-68.6%</span></td>
   <td class="ix-v" data-label="Verdict"><span class="ix-verdict v-cheap">CHEAPER</span><span class="ix-sub">decision-eligible (golden protocol)</span></td>
-  <td class="ix-btn"><button class="ix-more" type="button" aria-expanded="false" aria-controls="ix-d9">Details</button></td>
+  <td class="ix-btn"><button class="ix-more" type="button" aria-expanded="false" aria-controls="ix-d10">Details</button></td>
 </tr>
-<tr class="ix-detail" id="ix-d9"><td colspan="8"><div class="ix-detail-in">
+<tr class="ix-detail" id="ix-d10"><td colspan="8"><div class="ix-detail-in">
   <p class="ix-caveat">A deliberately bad baseline (one sequence at a time) on a small model; it shows the measurement, not a saving to expect.</p>
   <dl class="ix-facts">
     <div><dt>Answers</dt><dd>Not sampled.</dd></div>
