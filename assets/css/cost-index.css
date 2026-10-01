@@ -1,0 +1,85 @@
+/* The Throttle Index (/cost-index) */
+.ix-wrap { max-width: 1180px; margin: 0 auto; padding: 120px 24px 40px; position: relative; z-index: 1; }
+.ix-head { max-width: 780px; margin-bottom: 30px; }
+.ix-head h1 { font: 600 clamp(38px, 5.4vw, 64px)/1.02 var(--sans); letter-spacing: -.03em; margin: 0 0 22px; }
+.ix-head h1 em { font-family: var(--serif); font-weight: 400; color: var(--accent); }
+.ix-legend { display: flex; flex-wrap: wrap; gap: 10px 22px; font-size: 13.5px; color: var(--muted); }
+.ix-legend .tag { margin-right: 6px; }
+
+.v-cheap { color: var(--accent); }
+.v-exp { color: var(--exp); }
+.v-flag { color: #ffb547; }
+.v-nw { color: var(--nw); }
+
+.ix-tools { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin: 0 0 14px; }
+.ix-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.ix-chip { font: 500 13px/1 var(--mono); color: var(--muted); background: rgba(255,255,255,.02); border: 1px solid var(--line-2); border-radius: 99px; padding: 9px 13px; cursor: pointer; }
+.ix-chip:hover { color: var(--text); border-color: var(--muted); }
+.ix-chip.is-on { color: var(--accent-ink); background: var(--accent); border-color: var(--accent); }
+.ix-select { font: 500 13px/1 var(--mono); color: var(--muted); display: inline-flex; align-items: center; gap: 8px; }
+.ix-select select { font: inherit; color: var(--text); background: var(--panel); border: 1px solid var(--line-2); border-radius: 8px; padding: 8px 10px; }
+
+.ix-table-wrap { margin: 0; }
+.ix-table { width: 100%; border-collapse: collapse; font-size: 14.5px; line-height: 1.45; }
+.ix-table th, .ix-table td { padding: 13px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.ix-table th { font: 500 11.5px/1.3 var(--mono); color: var(--muted); letter-spacing: .03em; text-transform: uppercase; background: rgba(255,255,255,.02); white-space: nowrap; }
+.ix-table .num { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.ix-sub { display: block; font: 400 12px/1.4 var(--mono); color: var(--dim); margin-top: 3px; }
+.ix-change { max-width: 300px; color: #c3c8cf; overflow-wrap: anywhere; }
+.ix-verdict { font: 600 12.5px/1.2 var(--mono); letter-spacing: .02em; white-space: nowrap; }
+.ix-row.is-flagged .ix-val, .ix-row.is-flagged .ix-val .ix-sub { text-decoration: line-through; text-decoration-color: rgba(255,181,71,.7); }
+.ix-row.is-flagged { background: linear-gradient(90deg, rgba(255,181,71,.06), transparent 70%); }
+.ix-sort, .ix-more { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-transform: inherit; letter-spacing: inherit; }
+.ix-sort::after { content: " ↕"; color: var(--line-2); }
+.ix-sort[aria-sort="ascending"]::after { content: " ↑"; color: var(--accent); }
+.ix-sort[aria-sort="descending"]::after { content: " ↓"; color: var(--accent); }
+.ix-more { font: 500 12.5px/1 var(--mono); color: var(--muted); border: 1px solid var(--line-2); border-radius: 7px; padding: 7px 9px; white-space: nowrap; }
+.ix-more:hover, .ix-more[aria-expanded="true"] { color: var(--text); border-color: var(--muted); }
+
+.ix-detail td { background: var(--bg-2); padding: 0; }
+.js .ix-detail { display: none; }
+.js .ix-detail.is-open { display: table-row; }
+.ix-detail-in { padding: 18px 20px 22px; max-width: 980px; }
+.ix-flag-note { margin: 0 0 14px; padding: 12px 14px; border: 1px solid rgba(255,181,71,.35); border-radius: 10px; background: rgba(255,181,71,.07); color: #ffd9a0; }
+.ix-caveat { margin: 0 0 14px; color: #c3c8cf; }
+.ix-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 26px; margin: 0; }
+.ix-facts div { border-top: 1px solid var(--line); padding-top: 9px; }
+.ix-facts dt { font: 500 11.5px/1.3 var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: .03em; margin-bottom: 4px; }
+.ix-facts dd { margin: 0; color: #d6dae0; font-size: 14px; }
+.ix-facts .tag { font-size: 10px; padding: 3px 6px; }
+.ix-checks-h { font: 500 11.5px/1.3 var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: .03em; margin: 18px 0 6px; }
+.ix-checks { margin: 0; padding-left: 18px; font-size: 13.5px; color: #c3c8cf; }
+.ix-checks code { white-space: nowrap; }
+.ix-share { margin: 16px 0 0; max-height: 280px; overflow: auto; font: 12px/1.5 var(--mono); color: #b9bec6; background: var(--panel); border: 1px solid var(--line-2); border-radius: 10px; padding: 14px; white-space: pre-wrap; }
+.ix-foot-note { font-size: 13.5px; color: var(--muted); margin: 14px 0 0; max-width: 900px; }
+.ix-foot-note a, .ix-prose a { color: var(--accent); }
+.ix-prose { max-width: 740px; margin-top: 56px; }
+.ix-empty td { color: var(--muted); text-align: center; padding: 28px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@media (max-width: 760px) {
+  .ix-wrap { padding: 100px 16px 32px; }
+  .ix-facts { grid-template-columns: 1fr; }
+  .ix-table { font-size: 13.5px; }
+  .ix-table th, .ix-table td { padding: 10px 10px; }
+  .ix-change { min-width: 180px; }
+  .ix-table td:first-child { min-width: 150px; }
+}
+
+/* Phones: each row becomes a card so price and verdict are visible without sideways scrolling. */
+.ix-change code { white-space: nowrap; font-size: .9em; }
+@media (max-width: 760px) {
+  .ix-table-wrap { overflow: visible; border: 0; }
+  .ix-table, .ix-table tbody, .ix-table tr, .ix-table td { display: block; }
+  .ix-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .ix-table tr.ix-row { border: 1px solid var(--line-2); border-radius: 12px; margin: 0 0 10px; padding: 12px 0 8px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .ix-table-wrap .ix-table tr.ix-row td, .ix-table-wrap .ix-table tr.ix-detail td { border: 0; padding: 4px 14px; text-align: left; white-space: normal; }
+  .ix-table .ix-model, .ix-table .ix-change, .ix-table .ix-gpu { grid-column: 1 / -1; }
+  .ix-table td[data-label]::before { content: attr(data-label); display: block; font: 500 10.5px/1.3 var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 2px; }
+  .ix-table .ix-btn { grid-column: 1 / -1; padding-top: 8px; }
+  .ix-table .ix-more { width: 100%; padding: 10px; }
+  .ix-table tr.ix-detail { margin: -6px 0 12px; }
+  .js .ix-table tr.ix-detail.is-open { display: block; }
+  .ix-table tr.ix-detail td { border: 1px solid var(--line-2); border-radius: 12px; }
+  .ix-change { max-width: none; min-width: 0; overflow-wrap: anywhere; }
+}

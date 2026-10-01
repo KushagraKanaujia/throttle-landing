@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>document.documentElement.classList.add("js")</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Throttle Index: what tokens really cost</title>
+<meta name="description" content="Measured cost per million output tokens for real serving changes on real hardware, with 95% confidence intervals, run-to-run noise bounds and the cases where a cheaper token came with broken answers.">
+<meta name="author" content="Kushagra Kanaujia">
+<meta name="theme-color" content="#07080a">
+<link rel="canonical" href="https://www.throttle-pro.com/cost-index">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Throttle">
+<meta property="og:title" content="The Throttle Index: what tokens really cost">
+<meta property="og:description" content="Measured cost per million output tokens for real serving changes on real hardware, with 95% confidence intervals, run-to-run noise bounds and the cases where a cheaper token came with broken answers.">
+<meta property="og:url" content="https://www.throttle-pro.com/cost-index">
+<meta property="og:image" content="https://www.throttle-pro.com/assets/media/index-og.png">
+<meta property="og:image:width" content="1600">
+<meta property="og:image:height" content="900">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Throttle Index: what tokens really cost">
+<meta name="twitter:description" content="Measured cost per million output tokens for real serving changes on real hardware, with 95% confidence intervals, run-to-run noise bounds and the cases where a cheaper token came with broken answers.">
+<meta name="twitter:image" content="https://www.throttle-pro.com/assets/media/index-og.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Dataset", "name": "The Throttle Index", "description": "Measured cost per million output tokens for real serving changes on real hardware, with 95% confidence intervals, run-to-run noise bounds and the cases where a cheaper token came with broken answers.", "url": "https://www.throttle-pro.com/cost-index", "license": "https://creativecommons.org/licenses/by/4.0/", "creator": {"@type": "Organization", "name": "Throttle", "url": "https://www.throttle-pro.com/"}, "distribution": [{"@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": "https://www.throttle-pro.com/assets/data/throttle-index.json"}]}</script>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/site.css?v=a54ae2d5">
+<link rel="stylesheet" href="/assets/css/blog.css?v=8c7afacb">
+<link rel="stylesheet" href="/assets/css/cost-index.css?v=7fa38fc2">
+<script src="/assets/js/site.js?v=dd1c358f" defer></script>
+<script src="/assets/js/cost-index.js?v=a6917b5d" defer></script>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="glow" aria-hidden="true"></div>
+
+<header class="nav">
+  <a class="brand" href="/" aria-label="Throttle home">
+    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg>
+    <span>throttle</span>
+  </a>
+  <nav class="nav-links" aria-label="Sections">
+    <a href="/#drift">Drift</a>
+    <a href="/#runs">Real runs</a>
+    <a href="/#receipts">Receipts</a>
+    <a href="/#pricing">Pricing</a>
+    <a href="/audit">Audit</a>
+    <a href="/cost-index" aria-current="page">Index</a>
+    <a href="/blog">Blog</a>
+  </nav>
+  <div class="nav-cta">
+    <a class="nav-gh" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener" aria-label="Throttle on GitHub">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      <span>GitHub</span>
+    </a>
+    <a class="btn btn-accent btn-sm magnetic" href="/#early-access">Pro · $19/mo</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="ix-wrap">
+    <header class="ix-head">
+      <span class="kicker">The Throttle Index · 10 changes · updated 2026-10-01</span>
+      <h1>What tokens <em>really</em> cost.</h1>
+      <p class="post-lede">Real serving changes on real hardware, measured in dollars per million output tokens. A change only counts as <b class="v-cheap">CHEAPER</b> or <b class="v-exp">MORE EXPENSIVE</b> when it beats run-to-run noise measured from repeat checks. When the answers change shape, it's flagged <b class="v-flag">OUTPUT CHANGED</b>: a cheaper token isn't a saving if the answers broke.</p>
+      <div class="ix-legend">
+        <span><b class="tag tag-b">MEASURED</b> tokens and wall-clock time</span>
+        <span><b class="tag">ASSUMED</b> the GPU's $/hr (a list price, stated on every row)</span>
+      </div>
+    </header>
+
+    <div class="ix-tools" role="group" aria-label="Filter results">
+      <div class="ix-chips">
+        <button type="button" class="ix-chip is-on" data-filter="all">All</button>
+        <button type="button" class="ix-chip" data-filter="CHEAPER">Cheaper</button>
+        <button type="button" class="ix-chip" data-filter="MORE EXPENSIVE">More expensive</button>
+        <button type="button" class="ix-chip" data-filter="OUTPUT CHANGED">Output changed</button>
+      </div>
+      <label class="ix-select">GPU <select id="ix-gpu"><option value="all">All</option><option value="A100">A100</option><option value="Apple M3 Pro">Apple M3 Pro</option><option value="MI300X">MI300X</option></select></label>
+    </div>
+
+    <div class="table-scroll ix-table-wrap">
+      <table class="ix-table">
+        <thead><tr>
+          <th scope="col">Model · engine</th>
+          <th scope="col">GPU</th>
+          <th scope="col">Change</th>
+          <th scope="col" class="num"><button type="button" class="ix-sort" data-key="before">Before $/M</button></th>
+          <th scope="col" class="num"><button type="button" class="ix-sort" data-key="after">After $/M</button></th>
+          <th scope="col" class="num"><button type="button" class="ix-sort" data-key="change">Change</button></th>
+          <th scope="col">Verdict</th>
+          <th scope="col"><span class="sr-only">Details</span></th>
+        </tr></thead>
+        <tbody id="ix-body">
+<tr class="ix-row" data-verdict="CHEAPER" data-gpu="MI300X"
+    data-change="-32.443" data-before="1.672723" data-after="1.130232" data-date="2026-10-01">
+  <td class="ix-model"><b>Qwen2.5-72B-Instruct</b><span class="ix-sub">vLLM 0.23.1 (ROCm)</span></td>
+  <td class="ix-gpu" data-label="GPU">1x AMD MI300X (Hot Aisle)</td>
+  <td class="ix-change" data-label="Change">BF16 → pre-quantized FP8 checkpoint (RedHatAI/Qwen2.5-72B-Instruct-FP8-dynamic)</td>
+  <td class="num" data-label="Before $/M">$1.67<span class="ix-sub">$1.67–$1.68</span></td>
+  <td class="num ix-after" data-label="After $/M"><span class="ix-val">$1.13<span class="ix-sub">$1.13–$1.13</span></span></td>
+  <td class="num ix-pct v-cheap" data-label="Change"><span class="ix-val">-32.5%</span></td>
+  <td class="ix-v" data-label="Verdict"><span class="ix-verdict v-cheap">CHEAPER</span><span class="ix-sub">3 of 3</span></td>
+  <td class="ix-btn"><button class="ix-more" type="button" aria-expanded="false" aria-controls="ix-d0">Details</button></td>
+</tr>
+<tr class="ix-detail" id="ix-d0"><td colspan="8"><div class="ix-detail-in">
+  <p class="ix-caveat">FP8 server ran on the VM&#x27;s second MI300X, the BF16 baseline on the first (same GPU model; Throttle flagged the different endpoint).</p>
+  <dl class="ix-facts">
+    <div><dt>Answers</dt><dd>6 of 6 sample answers correct and coherent (temperature 0); output length per request within 1% of BF16.</dd></div>
+    <div><dt>GPU price</dt><dd>$2.99/hr <b class="tag">ASSUMED</b> Hot Aisle on-demand list price per MI300X GPU. Tokens and time are <b class="tag tag-b">MEASURED</b>.</dd></div>
+    <div><dt>Workload</dt><dd>5 blocks × 32 requests, concurrency 32, max 256 output tokens, temperature 0, cache: cold</dd></div>
+    <div><dt>Baseline repeats</dt><dd>$1.67, $1.67, $1.67, $1.67 (noise bound 0.6%)</dd></div>
+    <div><dt>Method</dt><dd>throttle check (throttle-pro 0.5.1), re-judged with the OUTPUT CHANGED rule. Date: 2026-10-01.</dd></div>
+    <div><dt>Source</dt><dd>the saved check history (summary below is Throttle's own sanitized <code>--share-id</code> output)</dd></div>
+  </dl>
+  <p class="ix-checks-h">Every check of this change</p><ul class="ix-checks"><li><code>20261001T063815Z-8ece234d</code> $1.13 ($1.13–$1.13) vs $1.67: <b class='v-cheap'>CHEAPER</b> -32.5%, noise bound 0.8%, output length +0.7%</li><li><code>20261001T063859Z-c8674c58</code> $1.13 ($1.13–$1.13) vs $1.67: <b class='v-cheap'>CHEAPER</b> -32.4%, noise bound 0.8%, output length +0.8%</li><li><code>20261001T063943Z-bcd9daf2</code> $1.13 ($1.13–$1.13) vs $1.67: <b class='v-cheap'>CHEAPER</b> -32.4%, noise bound 0.6%, output length +0.4%</li></ul>
+  <pre class='ix-share'>## Throttle check: Qwen/Qwen2.5-72B-Instruct
+
+| | |
+|---|---|
+| Throttle version | 0.5.1 |
+| Engine | vllm-rocm (from --config) |
+| GPU | MI300X |
+| Model | Qwen/Qwen2.5-72B-Instruct |
+| GPU hourly rate | $2.99/hr (ASSUMED, user-supplied) |
+| Workload | 5 blocks x 32 requests, concurrency 32, max 256 output tokens, temperature 0, 8 built-in prompts (sha256 787fc93d62e1) |
+| Prompt cache | cold (unique prompt per request) |
+| Label | fp8-prequant |
+| Check | 20261001T063943Z-bcd9daf2 (2026-10-01) |
+
+**Result:** $1.13 per million output tokens (95% CI $1.13 to $1.13, 5 blocks) [MEASURED]
+
+**Compared with** check 20261001T062110Z-87304e73:
+
+- before: $1.67/M output tokens (95% CI $1.67 to $1.68)
+- after: $1.13/M output tokens (95% CI $1.13 to $1.13)
+- change: -32.4%
+- noise floor: calibrated: bound 0.6% (t x sqrt(2) x 0.2% run-to-run SD, 4 df)
+- **Verdict: CHEAPER**, the -32.4% change is larger than the run-to-run noise bound (0.6% = t x sqrt(2) x 0.2% run-to-run SD, 4 df) and the 95% confidence intervals do not overlap
+
+**What changed in config:**
+
+- endpoint: changed (URLs are not shared)
+- `config.quantization`: none -&gt; fp8-redhat-dynamic
+- `label`: baseline -&gt; fp8-prequant
+- `server.[host removed]`: Qwen/Qwen2.5-72B-Instruct -&gt; RedHatAI/Qwen2.5-72B-Instruct-FP8-dynamic
+- `vllm.cache_config.num_gpu_blocks`: 7776 -&gt; 21116
+
+_Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are included; config values that look like secrets are masked._</pre>
+</div></td></tr>
+<tr class="ix-row is-flagged" data-verdict="OUTPUT CHANGED" data-gpu="MI300X"
+    data-change="-47.422" data-before="1.672723" data-after="0.872061" data-date="2026-10-01">
+  <td class="ix-model"><b>Qwen2.5-72B-Instruct</b><span class="ix-sub">vLLM 0.23.1 (ROCm)</span></td>
+  <td class="ix-gpu" data-label="GPU">1x AMD MI300X (Hot Aisle)</td>
+  <td class="ix-change" data-label="Change">BF16 → vLLM on-the-fly FP8 (<code>--quantization fp8</code>)</td>
+  <td class="num" data-label="Before $/M">$1.67<span class="ix-sub">$1.67–$1.68</span></td>
+  <td class="num ix-after" data-label="After $/M"><span class="ix-val">$0.872<span class="ix-sub">$0.868–$0.876</span></span></td>
+  <td class="num ix-pct v-flag" data-label="Change"><span class="ix-val">-47.9 to -47.0%</span></td>
+  <td class="ix-v" data-label="Verdict"><span class="ix-verdict v-flag">OUTPUT CHANGED</span><span class="ix-sub">3 of 3</span></td>
+  <td class="ix-btn"><button class="ix-more" type="button" aria-expanded="false" aria-controls="ix-d1">Details</button></td>
+</tr>
+<tr class="ix-detail" id="ix-d1"><td colspan="8"><div class="ix-detail-in">
+  <p class="ix-flag-note"><b>Not a saving.</b> Looked 47% cheaper per token; excluded as a saving because the answers changed shape.</p>
+  <dl class="ix-facts">
+    <div><dt>Answers</dt><dd>Not sampled. Every request ran to the 256-token cap (8,016–8,192 output tokens per 32-request block vs 6,328 for BF16).</dd></div>
+    <div><dt>GPU price</dt><dd>$2.99/hr <b class="tag">ASSUMED</b> Hot Aisle on-demand list price per MI300X GPU. Tokens and time are <b class="tag tag-b">MEASURED</b>.</dd></div>
+    <div><dt>Workload</dt><dd>5 blocks × 32 requests, concurrency 32, max 256 output tokens, temperature 0, cache: cold</dd></div>
+    <div><dt>Baseline repeats</dt><dd>$1.67, $1.67, $1.67, $1.67 (noise bound 2.5%)</dd></div>
+    <div><dt>Method</dt><dd>throttle check (throttle-pro 0.5.1), re-judged with the OUTPUT CHANGED rule. Date: 2026-10-01.</dd></div>
+    <div><dt>Source</dt><dd>the saved check history (summary below is Throttle's own sanitized <code>--share-id</code> output)</dd></div>
+  </dl>
+  <p class="ix-checks-h">Every check of this change</p><ul class="ix-checks"><li><code>20261001T062514Z-0df61c4e</code> $0.887 ($0.859–$0.915) vs $1.67: <b class='v-flag'>OUTPUT CHANGED</b> -47.0%, noise bound 0.8%, output length +28.3%</li><li><code>20261001T062604Z-47da7f94</code> $0.872 ($0.869–$0.875) vs $1.67: <b class='v-flag'>OUTPUT CHANGED</b> -47.9%, noise bound 0.8%, output length +29.5%</li><li><code>20261001T062654Z-8d20c47c</code> $0.872 ($0.868–$0.876) vs $1.67: <b class='v-flag'>OUTPUT CHANGED</b> -47.9%, noise bound 2.5%, output length +29.5%</li></ul>
+  <pre class='ix-share'>## Throttle check: Qwen/Qwen2.5-72B-Instruct
+
+| | |
+|---|---|
+| Throttle version | 0.5.1 |
+| Engine | vllm-rocm (from --config) |
+| GPU | MI300X |
+| Model | Qwen/Qwen2.5-72B-Instruct |
+| GPU hourly rate | $2.99/hr (ASSUMED, user-supplied) |
+| Workload | 5 blocks x 32 requests, concurrency 32, max 256 output tokens, temperature 0, 8 built-in prompts (sha256 787fc93d62e1) |
+| Prompt cache | cold (unique prompt per request) |
+| Label | fp8 |
+| Check | 20261001T062654Z-8d20c47c (2026-10-01) |
+
+**Result:** $0.8721 per million output tokens (95% CI $0.8682 to $0.8759, 5 blocks) [MEASURED]
+
+**Compared with** check 20261001T062110Z-87304e73:
+
+- before: $1.67/M output tokens (95% CI $1.67 to $1.68)
+- after: $0.8721/M output tokens (95% CI $0.8682 to $0.8759)
+- change: -47.9%
+- noise floor: calibrated: bound 2.5% (t x sqrt(2) x 0.6% run-to-run SD, 4 df)
+- **Verdict: OUTPUT CHANGED**, the server&#x27;s answers changed: output length per request moved +29.5% (197.7 -&gt; 256.0 tokens; more than 10%). At temperature 0 the same prompts should get the same answers, so this $/M difference may come from broken or padded output, not a faster server. Read a few answers from both configs before trusting it
+
+**What changed in config:**
+
+- `config.quantization`: none -&gt; fp8
+- `label`: baseline -&gt; fp8
+- `vllm.cache_config.num_gpu_blocks`: 7776 -&gt; 21166
+
+_Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are included; config values that look like secrets are masked._</pre>
+</div></td></tr>
+<tr class="ix-row is-flagged" data-verdict="OUTPUT CHANGED" data-gpu="MI300X"
+    data-change="-40.965" data-before="0.760828" data-after="0.450349" data-date="2026-10-01">
+  <td class="ix-model"><b>Qwen2.5-32B-Instruct</b><span class="ix-sub">vLLM 0.23.1 (ROCm)</span></td>
+  <td class="ix-gpu" data-label="GPU">1x AMD MI300X (Hot Aisle)</td>
+  <td class="ix-change" data-label="Change">BF16 → vLLM on-the-fly FP8 (<code>--quantization fp8</code>)</td>
+  <td class="num" data-label="Before $/M">$0.761<span class="ix-sub">$0.751–$0.771</span></td>
+  <td class="num ix-after" data-label="After $/M"><span class="ix-val">$0.450<span class="ix-sub">$0.447–$0.454</span></span></td>
+  <td class="num ix-pct v-flag" data-label="Change"><span class="ix-val">-41.1 to -40.8%</span></td>
+  <td class="ix-v" data-label="Verdict"><span class="ix-verdict v-flag">OUTPUT CHANGED</span><span class="ix-sub">3 of 3</span></td>
+  <td class="ix-btn"><button class="ix-more" type="button" aria-expanded="false" aria-controls="ix-d2">Details</button></td>
+</tr>
+<tr class="ix-detail" id="ix-d2"><td colspan="8"><div class="ix-detail-in">
+  <p class="ix-flag-note"><b>Not a saving.</b> Looked 41% cheaper per token; the answers were broken.</p>
+  <dl class="ix-facts">
+    <div><dt>Answers</dt><dd>Broken: asked to summarize WWI, it answered with 256 tokens of &quot;!!!!&quot;. Every request hit the token cap (8,192 vs 6,883 output tokens per block).</dd></div>
+    <div><dt>GPU price</dt><dd>$2.99/hr <b class="tag">ASSUMED</b> Hot Aisle on-demand list price per MI300X GPU. Tokens and time are <b class="tag tag-b">MEASURED</b>.</dd></div>
+    <div><dt>Workload</dt><dd>5 blocks × 32 requests, concurrency 32, max 256 output tokens, temperature 0, cache: cold</dd></div>
+    <div><dt>Baseline repeats</dt><dd>$0.760, $0.776, $0.782, $0.761 (noise bound 4.9%)</dd></div>
+    <div><dt>Method</dt><dd>throttle check (throttle-pro 0.5.1), re-judged with the OUTPUT CHANGED rule. Date: 2026-10-01.</dd></div>
+    <div><dt>Source</dt><dd>the saved check history (summary below is Throttle's own sanitized <code>--share-id</code> output)</dd></div>
+  </dl>
+  <p class="ix-checks-h">Every check of this change</p><ul class="ix-checks"><li><code>20261001T062119Z-0df04e1d</code> $0.448 ($0.445–$0.451) vs $0.761: <b class='v-flag'>OUTPUT CHANGED</b> -41.1%, noise bound 6.4%, output length +17.7%</li><li><code>20261001T062142Z-444dc655</code> $0.449 ($0.446–$0.452) vs $0.761: <b class='v-flag'>OUTPUT CHANGED</b> -41.0%, noise bound 6.4%, output length +17.7%</li><li><code>20261001T062205Z-cfa31769</code> $0.450 ($0.447–$0.454) vs $0.761: <b class='v-flag'>OUTPUT CHANGED</b> -40.8%, noise bound 4.9%, output length +17.7%</li></ul>
+  <pre class='ix-share'>## Throttle check: Qwen/Qwen2.5-32B-Instruct
+
+| | |
+|---|---|
+| Throttle version | 0.5.1 |
+| Engine | vllm-rocm (from --config) |
+| GPU | MI300X |
+| Model | Qwen/Qwen2.5-32B-Instruct |
+| GPU hourly rate | $2.99/hr (ASSUMED, user-supplied) |
+| Workload | 5 blocks x 32 requests, concurrency 32, max 256 output tokens, temperature 0, 8 built-in prompts (sha256 787fc93d62e1) |
+| Prompt cache | cold (unique prompt per request) |
+| Label | fp8 |
+| Check | 20261001T062205Z-cfa31769 (2026-10-01) |
+
+**Result:** $0.4503 per million output tokens (95% CI $0.4466 to $0.4541, 5 blocks) [MEASURED]
+
+**Compared with** check 20261001T061821Z-35ff548e:
+
+- before: $0.7608/M output tokens (95% CI $0.7508 to $0.7709)
+- after: $0.4503/M output tokens (95% CI $0.4466 to $0.4541)
+- change: -40.8%
+- noise floor: calibrated: bound 4.9% (t x sqrt(2) x 1.2% run-to-run SD, 4 df)
+- **Verdict: OUTPUT CHANGED**, the server&#x27;s answers changed: output length per request moved +17.7% (217.5 -&gt; 256.0 tokens; more than 10%). At temperature 0 the same prompts should get the same answers, so this $/M difference may come from broken or padded output, not a faster server. Read a few answers from both configs before trusting it
+
+**What changed in config:**
+
+- `config.quantization`: none -&gt; fp8
+- `label`: baseline -&gt; fp8
+- `vllm.cache_config.num_gpu_blocks`: 28821 -&gt; 36228
+
+_Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are included; config values that look like secrets are masked._</pre>
+</div></td></tr>
+<tr class="ix-row" data-verdict="CHEAPER" data-gpu="MI300X"
+    data-change="-18.562" data-before="0.227222" data-after="0.185605" data-date="2026-10-01">
+  <td class="ix-model"><b>Qwen2.5-7B-Instruct</b><span class="ix-sub">vLLM 0.23.1 (ROCm)</span></td>
+  <td class="ix-gpu" data-label="GPU">1x AMD MI300X (Hot Aisle)</td>
+  <td class="ix-change" data-label="Change">BF16 → pre-quantized FP8 checkpoint (RedHatAI/Qwen2.5-7B-Instruct-FP8-dynamic)</td>
+  <td class="num" data-label="Before $/M">$0.227<span class="ix-sub">$0.222–$0.233</span></td>
+  <td class="num ix-after" data-label="After $/M"><span class="ix-val">$0.186<span class="ix-sub">$0.182–$0.190</span></span></td>
+  <td class="num ix-pct v-cheap" data-label="Change"><span class="ix-val">-18.8 to -18.3%</span></td>
+  <td class="ix-v" data-label="Verdict"><span class="ix-verdict v-cheap">CHEAPER</span><span class="ix-sub">3 of 3</span></td>
+  <td class="ix-btn"><button class="ix-more" type="button" aria-expanded="false" aria-controls="ix-d3">Details</button></td>
+</tr>
+<tr class="ix-detail" id="ix-d3"><td colspan="8"><div class="ix-detail-in">
+  
+  <dl class="ix-facts">
+    <div><dt>Answers</dt><dd>6 of 6 sample answers correct and coherent (temperature 0).</dd></div>
+    <div><dt>GPU price</dt><dd>$2.99/hr <b class="tag">ASSUMED</b> Hot Aisle on-demand list price per MI300X GPU. Tokens and time are <b class="tag tag-b">MEASURED</b>.</dd></div>
+    <div><dt>Workload</dt><dd>5 blocks × 32 requests, concurrency 32, max 256 output tokens, temperature 0, cache: cold</dd></div>
+    <div><dt>Baseline repeats</dt><dd>$0.227, $0.230, $0.228, $0.227 (noise bound 2.3%)</dd></div>
+    <div><dt>Method</dt><dd>throttle check (throttle-pro 0.5.1), re-judged with the OUTPUT CHANGED rule. Date: 2026-10-01.</dd></div>
+    <div><dt>Source</dt><dd>the saved check history (summary below is Throttle's own sanitized <code>--share-id</code> output)</dd></div>
+  </dl>
+  <p class="ix-checks-h">Every check of this change</p><ul class="ix-checks"><li><code>20261001T065636Z-39619c63</code> $0.184 ($0.178–$0.190) vs $0.227: <b class='v-cheap'>CHEAPER</b> -18.8%, noise bound 2.8%, output length +2.2%</li><li><code>20261001T065644Z-79de36b0</code> $0.186 ($0.180–$0.192) vs $0.227: <b class='v-cheap'>CHEAPER</b> -18.3%, noise bound 2.8%, output length +2.0%</li><li><code>20261001T065652Z-411315d1</code> $0.186 ($0.182–$0.190) vs $0.227: <b class='v-cheap'>CHEAPER</b> -18.3%, noise bound 2.3%, output length +2.0%</li></ul>
+  <pre class='ix-share'>## Throttle check: Qwen/Qwen2.5-7B-Instruct
+
+| | |
+|---|---|
+| Throttle version | 0.5.1 |
+| Engine | vllm-rocm (from --config) |
+| GPU | MI300X |
+| Model | Qwen/Qwen2.5-7B-Instruct |
+| GPU hourly rate | $2.99/hr (ASSUMED, user-supplied) |
+| Workload | 5 blocks x 32 requests, concurrency 32, max 256 output tokens, temperature 0, 8 built-in prompts (sha256 787fc93d62e1) |
+| Prompt cache | cold (unique prompt per request) |
+| Label | fp8-prequant |
+| Check | 20261001T065652Z-411315d1 (2026-10-01) |
+
+**Result:** $0.1856 per million output tokens (95% CI $0.1817 to $0.1895, 5 blocks) [MEASURED]
+
+**Compared with** check 20261001T054905Z-0f15c02b:
+
+- before: $0.2272/M output tokens (95% CI $0.2217 to $0.2327)
+- after: $0.1856/M output tokens (95% CI $0.1817 to $0.1895)
+- change: -18.3%
+- noise floor: calibrated: bound 2.3% (t x sqrt(2) x 0.6% run-to-run SD, 4 df)
+- **Verdict: CHEAPER**, the -18.3% change is larger than the run-to-run noise bound (2.3% = t x sqrt(2) x 0.6% run-to-run SD, 4 df) and the 95% confidence intervals do not overlap
+
+**What changed in config:**
+
+- `config.max_num_seqs`: default -&gt; (not set)
+- `config.quantization`: (not set) -&gt; fp8-redhat-dynamic
+- `label`: baseline -&gt; fp8-prequant
+- `server.[host removed]`: Qwen/Qwen2.5-7B-Instruct -&gt; RedHatAI/Qwen2.5-7B-Instruct-FP8-dynamic
+- `vllm.cache_config.num_gpu_blocks`: 186542 -&gt; 193570
+
+_Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are included; config values that look like secrets are masked._</pre>
+</div></td></tr>
+<tr class="ix-row" data-verdict="CHEAPER" data-gpu="MI300X"
+    data-change="-16.824" data-before="0.227222" data-after="0.186046" data-date="2026-10-01">
+  <td class="ix-model"><b>Qwen2.5-7B-Instruct</b><span class="ix-sub">vLLM 0.23.1 (ROCm)</span></td>
+  <td class="ix-gpu" data-label="GPU">1x AMD MI300X (Hot Aisle)</td>
+  <td class="ix-change" data-label="Change">BF16 → vLLM on-the-fly FP8 (<code>--quantization fp8</code>)</td>
+  <td class="num" data-label="Before $/M">$0.227<span class="ix-sub">$0.222–$0.233</span></td>
+  <td class="num ix-after" data-label="After $/M"><span class="ix-val">$0.186<span class="ix-sub">$0.169–$0.203</span></span></td>
+  <td class="num ix-pct v-cheap" data-label="Change"><span class="ix-val">-18.1 to -15.5%</span></td>
+  <td class="ix-v" data-label="Verdict"><span class="ix-verdict v-cheap">CHEAPER</span><span class="ix-sub">2 of 2</span></td>
+  <td class="ix-btn"><button class="ix-more" type="button" aria-expanded="false" aria-controls="ix-d4">Details</button></td>
+</tr>
+<tr class="ix-detail" id="ix-d4"><td colspan="8"><div class="ix-detail-in">
+  
+  <dl class="ix-facts">
+    <div><dt>Answers</dt><dd>6 of 6 sample answers correct and coherent (temperature 0); output length +6–9% (under the 10% OUTPUT CHANGED line).</dd></div>
+    <div><dt>GPU price</dt><dd>$2.99/hr <b class="tag">ASSUMED</b> Hot Aisle on-demand list price per MI300X GPU. Tokens and time are <b class="tag tag-b">MEASURED</b>.</dd></div>
+    <div><dt>Workload</dt><dd>5 blocks × 32 requests, concurrency 32, max 256 output tokens, temperature 0, cache: cold</dd></div>
+    <div><dt>Baseline repeats</dt><dd>$0.227, $0.230, $0.228, $0.227 (noise bound 2.8%)</dd></div>
+    <div><dt>Method</dt><dd>throttle check (throttle-pro 0.5.1), re-judged with the OUTPUT CHANGED rule. Date: 2026-10-01.</dd></div>
+    <div><dt>Source</dt><dd>the saved check history (summary below is Throttle's own sanitized <code>--share-id</code> output)</dd></div>
+  </dl>
+  <p class="ix-checks-h">Every check of this change</p><ul class="ix-checks"><li><code>20261001T055339Z-d24e1ac8</code> $0.192 ($0.180–$0.204) vs $0.227: <b class='v-cheap'>CHEAPER</b> -15.5%, noise bound 2.8%, output length +6.3%</li><li><code>20261001T055349Z-ec722b14</code> $0.186 ($0.169–$0.203) vs $0.227: <b class='v-cheap'>CHEAPER</b> -18.1%, noise bound 2.8%, output length +9.1%</li></ul>
+  <pre class='ix-share'>## Throttle check: Qwen/Qwen2.5-7B-Instruct
+
+| | |
+|---|---|
+| Throttle version | 0.5.1 |
+| Engine | vllm-rocm (from --config) |
+| GPU | MI300X |
+| Model | Qwen/Qwen2.5-7B-Instruct |
+| GPU hourly rate | $2.99/hr (ASSUMED, user-supplied) |
+| Workload | 5 blocks x 32 requests, concurrency 32, max 256 output tokens, temperature 0, 8 built-in prompts (sha256 787fc93d62e1) |
+| Prompt cache | cold (unique prompt per request) |
+| Label | fp8 |
+| Check | 20261001T055349Z-ec722b14 (2026-10-01) |
+
+**Result:** $0.1860 per million output tokens (95% CI $0.1691 to $0.2030, 5 blocks) [MEASURED]
+
+**Compared with** check 20261001T054905Z-0f15c02b:
+
+- before: $0.2272/M output tokens (95% CI $0.2217 to $0.2327)
+- after: $0.1860/M output tokens (95% CI $0.1691 to $0.2030)
+- change: -18.1%
+- noise floor: calibrated: bound 2.8% (t x sqrt(2) x 0.6% run-to-run SD, 3 df)
+- **Verdict: CHEAPER**, the -18.1% change is larger than the run-to-run noise bound (2.8% = t x sqrt(2) x 0.6% run-to-run SD, 3 df) and the 95% confidence intervals do not overlap
+
+**What changed in config:**
+
+- `config.quantization`: (not set) -&gt; fp8
+- `label`: baseline -&gt; fp8
+- `vllm.cache_config.num_gpu_blocks`: 186542 -&gt; 193542
+
+_Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are included; config values that look like secrets are masked._</pre>
+</div></td></tr>
+<tr class="ix-row" data-verdict="MORE EXPENSIVE" data-gpu="MI300X"
+    data-change="210.706" data-before="0.227222" data-after="0.699839" data-date="2026-10-01">
+  <td class="ix-model"><b>Qwen2.5-7B-Instruct</b><span class="ix-sub">vLLM 0.23.1 (ROCm)</span></td>
+  <td class="ix-gpu" data-label="GPU">1x AMD MI300X (Hot Aisle)</td>
+  <td class="ix-change" data-label="Change">vLLM defaults → <code>--max-num-seqs 8</code> (at 32 concurrent requests)</td>
+  <td class="num" data-label="Before $/M">$0.227<span class="ix-sub">$0.222–$0.233</span></td>
+  <td class="num ix-after" data-label="After $/M"><span class="ix-val">$0.700<span class="ix-sub">$0.684–$0.716</span></span></td>
+  <td class="num ix-pct v-exp" data-label="Change"><span class="ix-val">+208.0 to +213.4%</span></td>
+  <td class="ix-v" data-label="Verdict"><span class="ix-verdict v-exp">MORE EXPENSIVE</span><span class="ix-sub">4 of 4</span></td>
+  <td class="ix-btn"><button class="ix-more" type="button" aria-expanded="false" aria-controls="ix-d5">Details</button></td>
+</tr>
+<tr class="ix-detail" id="ix-d5"><td colspan="8"><div class="ix-detail-in">
+  <p class="ix-caveat">A deliberately bad setting for this load: shows what a harmless-looking flag costs.</p>
+  <dl class="ix-facts">
+    <div><dt>Answers</dt><dd>Not sampled; output length within 2.5% of baseline.</dd></div>
+    <div><dt>GPU price</dt><dd>$2.99/hr <b class="tag">ASSUMED</b> Hot Aisle on-demand list price per MI300X GPU. Tokens and time are <b class="tag tag-b">MEASURED</b>.</dd></div>
+    <div><dt>Workload</dt><dd>5 blocks × 32 requests, concurrency 32, max 256 output tokens, temperature 0, cache: cold</dd></div>
+    <div><dt>Baseline repeats</dt><dd>$0.227, $0.230, $0.228, $0.227 (noise bound 2.8%)</dd></div>
+    <div><dt>Method</dt><dd>throttle check (throttle-pro 0.5.1), re-judged with the OUTPUT CHANGED rule. Date: 2026-10-01.</dd></div>
+    <div><dt>Source</dt><dd>the saved check history (summary below is Throttle's own sanitized <code>--share-id</code> output)</dd></div>
+  </dl>
+  <p class="ix-checks-h">Every check of this change</p><ul class="ix-checks"><li><code>20261001T055113Z-acda5e76</code> $0.700 ($0.682–$0.718) vs $0.227: <b class='v-exp'>MORE EXPENSIVE</b> +208.2%, noise bound 2.8%, output length -0.3%</li><li><code>20261001T055624Z-9f099538</code> $0.701 ($0.681–$0.720) vs $0.227: <b class='v-exp'>MORE EXPENSIVE</b> +208.4%, noise bound 2.8%, output length +0.4%</li><li><code>20261001T055652Z-4340d2de</code> $0.712 ($0.692–$0.732) vs $0.227: <b class='v-exp'>MORE EXPENSIVE</b> +213.4%, noise bound 2.1%, output length -1.5%</li><li><code>20261001T055720Z-7973bb09</code> $0.700 ($0.684–$0.716) vs $0.227: <b class='v-exp'>MORE EXPENSIVE</b> +208.0%, noise bound 2.8%, output length -2.3%</li></ul>
+  <pre class='ix-share'>## Throttle check: Qwen/Qwen2.5-7B-Instruct
+
+| | |
+|---|---|
+| Throttle version | 0.5.1 |
+| Engine | vllm-rocm (from --config) |
+| GPU | MI300X |
+| Model | Qwen/Qwen2.5-7B-Instruct |
+| GPU hourly rate | $2.99/hr (ASSUMED, user-supplied) |
+| Workload | 5 blocks x 32 requests, concurrency 32, max 256 output tokens, temperature 0, 8 built-in prompts (sha256 787fc93d62e1) |
+| Prompt cache | cold (unique prompt per request) |
+| Label | seqs8 |
+| Check | 20261001T055720Z-7973bb09 (2026-10-01) |
+
+**Result:** $0.6998 per million output tokens (95% CI $0.6839 to $0.7158, 5 blocks) [MEASURED]
+
+**Compared with** check 20261001T054905Z-0f15c02b:
+
+- before: $0.2272/M output tokens (95% CI $0.2217 to $0.2327)
+- after: $0.6998/M output tokens (95% CI $0.6839 to $0.7158)
+- change: +208.0%
+- noise floor: calibrated: bound 2.8% (t x sqrt(2) x 0.8% run-to-run SD, 5 df)
+- **Verdict: MORE EXPENSIVE**, the +208.0% change is larger than the run-to-run noise bound (2.8% = t x sqrt(2) x 0.8% run-to-run SD, 5 df) and the 95% confidence intervals do not overlap
+
+**What changed in config:**
+
+- `config.max_num_seqs`: default -&gt; 8
+- `label`: baseline -&gt; seqs8
+- `vllm.cache_config.num_gpu_blocks`: 186542 -&gt; 187972
+
+_Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are included; config values that look like secrets are masked._</pre>
+</div></td></tr>
+<tr class="ix-row" data-verdict="CHEAPER" data-gpu="Apple M3 Pro"
+    data-change="-63.909" data-before="5.928474" data-after="2.010928" data-date="2026-09-30">
+  <td class="ix-model"><b>llama3.2:1b</b><span class="ix-sub">Ollama 0.32.5</span></td>
+  <td class="ix-gpu" data-label="GPU">Apple M3 Pro (MacBook)</td>
+  <td class="ix-change" data-label="Change">OLLAMA_NUM_PARALLEL 1 → 4</td>
+  <td class="num" data-label="Before $/M">$5.93<span class="ix-sub">$5.80–$6.06</span></td>
+  <td class="num ix-after" data-label="After $/M"><span class="ix-val">$2.01<span class="ix-sub">$1.96–$2.06</span></span></td>
+  <td class="num ix-pct v-cheap" data-label="Change"><span class="ix-val">-66.1 to -61.7%</span></td>
+  <td class="ix-v" data-label="Verdict"><span class="ix-verdict v-cheap">CHEAPER</span><span class="ix-sub">2 of 2</span></td>
+  <td class="ix-btn"><button class="ix-more" type="button" aria-expanded="false" aria-controls="ix-d6">Details</button></td>
+</tr>
+<tr class="ix-detail" id="ix-d6"><td colspan="8"><div class="ix-detail-in">
+  <p class="ix-caveat">Laptop; the $/hr is an assumed rate for illustration.</p>
+  <dl class="ix-facts">
+    <div><dt>Answers</dt><dd>Not sampled.</dd></div>
+    <div><dt>GPU price</dt><dd>$1.50/hr <b class="tag">ASSUMED</b> assumed $1.50/hr (laptop, no real bill). Tokens and time are <b class="tag tag-b">MEASURED</b>.</dd></div>
+    <div><dt>Workload</dt><dd>5 blocks × 8 requests, concurrency 4, max 128 output tokens, temperature 0, cache: cold</dd></div>
+    <div><dt>Baseline repeats</dt><dd>$6.42, $6.22, $6.10, $5.93 (noise bound 15.0%)</dd></div>
+    <div><dt>Method</dt><dd>throttle check (throttle-pro 0.5.1), re-judged with the OUTPUT CHANGED rule. Date: 2026-09-30.</dd></div>
+    <div><dt>Source</dt><dd>the saved check history (summary below is Throttle's own sanitized <code>--share-id</code> output)</dd></div>
+  </dl>
+  <p class="ix-checks-h">Every check of this change</p><ul class="ix-checks"><li><code>20260930T064318Z-aa845aa6</code> $2.27 ($1.99–$2.54) vs $5.93: <b class='v-cheap'>CHEAPER</b> -61.7%, noise bound 15.0%, output length -2.1%</li><li><code>20260930T064345Z-bef600a8</code> $2.01 ($1.96–$2.06) vs $5.93: <b class='v-cheap'>CHEAPER</b> -66.1%, noise bound 15.0%, output length +0.0%</li></ul>
+  <pre class='ix-share'>## Throttle check: llama3.2:1b
+
+| | |
+|---|---|
+| Throttle version | 0.5.1 |
+| Engine | Ollama (likely; /v1/models owned_by=library) |
+| GPU | not given (add --config gpu=NAME) |
+| Model | llama3.2:1b |
+| GPU hourly rate | $1.50/hr (ASSUMED, user-supplied) |
+| Workload | 5 blocks x 8 requests, concurrency 4, max 128 output tokens, temperature 0, 8 built-in prompts (sha256 787fc93d62e1) |
+| Prompt cache | cold (unique prompt per request) |
+| Label | parallel-4 |
+| Check | 20260930T064345Z-bef600a8 (2026-09-30) |
+
+**Result:** $2.01 per million output tokens (95% CI $1.96 to $2.06, 5 blocks) [MEASURED]
+
+**Compared with** check 20260930T064223Z-93b28975:
+
+- before: $5.93/M output tokens (95% CI $5.80 to $6.06)
+- after: $2.01/M output tokens (95% CI $1.96 to $2.06)
+- change: -66.1%
+- noise floor: calibrated: bound 15.0% (t x sqrt(2) x 3.3% run-to-run SD, 3 df)
+- **Verdict: CHEAPER**, the -66.1% change is larger than the run-to-run noise bound (15.0% = t x sqrt(2) x 3.3% run-to-run SD, 3 df) and the 95% confidence intervals do not overlap
+
+**What changed in config:**
+
+- `config.ollama_num_parallel`: 1 -&gt; 4
+- `label`: parallel-1 -&gt; parallel-4
+
+_Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are included; config values that look like secrets are masked._</pre>
+</div></td></tr>
+<tr class="ix-row" data-verdict="CHEAPER" data-gpu="Apple M3 Pro"
+    data-change="-9.723" data-before="5.175723" data-after="4.700297" data-date="2026-10-01">
+  <td class="ix-model"><b>llama3.2:3b</b><span class="ix-sub">Ollama 0.32.5</span></td>
+  <td class="ix-gpu" data-label="GPU">Apple M3 Pro (MacBook)</td>
+  <td class="ix-change" data-label="Change">Q4_K_M → Q8_0 weights (OLLAMA_NUM_PARALLEL=4)</td>
+  <td class="num" data-label="Before $/M">$5.18<span class="ix-sub">$5.08–$5.27</span></td>
+  <td class="num ix-after" data-label="After $/M"><span class="ix-val">$4.70<span class="ix-sub">$4.53–$4.87</span></span></td>
+  <td class="num ix-pct v-cheap" data-label="Change"><span class="ix-val">-10.3 to -9.2%</span></td>
+  <td class="ix-v" data-label="Verdict"><span class="ix-verdict v-cheap">CHEAPER</span><span class="ix-sub">3 of 3</span></td>
+  <td class="ix-btn"><button class="ix-more" type="button" aria-expanded="false" aria-controls="ix-d7">Details</button></td>
+</tr>
+<tr class="ix-detail" id="ix-d7"><td colspan="8"><div class="ix-detail-in">
+  <p class="ix-caveat">Laptop; the $/hr is an assumed rate. Q4/Q8 order was interleaved to rule out drift.</p>
+  <dl class="ix-facts">
+    <div><dt>Answers</dt><dd>Not sampled.</dd></div>
+    <div><dt>GPU price</dt><dd>$1.50/hr <b class="tag">ASSUMED</b> assumed $1.50/hr (laptop, no real bill). Tokens and time are <b class="tag tag-b">MEASURED</b>.</dd></div>
+    <div><dt>Workload</dt><dd>5 blocks × 8 requests, concurrency 4, max 128 output tokens, temperature 0, cache: cold</dd></div>
+    <div><dt>Baseline repeats</dt><dd>$5.17, $5.22, $5.28, $5.18 (noise bound 3.9%)</dd></div>
+    <div><dt>Method</dt><dd>throttle check (throttle-pro 0.5.1), re-judged with the OUTPUT CHANGED rule. Date: 2026-10-01.</dd></div>
+    <div><dt>Source</dt><dd>the saved check history (summary below is Throttle's own sanitized <code>--share-id</code> output)</dd></div>
+  </dl>
+  <p class="ix-checks-h">Every check of this change</p><ul class="ix-checks"><li><code>20261001T034603Z-393086ba</code> $4.64 ($4.54–$4.74) vs $5.18: <b class='v-cheap'>CHEAPER</b> -10.3%, noise bound 4.5%, output length +0.0%</li><li><code>20261001T034701Z-3909ebcc</code> $4.69 ($4.42–$4.95) vs $5.18: <b class='v-cheap'>CHEAPER</b> -9.4%, noise bound 4.5%, output length +0.3%</li><li><code>20261001T035022Z-29452cbf</code> $4.70 ($4.53–$4.87) vs $5.18: <b class='v-cheap'>CHEAPER</b> -9.2%, noise bound 3.9%, output length -0.3%</li></ul>
+  <pre class='ix-share'>## Throttle check: llama3.2:3b-instruct-q8_0
+
+| | |
+|---|---|
+| Throttle version | 0.5.1 |
+| Engine | Ollama (likely; /v1/models owned_by=library) |
+| GPU | not given (add --config gpu=NAME) |
+| Model | llama3.2:3b-instruct-q8_0 |
+| GPU hourly rate | $1.50/hr (ASSUMED, user-supplied) |
+| Workload | 5 blocks x 8 requests, concurrency 4, max 128 output tokens, temperature 0, 8 built-in prompts (sha256 787fc93d62e1) |
+| Prompt cache | cold (unique prompt per request) |
+| Label | q8 |
+| Check | 20261001T035022Z-29452cbf (2026-10-01) |
+
+**Result:** $4.70 per million output tokens (95% CI $4.53 to $4.87, 5 blocks) [MEASURED]
+
+**Compared with** check 20261001T034456Z-06d7816a:
+
+- before: $5.18/M output tokens (95% CI $5.08 to $5.27)
+- after: $4.70/M output tokens (95% CI $4.53 to $4.87)
+- change: -9.2%
+- noise floor: calibrated: bound 3.9% (t x sqrt(2) x 1.1% run-to-run SD, 6 df)
+- **Verdict: CHEAPER**, the -9.2% change is larger than the run-to-run noise bound (3.9% = t x sqrt(2) x 1.1% run-to-run SD, 6 df) and the 95% confidence intervals do not overlap
+
+**What changed in config:**
+
+- `config.quant`: Q4_K_M -&gt; Q8_0
+- `label`: q4 -&gt; q8
+- `request.model`: llama3.2:3b -&gt; llama3.2:3b-instruct-q8_0
+
+_Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are included; config values that look like secrets are masked._</pre>
+</div></td></tr>
+<tr class="ix-row" data-verdict="CHEAPER" data-gpu="Apple M3 Pro"
+    data-change="-33.726" data-before="8.633896" data-after="5.907831" data-date="2026-09-27">
+  <td class="ix-model"><b>llama3.2:3b → llama3.2:1b</b><span class="ix-sub">Ollama</span></td>
+  <td class="ix-gpu" data-label="GPU">Apple M3 Pro (MacBook)</td>
+  <td class="ix-change" data-label="Change">Swap llama3.2:3b for llama3.2:1b</td>
+  <td class="num" data-label="Before $/M">$8.63<span class="ix-sub">$8.27–$9.00</span></td>
+  <td class="num ix-after" data-label="After $/M"><span class="ix-val">$5.91<span class="ix-sub">$4.85–$6.97</span></span></td>
+  <td class="num ix-pct v-cheap" data-label="Change"><span class="ix-val">-35.9 to -31.6%</span></td>
+  <td class="ix-v" data-label="Verdict"><span class="ix-verdict v-cheap">CHEAPER</span><span class="ix-sub">2 of 2</span></td>
+  <td class="ix-btn"><button class="ix-more" type="button" aria-expanded="false" aria-controls="ix-d8">Details</button></td>
+</tr>
+<tr class="ix-detail" id="ix-d8"><td colspan="8"><div class="ix-detail-in">
+  <p class="ix-caveat">Laptop; the $/hr is an assumed rate.</p>
+  <dl class="ix-facts">
+    <div><dt>Answers</dt><dd>Not sampled. A smaller model is a quality trade-off Throttle does not judge.</dd></div>
+    <div><dt>GPU price</dt><dd>$1.50/hr <b class="tag">ASSUMED</b> assumed $1.50/hr (laptop, no real bill). Tokens and time are <b class="tag tag-b">MEASURED</b>.</dd></div>
+    <div><dt>Workload</dt><dd>3 blocks × 4 requests, concurrency 2, max 64 output tokens, temperature 0, cache: cold</dd></div>
+    <div><dt>Baseline repeats</dt><dd>$8.49, $8.68, $8.71, $8.63 (noise bound 5.0%)</dd></div>
+    <div><dt>Method</dt><dd>throttle check (throttle-pro 0.4.2), re-judged with the OUTPUT CHANGED rule. Date: 2026-09-27.</dd></div>
+    <div><dt>Source</dt><dd>the saved check history (summary below is Throttle's own sanitized <code>--share-id</code> output)</dd></div>
+  </dl>
+  <p class="ix-checks-h">Every check of this change</p><ul class="ix-checks"><li><code>20260927T194325Z-40935488</code> $5.54 ($5.51–$5.57) vs $8.63: <b class='v-cheap'>CHEAPER</b> -35.9%, noise bound 5.0%, output length +0.0%</li><li><code>20260927T194337Z-41f5e1f0</code> $5.91 ($4.85–$6.97) vs $8.63: <b class='v-cheap'>CHEAPER</b> -31.6%, noise bound 5.0%, output length +0.0%</li></ul>
+  <pre class='ix-share'>## Throttle check: llama3.2:1b
+
+| | |
+|---|---|
+| Throttle version | 0.4.2 |
+| Engine | Ollama (likely; /v1/models owned_by=library) |
+| GPU | apple-m3-pro |
+| Model | llama3.2:1b |
+| GPU hourly rate | $1.50/hr (ASSUMED, user-supplied) |
+| Workload | 3 blocks x 4 requests, concurrency 2, max 64 output tokens, temperature 0, 8 built-in prompts (sha256 787fc93d62e1) |
+| Prompt cache | cold (unique prompt per request) |
+| Label | smaller-1b |
+| Check | 20260927T194337Z-41f5e1f0 (2026-09-27) |
+
+**Result:** $5.91 per million output tokens (95% CI $4.85 to $6.97, 3 blocks) [MEASURED]
+
+**Compared with** check 20260927T194311Z-48d7dd1d:
+
+- before: $8.63/M output tokens (95% CI $8.27 to $9.00)
+- after: $5.91/M output tokens (95% CI $4.85 to $6.97)
+- change: -31.6%
+- noise floor: calibrated: bound 5.0% (t x sqrt(2) x 1.1% run-to-run SD, 3 df)
+- **Verdict: CHEAPER**, the -31.6% change is larger than the run-to-run noise bound (5.0% = t x sqrt(2) x 1.1% run-to-run SD, 3 df) and the 95% confidence intervals do not overlap
+
+**What changed in config:**
+
+- `label`: baseline-3b -&gt; smaller-1b
+- `request.model`: llama3.2:3b -&gt; llama3.2:1b
+
+_Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are included; config values that look like secrets are masked._</pre>
+</div></td></tr>
+<tr class="ix-row" data-verdict="CHEAPER" data-gpu="A100"
+    data-change="-68.601" data-before="0.745891" data-after="0.234203" data-date="2026-08-17">
+  <td class="ix-model"><b>Qwen2.5-0.5B-Instruct</b><span class="ix-sub">vLLM 0.16.0</span></td>
+  <td class="ix-gpu" data-label="GPU">1x NVIDIA A100 80GB PCIe (RunPod)</td>
+  <td class="ix-change" data-label="Change">max_num_seqs 1 → 8</td>
+  <td class="num" data-label="Before $/M">$0.746<span class="ix-sub"></span></td>
+  <td class="num ix-after" data-label="After $/M"><span class="ix-val">$0.234<span class="ix-sub"></span></span></td>
+  <td class="num ix-pct v-cheap" data-label="Change"><span class="ix-val">-68.6%</span></td>
+  <td class="ix-v" data-label="Verdict"><span class="ix-verdict v-cheap">CHEAPER</span><span class="ix-sub">decision-eligible (golden protocol)</span></td>
+  <td class="ix-btn"><button class="ix-more" type="button" aria-expanded="false" aria-controls="ix-d9">Details</button></td>
+</tr>
+<tr class="ix-detail" id="ix-d9"><td colspan="8"><div class="ix-detail-in">
+  <p class="ix-caveat">A deliberately bad baseline (one sequence at a time) on a small model; it shows the measurement, not a saving to expect.</p>
+  <dl class="ix-facts">
+    <div><dt>Answers</dt><dd>Not sampled.</dd></div>
+    <div><dt>GPU price</dt><dd>$1.39/hr <b class="tag">ASSUMED</b> RunPod on-demand rate at run time. Tokens and time are <b class="tag tag-b">MEASURED</b>.</dd></div>
+    <div><dt>Workload</dt><dd>3 blocks × 67 requests, concurrency 8, max 128 output tokens, temperature 0, cache: prefix caching disabled</dd></div>
+    <div><dt>Baseline repeats</dt><dd>$0.748, $0.746, $0.745</dd></div>
+    <div><dt>Method</dt><dd>throttle golden: six-position counterbalanced protocol (3 baseline, 3 candidate positions), decision_eligible: true. Date: 2026-08-17.</dd></div>
+    <div><dt>Source</dt><dd><a href="https://github.com/KushagraKanaujia/throttle/tree/main/validation/golden-live-20260817" target="_blank" rel="noopener">raw artifacts in the Throttle repo</a></dd></div>
+  </dl>
+  
+  
+</div></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="ix-foot-note">$ per million output tokens = measured wall-clock time × the GPU's hourly price ÷ measured output tokens. Ranges show every check of a change; CIs are 95%. One workload per row: your prompts, concurrency and output lengths will give different numbers. <a href="/assets/data/throttle-index.json">Download the data (JSON)</a>.</p>
+
+    <div class="prose ix-prose">
+      <h2 id="submit">Add your result</h2>
+      <p>The Index grows from real checks. If you serve a model on your own or rented GPUs, measure one change and send it in:</p>
+      <ol>
+        <li>Install Throttle: <code>pipx install throttle-pro</code></li>
+        <li>Run <code>throttle check</code> 3 times on your current config to measure your noise, then once after your change.</li>
+        <li>Read a few answers from both configs (the FP8 rows above are why).</li>
+        <li>Run <code>throttle check --share-id &lt;id&gt;</code> and paste the summary into a <a href="https://github.com/KushagraKanaujia/throttle/issues/new?template=index-submission.yml" target="_blank" rel="noopener">new Index submission</a>. The summary leaves out URLs, hostnames and anything that looks like a secret.</li>
+      </ol>
+      <p>Every accepted row names its GPU, engine, workload and the $/hr it assumed. Nothing is added without the check output behind it.</p>
+
+      <h2 id="pick">You pick, we measure</h2>
+      <p>Every week the community votes on one serving question, and we rent the GPU, run it with Throttle and add the result here, including when the answer is "no winner." Want a question measured? Open a <a href="https://github.com/KushagraKanaujia/throttle/issues/new?template=index-submission.yml" target="_blank" rel="noopener">request on GitHub</a> or email <b>kushthrottle@gmail.com</b>.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <a class="brand" href="/"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg><span>throttle</span></a>
+    <p>Measures, caches and reports. Provisions nothing and never changes your server.</p>
+    <nav aria-label="Footer">
+      <a href="/audit">Cost Audit</a>
+      <a href="/blog">Blog</a>
+      <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://pypi.org/project/throttle-pro/" target="_blank" rel="noopener">PyPI</a>
+      <a href="https://github.com/KushagraKanaujia/throttle/blob/main/RESULTS.md" target="_blank" rel="noopener">Results</a>
+      <a href="https://github.com/KushagraKanaujia/throttle/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>
