@@ -1,0 +1,1031 @@
+{
+ "title": "The Throttle Index: what tokens really cost",
+ "generated_at": "2026-10-01",
+ "method": "$/M output tokens = measured wall-clock time x the GPU's hourly price / measured output tokens. Tokens and time are MEASURED; the $/hr is ASSUMED (a list price or a stated assumption, never a bill). CHEAPER / MORE EXPENSIVE only when the change beats a run-to-run noise bound measured from repeat checks and the 95% confidence intervals do not overlap. OUTPUT CHANGED when the same prompts at temperature 0 come back >10% longer/shorter or many more hit max tokens: the $/M difference is then not a verified saving.",
+ "rows": [
+  {
+   "id": "mi300x-qwen72b-fp8-prequant",
+   "model": "Qwen2.5-72B-Instruct",
+   "gpu": "1x AMD MI300X (Hot Aisle)",
+   "engine": "vLLM 0.23.1 (ROCm)",
+   "change": "BF16 \u2192 pre-quantized FP8 checkpoint (RedHatAI/Qwen2.5-72B-Instruct-FP8-dynamic)",
+   "metric": "$ per million output tokens",
+   "baseline": {
+    "mean": 1.6727231812708379,
+    "ci_low": 1.6698360284708058,
+    "ci_high": 1.67561033407087
+   },
+   "baseline_repeats": [
+    1.672255444775096,
+    1.6717153772492612,
+    1.6660016191584845,
+    1.6727231812708379
+   ],
+   "changed": {
+    "mean": 1.1302315492103738,
+    "ci_low": 1.1257595308884552,
+    "ci_high": 1.1347035675322925
+   },
+   "verdict": "CHEAPER",
+   "verdict_count": "3 of 3",
+   "change_percent_range": [
+    -32.466788280658996,
+    -32.41976787990741
+   ],
+   "noise_bound_percent": 0.6466588381075581,
+   "checks": [
+    {
+     "id": "20261001T063815Z-8ece234d",
+     "created_at": "2026-10-01T06:38:15.163579Z",
+     "baseline_id": "20261001T062110Z-87304e73",
+     "baseline": {
+      "mean": 1.6727231812708379,
+      "ci_low": 1.6698360284708058,
+      "ci_high": 1.67561033407087
+     },
+     "cost": {
+      "mean": 1.129643687486131,
+      "ci_low": 1.1251515316523113,
+      "ci_high": 1.1341358433199509
+     },
+     "verdict": "CHEAPER",
+     "change_percent": -32.466788280658996,
+     "noise_bound_percent": 0.8462993541134852,
+     "noise_df": 3,
+     "output_length_change_percent": 0.7490991845249262,
+     "reason": "the -32.5% change is larger than the run-to-run noise bound (0.8% = t x sqrt(2) x 0.2% run-to-run SD, 3 df) and the 95% confidence intervals do not overlap"
+    },
+    {
+     "id": "20261001T063859Z-c8674c58",
+     "created_at": "2026-10-01T06:38:59.577318Z",
+     "baseline_id": "20261001T062110Z-87304e73",
+     "baseline": {
+      "mean": 1.6727231812708379,
+      "ci_low": 1.6698360284708058,
+      "ci_high": 1.67561033407087
+     },
+     "cost": {
+      "mean": 1.1304302086294293,
+      "ci_low": 1.1274196178908202,
+      "ci_high": 1.1334407993680384
+     },
+     "verdict": "CHEAPER",
+     "change_percent": -32.41976787990741,
+     "noise_bound_percent": 0.8462993541134852,
+     "noise_df": 3,
+     "output_length_change_percent": 0.8344395979518193,
+     "reason": "the -32.4% change is larger than the run-to-run noise bound (0.8% = t x sqrt(2) x 0.2% run-to-run SD, 3 df) and the 95% confidence intervals do not overlap"
+    },
+    {
+     "id": "20261001T063943Z-bcd9daf2",
+     "created_at": "2026-10-01T06:39:43.830128Z",
+     "baseline_id": "20261001T062110Z-87304e73",
+     "baseline": {
+      "mean": 1.6727231812708379,
+      "ci_low": 1.6698360284708058,
+      "ci_high": 1.67561033407087
+     },
+     "cost": {
+      "mean": 1.1302315492103738,
+      "ci_low": 1.1257595308884552,
+      "ci_high": 1.1347035675322925
+     },
+     "verdict": "CHEAPER",
+     "change_percent": -32.431644287269954,
+     "noise_bound_percent": 0.6466588381075581,
+     "noise_df": 4,
+     "output_length_change_percent": 0.41089828687022045,
+     "reason": "the -32.4% change is larger than the run-to-run noise bound (0.6% = t x sqrt(2) x 0.2% run-to-run SD, 4 df) and the 95% confidence intervals do not overlap"
+    }
+   ],
+   "gpu_hourly_rate_usd": 2.99,
+   "rate_label": "ASSUMED",
+   "rate_source": "Hot Aisle on-demand list price per MI300X GPU",
+   "date": "2026-10-01",
+   "workload": {
+    "concurrency": 32,
+    "max_tokens": 256,
+    "requests_per_block": 32,
+    "blocks": 5,
+    "cache": "cold",
+    "temperature": 0
+   },
+   "tool": "throttle check (throttle-pro 0.5.1), re-judged with the OUTPUT CHANGED rule",
+   "quality": "6 of 6 sample answers correct and coherent (temperature 0); output length per request within 1% of BF16.",
+   "caveat": "FP8 server ran on the VM's second MI300X, the BF16 baseline on the first (same GPU model; Throttle flagged the different endpoint).",
+   "episode": "EP7",
+   "share_markdown": "## Throttle check: Qwen/Qwen2.5-72B-Instruct\n\n| | |\n|---|---|\n| Throttle version | 0.5.1 |\n| Engine | vllm-rocm (from --config) |\n| GPU | MI300X |\n| Model | Qwen/Qwen2.5-72B-Instruct |\n| GPU hourly rate | $2.99/hr (ASSUMED, user-supplied) |\n| Workload | 5 blocks x 32 requests, concurrency 32, max 256 output tokens, temperature 0, 8 built-in prompts (sha256 787fc93d62e1) |\n| Prompt cache | cold (unique prompt per request) |\n| Label | fp8-prequant |\n| Check | 20261001T063943Z-bcd9daf2 (2026-10-01) |\n\n**Result:** $1.13 per million output tokens (95% CI $1.13 to $1.13, 5 blocks) [MEASURED]\n\n**Compared with** check 20261001T062110Z-87304e73:\n\n- before: $1.67/M output tokens (95% CI $1.67 to $1.68)\n- after: $1.13/M output tokens (95% CI $1.13 to $1.13)\n- change: -32.4%\n- noise floor: calibrated: bound 0.6% (t x sqrt(2) x 0.2% run-to-run SD, 4 df)\n- **Verdict: CHEAPER**, the -32.4% change is larger than the run-to-run noise bound (0.6% = t x sqrt(2) x 0.2% run-to-run SD, 4 df) and the 95% confidence intervals do not overlap\n\n**What changed in config:**\n\n- endpoint: changed (URLs are not shared)\n- `config.quantization`: none -> fp8-redhat-dynamic\n- `label`: baseline -> fp8-prequant\n- `server.[host removed]`: Qwen/Qwen2.5-72B-Instruct -> RedHatAI/Qwen2.5-72B-Instruct-FP8-dynamic\n- `vllm.cache_config.num_gpu_blocks`: 7776 -> 21116\n\n_Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are included; config values that look like secrets are masked._"
+  },
+  {
+   "id": "mi300x-qwen72b-fp8-onthefly",
+   "model": "Qwen2.5-72B-Instruct",
+   "gpu": "1x AMD MI300X (Hot Aisle)",
+   "engine": "vLLM 0.23.1 (ROCm)",
+   "change": "BF16 \u2192 vLLM on-the-fly FP8 (--quantization fp8)",
+   "metric": "$ per million output tokens",
+   "baseline": {
+    "mean": 1.6727231812708379,
+    "ci_low": 1.6698360284708058,
+    "ci_high": 1.67561033407087
+   },
+   "baseline_repeats": [
+    1.672255444775096,
+    1.6717153772492612,
+    1.6660016191584845,
+    1.6727231812708379
+   ],
+   "changed": {
+    "mean": 0.8720611054483307,
+    "ci_low": 0.8681750123621783,
+    "ci_high": 0.8759471985344831
+   },
+   "verdict": "OUTPUT CHANGED",
+   "verdict_count": "3 of 3",
+   "change_percent_range": [
+    -47.871367336849936,
+    -46.97303840623673
+   ],
+   "noise_bound_percent": 2.4561819722302287,
+   "checks": [
+    {
+     "id": "20261001T062514Z-0df61c4e",
+     "created_at": "2026-10-01T06:25:14.560511Z",
+     "baseline_id": "20261001T062110Z-87304e73",
+     "baseline": {
+      "mean": 1.6727231812708379,
+      "ci_low": 1.6698360284708058,
+      "ci_high": 1.67561033407087
+     },
+     "cost": {
+      "mean": 0.8869942789024623,
+      "ci_low": 0.8586989344085307,
+      "ci_high": 0.9152896233963939
+     },
+     "verdict": "OUTPUT CHANGED",
+     "change_percent": -46.97303840623673,
+     "noise_bound_percent": 0.8462993541134852,
+     "noise_df": 3,
+     "output_length_change_percent": 28.342499525886588,
+     "reason": "the server's answers changed: output length per request moved +28.3% (197.7 -> 253.8 tokens; more than 10%). At temperature 0 the same prompts should get the same answers, so this $/M difference may come from broken or padded output, not a faster server. Read a few answers from both configs before trusting it"
+    },
+    {
+     "id": "20261001T062604Z-47da7f94",
+     "created_at": "2026-10-01T06:26:04.298535Z",
+     "baseline_id": "20261001T062110Z-87304e73",
+     "baseline": {
+      "mean": 1.6727231812708379,
+      "ci_low": 1.6698360284708058,
+      "ci_high": 1.67561033407087
+     },
+     "cost": {
+      "mean": 0.8719677226360328,
+      "ci_low": 0.8691787690155285,
+      "ci_high": 0.8747566762565372
+     },
+     "verdict": "OUTPUT CHANGED",
+     "change_percent": -47.871367336849936,
+     "noise_bound_percent": 0.8462993541134852,
+     "noise_df": 3,
+     "output_length_change_percent": 29.46456792464758,
+     "reason": "the server's answers changed: output length per request moved +29.5% (197.7 -> 256.0 tokens; more than 10%). At temperature 0 the same prompts should get the same answers, so this $/M difference may come from broken or padded output, not a faster server. Read a few answers from both configs before trusting it"
+    },
+    {
+     "id": "20261001T062654Z-8d20c47c",
+     "created_at": "2026-10-01T06:26:54.033708Z",
+     "baseline_id": "20261001T062110Z-87304e73",
+     "baseline": {
+      "mean": 1.6727231812708379,
+      "ci_low": 1.6698360284708058,
+      "ci_high": 1.67561033407087
+     },
+     "cost": {
+      "mean": 0.8720611054483307,
+      "ci_low": 0.8681750123621783,
+      "ci_high": 0.8759471985344831
+     },
+     "verdict": "OUTPUT CHANGED",
+     "change_percent": -47.86578465506831,
+     "noise_bound_percent": 2.4561819722302287,
+     "noise_df": 4,
+     "output_length_change_percent": 29.46456792464758,
+     "reason": "the server's answers changed: output length per request moved +29.5% (197.7 -> 256.0 tokens; more than 10%). At temperature 0 the same prompts should get the same answers, so this $/M difference may come from broken or padded output, not a faster server. Read a few answers from both configs before trusting it"
+    }
+   ],
+   "gpu_hourly_rate_usd": 2.99,
+   "rate_label": "ASSUMED",
+   "rate_source": "Hot Aisle on-demand list price per MI300X GPU",
+   "date": "2026-10-01",
+   "workload": {
+    "concurrency": 32,
+    "max_tokens": 256,
+    "requests_per_block": 32,
+    "blocks": 5,
+    "cache": "cold",
+    "temperature": 0
+   },
+   "tool": "throttle check (throttle-pro 0.5.1), re-judged with the OUTPUT CHANGED rule",
+   "quality": "Not sampled. Every request ran to the 256-token cap (8,016\u20138,192 output tokens per 32-request block vs 6,328 for BF16).",
+   "caveat": "Looked 47% cheaper per token; excluded as a saving because the answers changed shape.",
+   "episode": "EP7",
+   "share_markdown": "## Throttle check: Qwen/Qwen2.5-72B-Instruct\n\n| | |\n|---|---|\n| Throttle version | 0.5.1 |\n| Engine | vllm-rocm (from --config) |\n| GPU | MI300X |\n| Model | Qwen/Qwen2.5-72B-Instruct |\n| GPU hourly rate | $2.99/hr (ASSUMED, user-supplied) |\n| Workload | 5 blocks x 32 requests, concurrency 32, max 256 output tokens, temperature 0, 8 built-in prompts (sha256 787fc93d62e1) |\n| Prompt cache | cold (unique prompt per request) |\n| Label | fp8 |\n| Check | 20261001T062654Z-8d20c47c (2026-10-01) |\n\n**Result:** $0.8721 per million output tokens (95% CI $0.8682 to $0.8759, 5 blocks) [MEASURED]\n\n**Compared with** check 20261001T062110Z-87304e73:\n\n- before: $1.67/M output tokens (95% CI $1.67 to $1.68)\n- after: $0.8721/M output tokens (95% CI $0.8682 to $0.8759)\n- change: -47.9%\n- noise floor: calibrated: bound 2.5% (t x sqrt(2) x 0.6% run-to-run SD, 4 df)\n- **Verdict: OUTPUT CHANGED**, the server's answers changed: output length per request moved +29.5% (197.7 -> 256.0 tokens; more than 10%). At temperature 0 the same prompts should get the same answers, so this $/M difference may come from broken or padded output, not a faster server. Read a few answers from both configs before trusting it\n\n**What changed in config:**\n\n- `config.quantization`: none -> fp8\n- `label`: baseline -> fp8\n- `vllm.cache_config.num_gpu_blocks`: 7776 -> 21166\n\n_Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are included; config values that look like secrets are masked._"
+  },
+  {
+   "id": "mi300x-qwen32b-fp8-onthefly",
+   "model": "Qwen2.5-32B-Instruct",
+   "gpu": "1x AMD MI300X (Hot Aisle)",
+   "engine": "vLLM 0.23.1 (ROCm)",
+   "change": "BF16 \u2192 vLLM on-the-fly FP8 (--quantization fp8)",
+   "metric": "$ per million output tokens",
+   "baseline": {
+    "mean": 0.7608278105415855,
+    "ci_low": 0.7507870518223788,
+    "ci_high": 0.7708685692607923
+   },
+   "baseline_repeats": [
+    0.759770575541247,
+    0.775832958513103,
+    0.7819077235765037,
+    0.7608278105415855
+   ],
+   "changed": {
+    "mean": 0.45034878649413806,
+    "ci_low": 0.4465610684494172,
+    "ci_high": 0.45413650453885895
+   },
+   "verdict": "OUTPUT CHANGED",
+   "verdict_count": "3 of 3",
+   "change_percent_range": [
+    -41.12110341405181,
+    -40.80805403609483
+   ],
+   "noise_bound_percent": 4.876304570419248,
+   "checks": [
+    {
+     "id": "20261001T062119Z-0df04e1d",
+     "created_at": "2026-10-01T06:21:19.268470Z",
+     "baseline_id": "20261001T061821Z-35ff548e",
+     "baseline": {
+      "mean": 0.7608278105415855,
+      "ci_low": 0.7507870518223788,
+      "ci_high": 0.7708685692607923
+     },
+     "cost": {
+      "mean": 0.447967019765914,
+      "ci_low": 0.4452485938698331,
+      "ci_high": 0.4506854456619949
+     },
+     "verdict": "OUTPUT CHANGED",
+     "change_percent": -41.12110341405181,
+     "noise_bound_percent": 6.44002859643767,
+     "noise_df": 3,
+     "output_length_change_percent": 17.68762211240087,
+     "reason": "the server's answers changed: output length per request moved +17.7% (217.5 -> 256.0 tokens; more than 10%). At temperature 0 the same prompts should get the same answers, so this $/M difference may come from broken or padded output, not a faster server. Read a few answers from both configs before trusting it"
+    },
+    {
+     "id": "20261001T062142Z-444dc655",
+     "created_at": "2026-10-01T06:21:42.345652Z",
+     "baseline_id": "20261001T061821Z-35ff548e",
+     "baseline": {
+      "mean": 0.7608278105415855,
+      "ci_low": 0.7507870518223788,
+      "ci_high": 0.7708685692607923
+     },
+     "cost": {
+      "mean": 0.4490097462940801,
+      "ci_low": 0.4461662378681668,
+      "ci_high": 0.4518532547199934
+     },
+     "verdict": "OUTPUT CHANGED",
+     "change_percent": -40.984051835006106,
+     "noise_bound_percent": 6.44002859643767,
+     "noise_df": 3,
+     "output_length_change_percent": 17.68762211240087,
+     "reason": "the server's answers changed: output length per request moved +17.7% (217.5 -> 256.0 tokens; more than 10%). At temperature 0 the same prompts should get the same answers, so this $/M difference may come from broken or padded output, not a faster server. Read a few answers from both configs before trusting it"
+    },
+    {
+     "id": "20261001T062205Z-cfa31769",
+     "created_at": "2026-10-01T06:22:05.524975Z",
+     "baseline_id": "20261001T061821Z-35ff548e",
+     "baseline": {
+      "mean": 0.7608278105415855,
+      "ci_low": 0.7507870518223788,
+      "ci_high": 0.7708685692607923
+     },
+     "cost": {
+      "mean": 0.45034878649413806,
+      "ci_low": 0.4465610684494172,
+      "ci_high": 0.45413650453885895
+     },
+     "verdict": "OUTPUT CHANGED",
+     "change_percent": -40.80805403609483,
+     "noise_bound_percent": 4.876304570419248,
+     "noise_df": 4,
+     "output_length_change_percent": 17.68762211240087,
+     "reason": "the server's answers changed: output length per request moved +17.7% (217.5 -> 256.0 tokens; more than 10%). At temperature 0 the same prompts should get the same answers, so this $/M difference may come from broken or padded output, not a faster server. Read a few answers from both configs before trusting it"
+    }
+   ],
+   "gpu_hourly_rate_usd": 2.99,
+   "rate_label": "ASSUMED",
+   "rate_source": "Hot Aisle on-demand list price per MI300X GPU",
+   "date": "2026-10-01",
+   "workload": {
+    "concurrency": 32,
+    "max_tokens": 256,
+    "requests_per_block": 32,
+    "blocks": 5,
+    "cache": "cold",
+    "temperature": 0
+   },
+   "tool": "throttle check (throttle-pro 0.5.1), re-judged with the OUTPUT CHANGED rule",
+   "quality": "Broken: asked to summarize WWI, it answered with 256 tokens of \"!!!!\". Every request hit the token cap (8,192 vs 6,883 output tokens per block).",
+   "caveat": "Looked 41% cheaper per token; the answers were broken.",
+   "episode": "EP7",
+   "share_markdown": "## Throttle check: Qwen/Qwen2.5-32B-Instruct\n\n| | |\n|---|---|\n| Throttle version | 0.5.1 |\n| Engine | vllm-rocm (from --config) |\n| GPU | MI300X |\n| Model | Qwen/Qwen2.5-32B-Instruct |\n| GPU hourly rate | $2.99/hr (ASSUMED, user-supplied) |\n| Workload | 5 blocks x 32 requests, concurrency 32, max 256 output tokens, temperature 0, 8 built-in prompts (sha256 787fc93d62e1) |\n| Prompt cache | cold (unique prompt per request) |\n| Label | fp8 |\n| Check | 20261001T062205Z-cfa31769 (2026-10-01) |\n\n**Result:** $0.4503 per million output tokens (95% CI $0.4466 to $0.4541, 5 blocks) [MEASURED]\n\n**Compared with** check 20261001T061821Z-35ff548e:\n\n- before: $0.7608/M output tokens (95% CI $0.7508 to $0.7709)\n- after: $0.4503/M output tokens (95% CI $0.4466 to $0.4541)\n- change: -40.8%\n- noise floor: calibrated: bound 4.9% (t x sqrt(2) x 1.2% run-to-run SD, 4 df)\n- **Verdict: OUTPUT CHANGED**, the server's answers changed: output length per request moved +17.7% (217.5 -> 256.0 tokens; more than 10%). At temperature 0 the same prompts should get the same answers, so this $/M difference may come from broken or padded output, not a faster server. Read a few answers from both configs before trusting it\n\n**What changed in config:**\n\n- `config.quantization`: none -> fp8\n- `label`: baseline -> fp8\n- `vllm.cache_config.num_gpu_blocks`: 28821 -> 36228\n\n_Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are included; config values that look like secrets are masked._"
+  },
+  {
+   "id": "mi300x-qwen7b-fp8-prequant",
+   "model": "Qwen2.5-7B-Instruct",
+   "gpu": "1x AMD MI300X (Hot Aisle)",
+   "engine": "vLLM 0.23.1 (ROCm)",
+   "change": "BF16 \u2192 pre-quantized FP8 checkpoint (RedHatAI/Qwen2.5-7B-Instruct-FP8-dynamic)",
+   "metric": "$ per million output tokens",
+   "baseline": {
+    "mean": 0.22722158674649937,
+    "ci_low": 0.22173455104905693,
+    "ci_high": 0.2327086224439418
+   },
+   "baseline_repeats": [
+    0.2267610002504056,
+    0.22993640011721453,
+    0.22830731834952914,
+    0.22722158674649937
+   ],
+   "changed": {
+    "mean": 0.18560541123048863,
+    "ci_low": 0.18166952855763221,
+    "ci_high": 0.18954129390334504
+   },
+   "verdict": "CHEAPER",
+   "verdict_count": "3 of 3",
+   "change_percent_range": [
+    -18.84644509590928,
+    -18.27841797308064
+   ],
+   "noise_bound_percent": 2.3155588552858126,
+   "checks": [
+    {
+     "id": "20261001T065636Z-39619c63",
+     "created_at": "2026-10-01T06:56:36.014939Z",
+     "baseline_id": "20261001T054905Z-0f15c02b",
+     "baseline": {
+      "mean": 0.22722158674649937,
+      "ci_low": 0.22173455104905693,
+      "ci_high": 0.2327086224439418
+     },
+     "cost": {
+      "mean": 0.18439839515426648,
+      "ci_low": 0.1784222107036898,
+      "ci_high": 0.19037457960484316
+     },
+     "verdict": "CHEAPER",
+     "change_percent": -18.84644509590928,
+     "noise_bound_percent": 2.7840946111186042,
+     "noise_df": 3,
+     "output_length_change_percent": 2.210555402044756,
+     "reason": "the -18.8% change is larger than the run-to-run noise bound (2.8% = t x sqrt(2) x 0.6% run-to-run SD, 3 df) and the 95% confidence intervals do not overlap"
+    },
+    {
+     "id": "20261001T065644Z-79de36b0",
+     "created_at": "2026-10-01T06:56:44.253639Z",
+     "baseline_id": "20261001T054905Z-0f15c02b",
+     "baseline": {
+      "mean": 0.22722158674649937,
+      "ci_low": 0.22173455104905693,
+      "ci_high": 0.2327086224439418
+     },
+     "cost": {
+      "mean": 0.1856890753959082,
+      "ci_low": 0.17967707164816854,
+      "ci_high": 0.19170107914364787
+     },
+     "verdict": "CHEAPER",
+     "change_percent": -18.27841797308064,
+     "noise_bound_percent": 2.7840946111186042,
+     "noise_df": 3,
+     "output_length_change_percent": 1.977218998495589,
+     "reason": "the -18.3% change is larger than the run-to-run noise bound (2.8% = t x sqrt(2) x 0.6% run-to-run SD, 3 df) and the 95% confidence intervals do not overlap"
+    },
+    {
+     "id": "20261001T065652Z-411315d1",
+     "created_at": "2026-10-01T06:56:52.588975Z",
+     "baseline_id": "20261001T054905Z-0f15c02b",
+     "baseline": {
+      "mean": 0.22722158674649937,
+      "ci_low": 0.22173455104905693,
+      "ci_high": 0.2327086224439418
+     },
+     "cost": {
+      "mean": 0.18560541123048863,
+      "ci_low": 0.18166952855763221,
+      "ci_high": 0.18954129390334504
+     },
+     "verdict": "CHEAPER",
+     "change_percent": -18.315238491156205,
+     "noise_bound_percent": 2.3155588552858126,
+     "noise_df": 4,
+     "output_length_change_percent": 2.035553099382903,
+     "reason": "the -18.3% change is larger than the run-to-run noise bound (2.3% = t x sqrt(2) x 0.6% run-to-run SD, 4 df) and the 95% confidence intervals do not overlap"
+    }
+   ],
+   "gpu_hourly_rate_usd": 2.99,
+   "rate_label": "ASSUMED",
+   "rate_source": "Hot Aisle on-demand list price per MI300X GPU",
+   "date": "2026-10-01",
+   "workload": {
+    "concurrency": 32,
+    "max_tokens": 256,
+    "requests_per_block": 32,
+    "blocks": 5,
+    "cache": "cold",
+    "temperature": 0
+   },
+   "tool": "throttle check (throttle-pro 0.5.1), re-judged with the OUTPUT CHANGED rule",
+   "quality": "6 of 6 sample answers correct and coherent (temperature 0).",
+   "caveat": "",
+   "episode": "EP7",
+   "share_markdown": "## Throttle check: Qwen/Qwen2.5-7B-Instruct\n\n| | |\n|---|---|\n| Throttle version | 0.5.1 |\n| Engine | vllm-rocm (from --config) |\n| GPU | MI300X |\n| Model | Qwen/Qwen2.5-7B-Instruct |\n| GPU hourly rate | $2.99/hr (ASSUMED, user-supplied) |\n| Workload | 5 blocks x 32 requests, concurrency 32, max 256 output tokens, temperature 0, 8 built-in prompts (sha256 787fc93d62e1) |\n| Prompt cache | cold (unique prompt per request) |\n| Label | fp8-prequant |\n| Check | 20261001T065652Z-411315d1 (2026-10-01) |\n\n**Result:** $0.1856 per million output tokens (95% CI $0.1817 to $0.1895, 5 blocks) [MEASURED]\n\n**Compared with** check 20261001T054905Z-0f15c02b:\n\n- before: $0.2272/M output tokens (95% CI $0.2217 to $0.2327)\n- after: $0.1856/M output tokens (95% CI $0.1817 to $0.1895)\n- change: -18.3%\n- noise floor: calibrated: bound 2.3% (t x sqrt(2) x 0.6% run-to-run SD, 4 df)\n- **Verdict: CHEAPER**, the -18.3% change is larger than the run-to-run noise bound (2.3% = t x sqrt(2) x 0.6% run-to-run SD, 4 df) and the 95% confidence intervals do not overlap\n\n**What changed in config:**\n\n- `config.max_num_seqs`: default -> (not set)\n- `config.quantization`: (not set) -> fp8-redhat-dynamic\n- `label`: baseline -> fp8-prequant\n- `server.[host removed]`: Qwen/Qwen2.5-7B-Instruct -> RedHatAI/Qwen2.5-7B-Instruct-FP8-dynamic\n- `vllm.cache_config.num_gpu_blocks`: 186542 -> 193570\n\n_Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are included; config values that look like secrets are masked._"
+  },
+  {
+   "id": "mi300x-qwen7b-fp8-onthefly",
+   "model": "Qwen2.5-7B-Instruct",
+   "gpu": "1x AMD MI300X (Hot Aisle)",
+   "engine": "vLLM 0.23.1 (ROCm)",
+   "change": "BF16 \u2192 vLLM on-the-fly FP8 (--quantization fp8)",
+   "metric": "$ per million output tokens",
+   "baseline": {
+    "mean": 0.22722158674649937,
+    "ci_low": 0.22173455104905693,
+    "ci_high": 0.2327086224439418
+   },
+   "baseline_repeats": [
+    0.2267610002504056,
+    0.22993640011721453,
+    0.22830731834952914,
+    0.22722158674649937
+   ],
+   "changed": {
+    "mean": 0.18604608406820458,
+    "ci_low": 0.16912500577371284,
+    "ci_high": 0.20296716236269632
+   },
+   "verdict": "CHEAPER",
+   "verdict_count": "2 of 2",
+   "change_percent_range": [
+    -18.121298802579165,
+    -15.52752372147449
+   ],
+   "noise_bound_percent": 2.7840946111186042,
+   "checks": [
+    {
+     "id": "20261001T055339Z-d24e1ac8",
+     "created_at": "2026-10-01T05:53:39.651122Z",
+     "baseline_id": "20261001T054905Z-0f15c02b",
+     "baseline": {
+      "mean": 0.22722158674649937,
+      "ci_low": 0.22173455104905693,
+      "ci_high": 0.2327086224439418
+     },
+     "cost": {
+      "mean": 0.19193970096412594,
+      "ci_low": 0.17976596616772741,
+      "ci_high": 0.20411343576052446
+     },
+     "verdict": "CHEAPER",
+     "change_percent": -15.52752372147449,
+     "noise_bound_percent": 2.7840946111186042,
+     "noise_df": 3,
+     "output_length_change_percent": 6.309293543336092,
+     "reason": "the -15.5% change is larger than the run-to-run noise bound (2.8% = t x sqrt(2) x 0.6% run-to-run SD, 3 df) and the 95% confidence intervals do not overlap"
+    },
+    {
+     "id": "20261001T055349Z-ec722b14",
+     "created_at": "2026-10-01T05:53:49.346297Z",
+     "baseline_id": "20261001T054905Z-0f15c02b",
+     "baseline": {
+      "mean": 0.22722158674649937,
+      "ci_low": 0.22173455104905693,
+      "ci_high": 0.2327086224439418
+     },
+     "cost": {
+      "mean": 0.18604608406820458,
+      "ci_low": 0.16912500577371284,
+      "ci_high": 0.20296716236269632
+     },
+     "verdict": "CHEAPER",
+     "change_percent": -18.121298802579165,
+     "noise_bound_percent": 2.7840946111186042,
+     "noise_df": 3,
+     "output_length_change_percent": 9.072487795892048,
+     "reason": "the -18.1% change is larger than the run-to-run noise bound (2.8% = t x sqrt(2) x 0.6% run-to-run SD, 3 df) and the 95% confidence intervals do not overlap"
+    }
+   ],
+   "gpu_hourly_rate_usd": 2.99,
+   "rate_label": "ASSUMED",
+   "rate_source": "Hot Aisle on-demand list price per MI300X GPU",
+   "date": "2026-10-01",
+   "workload": {
+    "concurrency": 32,
+    "max_tokens": 256,
+    "requests_per_block": 32,
+    "blocks": 5,
+    "cache": "cold",
+    "temperature": 0
+   },
+   "tool": "throttle check (throttle-pro 0.5.1), re-judged with the OUTPUT CHANGED rule",
+   "quality": "6 of 6 sample answers correct and coherent (temperature 0); output length +6\u20139% (under the 10% OUTPUT CHANGED line).",
+   "caveat": "",
+   "episode": "",
+   "share_markdown": "## Throttle check: Qwen/Qwen2.5-7B-Instruct\n\n| | |\n|---|---|\n| Throttle version | 0.5.1 |\n| Engine | vllm-rocm (from --config) |\n| GPU | MI300X |\n| Model | Qwen/Qwen2.5-7B-Instruct |\n| GPU hourly rate | $2.99/hr (ASSUMED, user-supplied) |\n| Workload | 5 blocks x 32 requests, concurrency 32, max 256 output tokens, temperature 0, 8 built-in prompts (sha256 787fc93d62e1) |\n| Prompt cache | cold (unique prompt per request) |\n| Label | fp8 |\n| Check | 20261001T055349Z-ec722b14 (2026-10-01) |\n\n**Result:** $0.1860 per million output tokens (95% CI $0.1691 to $0.2030, 5 blocks) [MEASURED]\n\n**Compared with** check 20261001T054905Z-0f15c02b:\n\n- before: $0.2272/M output tokens (95% CI $0.2217 to $0.2327)\n- after: $0.1860/M output tokens (95% CI $0.1691 to $0.2030)\n- change: -18.1%\n- noise floor: calibrated: bound 2.8% (t x sqrt(2) x 0.6% run-to-run SD, 3 df)\n- **Verdict: CHEAPER**, the -18.1% change is larger than the run-to-run noise bound (2.8% = t x sqrt(2) x 0.6% run-to-run SD, 3 df) and the 95% confidence intervals do not overlap\n\n**What changed in config:**\n\n- `config.quantization`: (not set) -> fp8\n- `label`: baseline -> fp8\n- `vllm.cache_config.num_gpu_blocks`: 186542 -> 193542\n\n_Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are included; config values that look like secrets are masked._"
+  },
+  {
+   "id": "mi300x-qwen7b-max-num-seqs-8",
+   "model": "Qwen2.5-7B-Instruct",
+   "gpu": "1x AMD MI300X (Hot Aisle)",
+   "engine": "vLLM 0.23.1 (ROCm)",
+   "change": "vLLM defaults \u2192 --max-num-seqs 8 (at 32 concurrent requests)",
+   "metric": "$ per million output tokens",
+   "baseline": {
+    "mean": 0.22722158674649937,
+    "ci_low": 0.22173455104905693,
+    "ci_high": 0.2327086224439418
+   },
+   "baseline_repeats": [
+    0.2267610002504056,
+    0.22993640011721453,
+    0.22830731834952914,
+    0.22722158674649937
+   ],
+   "changed": {
+    "mean": 0.6998385815250313,
+    "ci_low": 0.683908541536557,
+    "ci_high": 0.7157686215135056
+   },
+   "verdict": "MORE EXPENSIVE",
+   "verdict_count": "4 of 4",
+   "change_percent_range": [
+    207.99828112537955,
+    213.41350904057458
+   ],
+   "noise_bound_percent": 2.797376247068847,
+   "checks": [
+    {
+     "id": "20261001T055113Z-acda5e76",
+     "created_at": "2026-10-01T05:51:13.399868Z",
+     "baseline_id": "20261001T054905Z-0f15c02b",
+     "baseline": {
+      "mean": 0.22722158674649937,
+      "ci_low": 0.22173455104905693,
+      "ci_high": 0.2327086224439418
+     },
+     "cost": {
+      "mean": 0.7002984973049232,
+      "ci_low": 0.6822421682774993,
+      "ci_high": 0.7183548263323472
+     },
+     "verdict": "MORE EXPENSIVE",
+     "change_percent": 208.20068961414916,
+     "noise_bound_percent": 2.7840946111186042,
+     "noise_df": 3,
+     "output_length_change_percent": -0.27631942525560005,
+     "reason": "the +208.2% change is larger than the run-to-run noise bound (2.8% = t x sqrt(2) x 0.6% run-to-run SD, 3 df) and the 95% confidence intervals do not overlap"
+    },
+    {
+     "id": "20261001T055624Z-9f099538",
+     "created_at": "2026-10-01T05:56:24.323381Z",
+     "baseline_id": "20261001T054905Z-0f15c02b",
+     "baseline": {
+      "mean": 0.22722158674649937,
+      "ci_low": 0.22173455104905693,
+      "ci_high": 0.2327086224439418
+     },
+     "cost": {
+      "mean": 0.7007809553730555,
+      "ci_low": 0.6813255547073306,
+      "ci_high": 0.7202363560387804
+     },
+     "verdict": "MORE EXPENSIVE",
+     "change_percent": 208.4130189421151,
+     "noise_bound_percent": 2.7840946111186042,
+     "noise_df": 3,
+     "output_length_change_percent": 0.3561450369961028,
+     "reason": "the +208.4% change is larger than the run-to-run noise bound (2.8% = t x sqrt(2) x 0.6% run-to-run SD, 3 df) and the 95% confidence intervals do not overlap"
+    },
+    {
+     "id": "20261001T055652Z-4340d2de",
+     "created_at": "2026-10-01T05:56:52.671473Z",
+     "baseline_id": "20261001T054905Z-0f15c02b",
+     "baseline": {
+      "mean": 0.22722158674649937,
+      "ci_low": 0.22173455104905693,
+      "ci_high": 0.2327086224439418
+     },
+     "cost": {
+      "mean": 0.7121431483198768,
+      "ci_low": 0.6920567086258238,
+      "ci_high": 0.7322295880139298
+     },
+     "verdict": "MORE EXPENSIVE",
+     "change_percent": 213.41350904057458,
+     "noise_bound_percent": 2.105629229140905,
+     "noise_df": 4,
+     "output_length_change_percent": -1.52896748641429,
+     "reason": "the +213.4% change is larger than the run-to-run noise bound (2.1% = t x sqrt(2) x 0.5% run-to-run SD, 4 df) and the 95% confidence intervals do not overlap"
+    },
+    {
+     "id": "20261001T055720Z-7973bb09",
+     "created_at": "2026-10-01T05:57:20.322705Z",
+     "baseline_id": "20261001T054905Z-0f15c02b",
+     "baseline": {
+      "mean": 0.22722158674649937,
+      "ci_low": 0.22173455104905693,
+      "ci_high": 0.2327086224439418
+     },
+     "cost": {
+      "mean": 0.6998385815250313,
+      "ci_low": 0.683908541536557,
+      "ci_high": 0.7157686215135056
+     },
+     "verdict": "MORE EXPENSIVE",
+     "change_percent": 207.99828112537955,
+     "noise_bound_percent": 2.797376247068847,
+     "noise_df": 5,
+     "output_length_change_percent": -2.2811703662767413,
+     "reason": "the +208.0% change is larger than the run-to-run noise bound (2.8% = t x sqrt(2) x 0.8% run-to-run SD, 5 df) and the 95% confidence intervals do not overlap"
+    }
+   ],
+   "gpu_hourly_rate_usd": 2.99,
+   "rate_label": "ASSUMED",
+   "rate_source": "Hot Aisle on-demand list price per MI300X GPU",
+   "date": "2026-10-01",
+   "workload": {
+    "concurrency": 32,
+    "max_tokens": 256,
+    "requests_per_block": 32,
+    "blocks": 5,
+    "cache": "cold",
+    "temperature": 0
+   },
+   "tool": "throttle check (throttle-pro 0.5.1), re-judged with the OUTPUT CHANGED rule",
+   "quality": "Not sampled; output length within 2.5% of baseline.",
+   "caveat": "A deliberately bad setting for this load: shows what a harmless-looking flag costs.",
+   "episode": "",
+   "share_markdown": "## Throttle check: Qwen/Qwen2.5-7B-Instruct\n\n| | |\n|---|---|\n| Throttle version | 0.5.1 |\n| Engine | vllm-rocm (from --config) |\n| GPU | MI300X |\n| Model | Qwen/Qwen2.5-7B-Instruct |\n| GPU hourly rate | $2.99/hr (ASSUMED, user-supplied) |\n| Workload | 5 blocks x 32 requests, concurrency 32, max 256 output tokens, temperature 0, 8 built-in prompts (sha256 787fc93d62e1) |\n| Prompt cache | cold (unique prompt per request) |\n| Label | seqs8 |\n| Check | 20261001T055720Z-7973bb09 (2026-10-01) |\n\n**Result:** $0.6998 per million output tokens (95% CI $0.6839 to $0.7158, 5 blocks) [MEASURED]\n\n**Compared with** check 20261001T054905Z-0f15c02b:\n\n- before: $0.2272/M output tokens (95% CI $0.2217 to $0.2327)\n- after: $0.6998/M output tokens (95% CI $0.6839 to $0.7158)\n- change: +208.0%\n- noise floor: calibrated: bound 2.8% (t x sqrt(2) x 0.8% run-to-run SD, 5 df)\n- **Verdict: MORE EXPENSIVE**, the +208.0% change is larger than the run-to-run noise bound (2.8% = t x sqrt(2) x 0.8% run-to-run SD, 5 df) and the 95% confidence intervals do not overlap\n\n**What changed in config:**\n\n- `config.max_num_seqs`: default -> 8\n- `label`: baseline -> seqs8\n- `vllm.cache_config.num_gpu_blocks`: 186542 -> 187972\n\n_Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are included; config values that look like secrets are masked._"
+  },
+  {
+   "id": "m3pro-llama1b-ollama-num-parallel-4",
+   "model": "llama3.2:1b",
+   "gpu": "Apple M3 Pro (MacBook)",
+   "engine": "Ollama 0.32.5",
+   "change": "OLLAMA_NUM_PARALLEL 1 \u2192 4",
+   "metric": "$ per million output tokens",
+   "baseline": {
+    "mean": 5.928474111082474,
+    "ci_low": 5.800784082638395,
+    "ci_high": 6.056164139526554
+   },
+   "baseline_repeats": [
+    6.417656673752011,
+    6.218842403725944,
+    6.095709960935855,
+    5.928474111082474
+   ],
+   "changed": {
+    "mean": 2.0109279106463873,
+    "ci_low": 1.9647746330552436,
+    "ci_high": 2.057081188237531
+   },
+   "verdict": "CHEAPER",
+   "verdict_count": "2 of 2",
+   "change_percent_range": [
+    -66.0801772434625,
+    -61.737887660174216
+   ],
+   "noise_bound_percent": 15.046319197061637,
+   "checks": [
+    {
+     "id": "20260930T064318Z-aa845aa6",
+     "created_at": "2026-09-30T06:43:18.606062Z",
+     "baseline_id": "20260930T064223Z-93b28975",
+     "baseline": {
+      "mean": 5.928474111082474,
+      "ci_low": 5.800784082638395,
+      "ci_high": 6.056164139526554
+     },
+     "cost": {
+      "mean": 2.2683594244198644,
+      "ci_low": 1.993138652940671,
+      "ci_high": 2.543580195899058
+     },
+     "verdict": "CHEAPER",
+     "change_percent": -61.737887660174216,
+     "noise_bound_percent": 15.046319197061637,
+     "noise_df": 3,
+     "output_length_change_percent": -2.109375000000002,
+     "reason": "the -61.7% change is larger than the run-to-run noise bound (15.0% = t x sqrt(2) x 3.3% run-to-run SD, 3 df) and the 95% confidence intervals do not overlap"
+    },
+    {
+     "id": "20260930T064345Z-bef600a8",
+     "created_at": "2026-09-30T06:43:45.237033Z",
+     "baseline_id": "20260930T064223Z-93b28975",
+     "baseline": {
+      "mean": 5.928474111082474,
+      "ci_low": 5.800784082638395,
+      "ci_high": 6.056164139526554
+     },
+     "cost": {
+      "mean": 2.0109279106463873,
+      "ci_low": 1.9647746330552436,
+      "ci_high": 2.057081188237531
+     },
+     "verdict": "CHEAPER",
+     "change_percent": -66.0801772434625,
+     "noise_bound_percent": 15.046319197061637,
+     "noise_df": 3,
+     "output_length_change_percent": 0.0,
+     "reason": "the -66.1% change is larger than the run-to-run noise bound (15.0% = t x sqrt(2) x 3.3% run-to-run SD, 3 df) and the 95% confidence intervals do not overlap"
+    }
+   ],
+   "gpu_hourly_rate_usd": 1.5,
+   "rate_label": "ASSUMED",
+   "rate_source": "assumed $1.50/hr (laptop, no real bill)",
+   "date": "2026-09-30",
+   "workload": {
+    "concurrency": 4,
+    "max_tokens": 128,
+    "requests_per_block": 8,
+    "blocks": 5,
+    "cache": "cold",
+    "temperature": 0
+   },
+   "tool": "throttle check (throttle-pro 0.5.1), re-judged with the OUTPUT CHANGED rule",
+   "quality": "Not sampled.",
+   "caveat": "Laptop; the $/hr is an assumed rate for illustration.",
+   "episode": "EP5",
+   "share_markdown": "## Throttle check: llama3.2:1b\n\n| | |\n|---|---|\n| Throttle version | 0.5.1 |\n| Engine | Ollama (likely; /v1/models owned_by=library) |\n| GPU | not given (add --config gpu=NAME) |\n| Model | llama3.2:1b |\n| GPU hourly rate | $1.50/hr (ASSUMED, user-supplied) |\n| Workload | 5 blocks x 8 requests, concurrency 4, max 128 output tokens, temperature 0, 8 built-in prompts (sha256 787fc93d62e1) |\n| Prompt cache | cold (unique prompt per request) |\n| Label | parallel-4 |\n| Check | 20260930T064345Z-bef600a8 (2026-09-30) |\n\n**Result:** $2.01 per million output tokens (95% CI $1.96 to $2.06, 5 blocks) [MEASURED]\n\n**Compared with** check 20260930T064223Z-93b28975:\n\n- before: $5.93/M output tokens (95% CI $5.80 to $6.06)\n- after: $2.01/M output tokens (95% CI $1.96 to $2.06)\n- change: -66.1%\n- noise floor: calibrated: bound 15.0% (t x sqrt(2) x 3.3% run-to-run SD, 3 df)\n- **Verdict: CHEAPER**, the -66.1% change is larger than the run-to-run noise bound (15.0% = t x sqrt(2) x 3.3% run-to-run SD, 3 df) and the 95% confidence intervals do not overlap\n\n**What changed in config:**\n\n- `config.ollama_num_parallel`: 1 -> 4\n- `label`: parallel-1 -> parallel-4\n\n_Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are included; config values that look like secrets are masked._"
+  },
+  {
+   "id": "m3pro-llama3b-q4-to-q8",
+   "model": "llama3.2:3b",
+   "gpu": "Apple M3 Pro (MacBook)",
+   "engine": "Ollama 0.32.5",
+   "change": "Q4_K_M \u2192 Q8_0 weights (OLLAMA_NUM_PARALLEL=4)",
+   "metric": "$ per million output tokens",
+   "baseline": {
+    "mean": 5.175723054677363,
+    "ci_low": 5.081455056378477,
+    "ci_high": 5.269991052976248
+   },
+   "baseline_repeats": [
+    5.1722437494172215,
+    5.221295068451324,
+    5.284109531004333,
+    5.175723054677363
+   ],
+   "changed": {
+    "mean": 4.700297462561215,
+    "ci_low": 4.52792638530209,
+    "ci_high": 4.87266853982034
+   },
+   "verdict": "CHEAPER",
+   "verdict_count": "3 of 3",
+   "change_percent_range": [
+    -10.260573819366536,
+    -9.185684533226713
+   ],
+   "noise_bound_percent": 3.8511081651704746,
+   "checks": [
+    {
+     "id": "20261001T034603Z-393086ba",
+     "created_at": "2026-10-01T03:46:03.382347Z",
+     "baseline_id": "20261001T034456Z-06d7816a",
+     "baseline": {
+      "mean": 5.175723054677363,
+      "ci_low": 5.081455056378477,
+      "ci_high": 5.269991052976248
+     },
+     "cost": {
+      "mean": 4.6446641699662194,
+      "ci_low": 4.544355864626688,
+      "ci_high": 4.744972475305751
+     },
+     "verdict": "CHEAPER",
+     "change_percent": -10.260573819366536,
+     "noise_bound_percent": 4.506056592518594,
+     "noise_df": 3,
+     "output_length_change_percent": 0.02004008016032177,
+     "reason": "the -10.3% change is larger than the run-to-run noise bound (4.5% = t x sqrt(2) x 1.0% run-to-run SD, 3 df) and the 95% confidence intervals do not overlap"
+    },
+    {
+     "id": "20261001T034701Z-3909ebcc",
+     "created_at": "2026-10-01T03:47:01.863268Z",
+     "baseline_id": "20261001T034456Z-06d7816a",
+     "baseline": {
+      "mean": 5.175723054677363,
+      "ci_low": 5.081455056378477,
+      "ci_high": 5.269991052976248
+     },
+     "cost": {
+      "mean": 4.687551161066855,
+      "ci_low": 4.420525916631618,
+      "ci_high": 4.954576405502092
+     },
+     "verdict": "CHEAPER",
+     "change_percent": -9.431955466963037,
+     "noise_bound_percent": 4.506056592518594,
+     "noise_df": 3,
+     "output_length_change_percent": 0.3406813627254479,
+     "reason": "the -9.4% change is larger than the run-to-run noise bound (4.5% = t x sqrt(2) x 1.0% run-to-run SD, 3 df) and the 95% confidence intervals do not overlap"
+    },
+    {
+     "id": "20261001T035022Z-29452cbf",
+     "created_at": "2026-10-01T03:50:22.899868Z",
+     "baseline_id": "20261001T034456Z-06d7816a",
+     "baseline": {
+      "mean": 5.175723054677363,
+      "ci_low": 5.081455056378477,
+      "ci_high": 5.269991052976248
+     },
+     "cost": {
+      "mean": 4.700297462561215,
+      "ci_low": 4.52792638530209,
+      "ci_high": 4.87266853982034
+     },
+     "verdict": "CHEAPER",
+     "change_percent": -9.185684533226713,
+     "noise_bound_percent": 3.8511081651704746,
+     "noise_df": 6,
+     "output_length_change_percent": -0.32064128256513724,
+     "reason": "the -9.2% change is larger than the run-to-run noise bound (3.9% = t x sqrt(2) x 1.1% run-to-run SD, 6 df) and the 95% confidence intervals do not overlap"
+    }
+   ],
+   "gpu_hourly_rate_usd": 1.5,
+   "rate_label": "ASSUMED",
+   "rate_source": "assumed $1.50/hr (laptop, no real bill)",
+   "date": "2026-10-01",
+   "workload": {
+    "concurrency": 4,
+    "max_tokens": 128,
+    "requests_per_block": 8,
+    "blocks": 5,
+    "cache": "cold",
+    "temperature": 0
+   },
+   "tool": "throttle check (throttle-pro 0.5.1), re-judged with the OUTPUT CHANGED rule",
+   "quality": "Not sampled.",
+   "caveat": "Laptop; the $/hr is an assumed rate. Q4/Q8 order was interleaved to rule out drift.",
+   "episode": "EP6",
+   "share_markdown": "## Throttle check: llama3.2:3b-instruct-q8_0\n\n| | |\n|---|---|\n| Throttle version | 0.5.1 |\n| Engine | Ollama (likely; /v1/models owned_by=library) |\n| GPU | not given (add --config gpu=NAME) |\n| Model | llama3.2:3b-instruct-q8_0 |\n| GPU hourly rate | $1.50/hr (ASSUMED, user-supplied) |\n| Workload | 5 blocks x 8 requests, concurrency 4, max 128 output tokens, temperature 0, 8 built-in prompts (sha256 787fc93d62e1) |\n| Prompt cache | cold (unique prompt per request) |\n| Label | q8 |\n| Check | 20261001T035022Z-29452cbf (2026-10-01) |\n\n**Result:** $4.70 per million output tokens (95% CI $4.53 to $4.87, 5 blocks) [MEASURED]\n\n**Compared with** check 20261001T034456Z-06d7816a:\n\n- before: $5.18/M output tokens (95% CI $5.08 to $5.27)\n- after: $4.70/M output tokens (95% CI $4.53 to $4.87)\n- change: -9.2%\n- noise floor: calibrated: bound 3.9% (t x sqrt(2) x 1.1% run-to-run SD, 6 df)\n- **Verdict: CHEAPER**, the -9.2% change is larger than the run-to-run noise bound (3.9% = t x sqrt(2) x 1.1% run-to-run SD, 6 df) and the 95% confidence intervals do not overlap\n\n**What changed in config:**\n\n- `config.quant`: Q4_K_M -> Q8_0\n- `label`: q4 -> q8\n- `request.model`: llama3.2:3b -> llama3.2:3b-instruct-q8_0\n\n_Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are included; config values that look like secrets are masked._"
+  },
+  {
+   "id": "m3pro-llama3b-to-1b",
+   "model": "llama3.2:3b \u2192 llama3.2:1b",
+   "gpu": "Apple M3 Pro (MacBook)",
+   "engine": "Ollama",
+   "change": "Swap llama3.2:3b for llama3.2:1b",
+   "metric": "$ per million output tokens",
+   "baseline": {
+    "mean": 8.633896370958558,
+    "ci_low": 8.26523861234368,
+    "ci_high": 9.002554129573436
+   },
+   "baseline_repeats": [
+    8.494238303455859,
+    8.680543280692946,
+    8.709295925560431,
+    8.633896370958558
+   ],
+   "changed": {
+    "mean": 5.907830697695874,
+    "ci_low": 4.8469451822811305,
+    "ci_high": 6.968716213110618
+   },
+   "verdict": "CHEAPER",
+   "verdict_count": "2 of 2",
+   "change_percent_range": [
+    -35.87819922422059,
+    -31.573991117524024
+   ],
+   "noise_bound_percent": 4.9734068252136066,
+   "checks": [
+    {
+     "id": "20260927T194325Z-40935488",
+     "created_at": "2026-09-27T19:43:25.537512Z",
+     "baseline_id": "20260927T194311Z-48d7dd1d",
+     "baseline": {
+      "mean": 8.633896370958558,
+      "ci_low": 8.26523861234368,
+      "ci_high": 9.002554129573436
+     },
+     "cost": {
+      "mean": 5.536209830173296,
+      "ci_low": 5.506295523416858,
+      "ci_high": 5.566124136929734
+     },
+     "verdict": "CHEAPER",
+     "change_percent": -35.87819922422059,
+     "noise_bound_percent": 4.9734068252136066,
+     "noise_df": 3,
+     "output_length_change_percent": 0.0,
+     "reason": "the -35.9% change is larger than the run-to-run noise bound (5.0% = t x sqrt(2) x 1.1% run-to-run SD, 3 df) and the 95% confidence intervals do not overlap"
+    },
+    {
+     "id": "20260927T194337Z-41f5e1f0",
+     "created_at": "2026-09-27T19:43:37.735961Z",
+     "baseline_id": "20260927T194311Z-48d7dd1d",
+     "baseline": {
+      "mean": 8.633896370958558,
+      "ci_low": 8.26523861234368,
+      "ci_high": 9.002554129573436
+     },
+     "cost": {
+      "mean": 5.907830697695874,
+      "ci_low": 4.8469451822811305,
+      "ci_high": 6.968716213110618
+     },
+     "verdict": "CHEAPER",
+     "change_percent": -31.573991117524024,
+     "noise_bound_percent": 4.9734068252136066,
+     "noise_df": 3,
+     "output_length_change_percent": 0.0,
+     "reason": "the -31.6% change is larger than the run-to-run noise bound (5.0% = t x sqrt(2) x 1.1% run-to-run SD, 3 df) and the 95% confidence intervals do not overlap"
+    }
+   ],
+   "gpu_hourly_rate_usd": 1.5,
+   "rate_label": "ASSUMED",
+   "rate_source": "assumed $1.50/hr (laptop, no real bill)",
+   "date": "2026-09-27",
+   "workload": {
+    "concurrency": 2,
+    "max_tokens": 64,
+    "requests_per_block": 4,
+    "blocks": 3,
+    "cache": "cold",
+    "temperature": 0
+   },
+   "tool": "throttle check (throttle-pro 0.4.2), re-judged with the OUTPUT CHANGED rule",
+   "quality": "Not sampled. A smaller model is a quality trade-off Throttle does not judge.",
+   "caveat": "Laptop; the $/hr is an assumed rate.",
+   "episode": "EP4",
+   "share_markdown": "## Throttle check: llama3.2:1b\n\n| | |\n|---|---|\n| Throttle version | 0.4.2 |\n| Engine | Ollama (likely; /v1/models owned_by=library) |\n| GPU | apple-m3-pro |\n| Model | llama3.2:1b |\n| GPU hourly rate | $1.50/hr (ASSUMED, user-supplied) |\n| Workload | 3 blocks x 4 requests, concurrency 2, max 64 output tokens, temperature 0, 8 built-in prompts (sha256 787fc93d62e1) |\n| Prompt cache | cold (unique prompt per request) |\n| Label | smaller-1b |\n| Check | 20260927T194337Z-41f5e1f0 (2026-09-27) |\n\n**Result:** $5.91 per million output tokens (95% CI $4.85 to $6.97, 3 blocks) [MEASURED]\n\n**Compared with** check 20260927T194311Z-48d7dd1d:\n\n- before: $8.63/M output tokens (95% CI $8.27 to $9.00)\n- after: $5.91/M output tokens (95% CI $4.85 to $6.97)\n- change: -31.6%\n- noise floor: calibrated: bound 5.0% (t x sqrt(2) x 1.1% run-to-run SD, 3 df)\n- **Verdict: CHEAPER**, the -31.6% change is larger than the run-to-run noise bound (5.0% = t x sqrt(2) x 1.1% run-to-run SD, 3 df) and the 95% confidence intervals do not overlap\n\n**What changed in config:**\n\n- `label`: baseline-3b -> smaller-1b\n- `request.model`: llama3.2:3b -> llama3.2:1b\n\n_Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are included; config values that look like secrets are masked._"
+  },
+  {
+   "id": "a100-qwen0.5b-max-num-seqs-1-to-8",
+   "model": "Qwen2.5-0.5B-Instruct",
+   "gpu": "1x NVIDIA A100 80GB PCIe (RunPod)",
+   "engine": "vLLM 0.16.0",
+   "change": "max_num_seqs 1 \u2192 8",
+   "metric": "$ per million output tokens",
+   "baseline": {
+    "mean": 0.745891310412664,
+    "ci_low": null,
+    "ci_high": null
+   },
+   "baseline_repeats": [
+    0.7475081396400038,
+    0.7455682844763261,
+    0.7445975071216621
+   ],
+   "changed": {
+    "mean": 0.2342033353456843,
+    "ci_low": null,
+    "ci_high": null
+   },
+   "verdict": "CHEAPER",
+   "verdict_count": "decision-eligible (golden protocol)",
+   "change_percent_range": [
+    -68.60087628368919,
+    -68.60087628368919
+   ],
+   "noise_bound_percent": null,
+   "checks": [],
+   "gpu_hourly_rate_usd": 1.39,
+   "rate_label": "ASSUMED",
+   "rate_source": "RunPod on-demand rate at run time",
+   "date": "2026-08-17",
+   "workload": {
+    "concurrency": 8,
+    "max_tokens": 128,
+    "requests_per_block": 67,
+    "blocks": 3,
+    "cache": "prefix caching disabled",
+    "temperature": 0
+   },
+   "tool": "throttle golden: six-position counterbalanced protocol (3 baseline, 3 candidate positions), decision_eligible: true",
+   "quality": "Not sampled.",
+   "caveat": "A deliberately bad baseline (one sequence at a time) on a small model; it shows the measurement, not a saving to expect.",
+   "episode": "",
+   "source": "https://github.com/KushagraKanaujia/throttle/tree/main/validation/golden-live-20260817",
+   "share_markdown": ""
+  }
+ ]
+}
