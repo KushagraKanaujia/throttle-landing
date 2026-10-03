@@ -402,7 +402,7 @@ h3 { font: 600 21px/1.2 var(--sans); letter-spacing: -.02em; margin: 0 0 12px; }
 .foot { border-top: 1px solid var(--line); padding: 40px 0 56px; }
 .foot-in { display: flex; align-items: center; justify-content: space-between; gap: 20px 32px; flex-wrap: wrap; }
 .foot p { margin: 0; color: var(--dim); font-size: 14px; flex: 1; min-width: 240px; }
-.foot nav { display: flex; gap: 22px; font-size: 14px; color: var(--muted); }
+.foot nav { display: flex; flex-wrap: wrap; gap: 10px 22px; font-size: 14px; color: var(--muted); }
 .foot nav a:hover { color: var(--text); }
 
 /* reveal */

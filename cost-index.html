@@ -28,7 +28,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/site.css?v=a54ae2d5">
 <link rel="stylesheet" href="/assets/css/blog.css?v=8c7afacb">
-<link rel="stylesheet" href="/assets/css/cost-index.css?v=7fa38fc2">
+<link rel="stylesheet" href="/assets/css/cost-index.css?v=987b06b2">
 <script src="/assets/js/site.js?v=dd1c358f" defer></script>
 <script src="/assets/js/cost-index.js?v=a6917b5d" defer></script>
 </head>
@@ -41,13 +41,10 @@
     <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg>
     <span>throttle</span>
   </a>
-  <nav class="nav-links" aria-label="Sections">
-    <a href="/#drift">Drift</a>
-    <a href="/#runs">Real runs</a>
-    <a href="/#receipts">Receipts</a>
-    <a href="/#pricing">Pricing</a>
+  <nav class="nav-links" aria-label="Pages">
+    <a href="/cost-index" aria-current="page">Cost Index</a>
+    <a href="/guides">Guides</a>
     <a href="/audit">Audit</a>
-    <a href="/cost-index" aria-current="page">Index</a>
     <a href="/blog">Blog</a>
   </nav>
   <div class="nav-cta">
@@ -65,6 +62,7 @@
       <span class="kicker">The Throttle Index · 11 changes · updated </span>
       <h1>What tokens <em>really</em> cost.</h1>
       <p class="post-lede">Real serving changes on real hardware, measured in dollars per million output tokens. A change only counts as <b class="v-cheap">CHEAPER</b> or <b class="v-exp">MORE EXPENSIVE</b> when it beats run-to-run noise measured from repeat checks. When the answers change shape, it's flagged <b class="v-flag">OUTPUT CHANGED</b>: a cheaper token isn't a saving if the answers broke.</p>
+      <p class="ix-guides">How these numbers work, and how to get your own: <a href="/guides/llm-cost-per-million-tokens">cost per million tokens</a> · <a href="/guides/vllm-cost-per-token">vLLM cost per token</a> · <a href="/guides/fp8-quantization-cost-vs-quality">FP8 cost vs quality</a> · <a href="/guides/tensor-parallel-cost">tensor parallel cost</a></p>
       <div class="ix-legend">
         <span><b class="tag tag-b">MEASURED</b> tokens and wall-clock time</span>
         <span><b class="tag">ASSUMED</b> the GPU's $/hr (a list price, stated on every row)</span>
@@ -114,6 +112,7 @@
     <div><dt>Baseline repeats</dt><dd>$1.67, $1.67, $1.67, $1.67 (noise bound 0.6%)</dd></div>
     <div><dt>Method</dt><dd>throttle check (throttle-pro 0.5.1), re-judged with the OUTPUT CHANGED rule. Date: 2026-10-01.</dd></div>
     <div><dt>Source</dt><dd>the saved check history (summary below is Throttle's own sanitized <code>--share-id</code> output)</dd></div>
+    <div><dt>Guide</dt><dd><a href="/guides/fp8-quantization-cost-vs-quality">FP8 quantization: cost vs quality</a></dd></div>
   </dl>
   <p class="ix-checks-h">Every check of this change</p><ul class="ix-checks"><li><code>20261001T063815Z-8ece234d</code> $1.13 ($1.13–$1.13) vs $1.67: <b class='v-cheap'>CHEAPER</b> -32.5%, noise bound 0.8%, output length +0.7%</li><li><code>20261001T063859Z-c8674c58</code> $1.13 ($1.13–$1.13) vs $1.67: <b class='v-cheap'>CHEAPER</b> -32.4%, noise bound 0.8%, output length +0.8%</li><li><code>20261001T063943Z-bcd9daf2</code> $1.13 ($1.13–$1.13) vs $1.67: <b class='v-cheap'>CHEAPER</b> -32.4%, noise bound 0.6%, output length +0.4%</li></ul>
   <pre class='ix-share'>## Throttle check: Qwen/Qwen2.5-72B-Instruct
@@ -170,6 +169,7 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
     <div><dt>Baseline repeats</dt><dd>$1.67, $1.67, $1.67, $1.67 (noise bound 2.5%)</dd></div>
     <div><dt>Method</dt><dd>throttle check (throttle-pro 0.5.1), re-judged with the OUTPUT CHANGED rule. Date: 2026-10-01.</dd></div>
     <div><dt>Source</dt><dd>the saved check history (summary below is Throttle's own sanitized <code>--share-id</code> output)</dd></div>
+    <div><dt>Guide</dt><dd><a href="/guides/fp8-quantization-cost-vs-quality">FP8 quantization: cost vs quality</a></dd></div>
   </dl>
   <p class="ix-checks-h">Every check of this change</p><ul class="ix-checks"><li><code>20261001T062514Z-0df61c4e</code> $0.887 ($0.859–$0.915) vs $1.67: <b class='v-flag'>OUTPUT CHANGED</b> -47.0%, noise bound 0.8%, output length +28.3%</li><li><code>20261001T062604Z-47da7f94</code> $0.872 ($0.869–$0.875) vs $1.67: <b class='v-flag'>OUTPUT CHANGED</b> -47.9%, noise bound 0.8%, output length +29.5%</li><li><code>20261001T062654Z-8d20c47c</code> $0.872 ($0.868–$0.876) vs $1.67: <b class='v-flag'>OUTPUT CHANGED</b> -47.9%, noise bound 2.5%, output length +29.5%</li></ul>
   <pre class='ix-share'>## Throttle check: Qwen/Qwen2.5-72B-Instruct
@@ -224,6 +224,7 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
     <div><dt>Baseline repeats</dt><dd>$0.760, $0.776, $0.782, $0.761 (noise bound 4.9%)</dd></div>
     <div><dt>Method</dt><dd>throttle check (throttle-pro 0.5.1), re-judged with the OUTPUT CHANGED rule. Date: 2026-10-01.</dd></div>
     <div><dt>Source</dt><dd>the saved check history (summary below is Throttle's own sanitized <code>--share-id</code> output)</dd></div>
+    <div><dt>Guide</dt><dd><a href="/guides/fp8-quantization-cost-vs-quality">FP8 quantization: cost vs quality</a></dd></div>
   </dl>
   <p class="ix-checks-h">Every check of this change</p><ul class="ix-checks"><li><code>20261001T062119Z-0df04e1d</code> $0.448 ($0.445–$0.451) vs $0.761: <b class='v-flag'>OUTPUT CHANGED</b> -41.1%, noise bound 6.4%, output length +17.7%</li><li><code>20261001T062142Z-444dc655</code> $0.449 ($0.446–$0.452) vs $0.761: <b class='v-flag'>OUTPUT CHANGED</b> -41.0%, noise bound 6.4%, output length +17.7%</li><li><code>20261001T062205Z-cfa31769</code> $0.450 ($0.447–$0.454) vs $0.761: <b class='v-flag'>OUTPUT CHANGED</b> -40.8%, noise bound 4.9%, output length +17.7%</li></ul>
   <pre class='ix-share'>## Throttle check: Qwen/Qwen2.5-32B-Instruct
@@ -278,6 +279,7 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
     <div><dt>Baseline repeats</dt><dd>$0.227, $0.230, $0.228, $0.227 (noise bound 2.3%)</dd></div>
     <div><dt>Method</dt><dd>throttle check (throttle-pro 0.5.1), re-judged with the OUTPUT CHANGED rule. Date: 2026-10-01.</dd></div>
     <div><dt>Source</dt><dd>the saved check history (summary below is Throttle's own sanitized <code>--share-id</code> output)</dd></div>
+    <div><dt>Guide</dt><dd><a href="/guides/fp8-quantization-cost-vs-quality">FP8 quantization: cost vs quality</a></dd></div>
   </dl>
   <p class="ix-checks-h">Every check of this change</p><ul class="ix-checks"><li><code>20261001T065636Z-39619c63</code> $0.184 ($0.178–$0.190) vs $0.227: <b class='v-cheap'>CHEAPER</b> -18.8%, noise bound 2.8%, output length +2.2%</li><li><code>20261001T065644Z-79de36b0</code> $0.186 ($0.180–$0.192) vs $0.227: <b class='v-cheap'>CHEAPER</b> -18.3%, noise bound 2.8%, output length +2.0%</li><li><code>20261001T065652Z-411315d1</code> $0.186 ($0.182–$0.190) vs $0.227: <b class='v-cheap'>CHEAPER</b> -18.3%, noise bound 2.3%, output length +2.0%</li></ul>
   <pre class='ix-share'>## Throttle check: Qwen/Qwen2.5-7B-Instruct
@@ -334,6 +336,7 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
     <div><dt>Baseline repeats</dt><dd>$0.227, $0.230, $0.228, $0.227 (noise bound 2.8%)</dd></div>
     <div><dt>Method</dt><dd>throttle check (throttle-pro 0.5.1), re-judged with the OUTPUT CHANGED rule. Date: 2026-10-01.</dd></div>
     <div><dt>Source</dt><dd>the saved check history (summary below is Throttle's own sanitized <code>--share-id</code> output)</dd></div>
+    <div><dt>Guide</dt><dd><a href="/guides/fp8-quantization-cost-vs-quality">FP8 quantization: cost vs quality</a></dd></div>
   </dl>
   <p class="ix-checks-h">Every check of this change</p><ul class="ix-checks"><li><code>20261001T055339Z-d24e1ac8</code> $0.192 ($0.180–$0.204) vs $0.227: <b class='v-cheap'>CHEAPER</b> -15.5%, noise bound 2.8%, output length +6.3%</li><li><code>20261001T055349Z-ec722b14</code> $0.186 ($0.169–$0.203) vs $0.227: <b class='v-cheap'>CHEAPER</b> -18.1%, noise bound 2.8%, output length +9.1%</li></ul>
   <pre class='ix-share'>## Throttle check: Qwen/Qwen2.5-7B-Instruct
@@ -388,6 +391,7 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
     <div><dt>Baseline repeats</dt><dd>$0.227, $0.230, $0.228, $0.227 (noise bound 2.8%)</dd></div>
     <div><dt>Method</dt><dd>throttle check (throttle-pro 0.5.1), re-judged with the OUTPUT CHANGED rule. Date: 2026-10-01.</dd></div>
     <div><dt>Source</dt><dd>the saved check history (summary below is Throttle's own sanitized <code>--share-id</code> output)</dd></div>
+    <div><dt>Guide</dt><dd><a href="/guides/vllm-cost-per-token">vLLM cost per token</a></dd></div>
   </dl>
   <p class="ix-checks-h">Every check of this change</p><ul class="ix-checks"><li><code>20261001T055113Z-acda5e76</code> $0.700 ($0.682–$0.718) vs $0.227: <b class='v-exp'>MORE EXPENSIVE</b> +208.2%, noise bound 2.8%, output length -0.3%</li><li><code>20261001T055624Z-9f099538</code> $0.701 ($0.681–$0.720) vs $0.227: <b class='v-exp'>MORE EXPENSIVE</b> +208.4%, noise bound 2.8%, output length +0.4%</li><li><code>20261001T055652Z-4340d2de</code> $0.712 ($0.692–$0.732) vs $0.227: <b class='v-exp'>MORE EXPENSIVE</b> +213.4%, noise bound 2.1%, output length -1.5%</li><li><code>20261001T055720Z-7973bb09</code> $0.700 ($0.684–$0.716) vs $0.227: <b class='v-exp'>MORE EXPENSIVE</b> +208.0%, noise bound 2.8%, output length -2.3%</li></ul>
   <pre class='ix-share'>## Throttle check: Qwen/Qwen2.5-7B-Instruct
@@ -442,6 +446,7 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
     <div><dt>Baseline repeats</dt><dd>$1.67, $1.67, $1.66, $1.66 (noise bound 0.8%)</dd></div>
     <div><dt>Method</dt><dd>throttle check (throttle-pro 0.5.1), re-judged with the OUTPUT CHANGED rule. Date: 2026-10-01.</dd></div>
     <div><dt>Source</dt><dd>the saved check history (summary below is Throttle's own sanitized <code>--share-id</code> output)</dd></div>
+    <div><dt>Guide</dt><dd><a href="/guides/tensor-parallel-cost">Tensor parallel size and cost</a></dd></div>
   </dl>
   <p class="ix-checks-h">Every check of this change</p><ul class="ix-checks"><li><code>20261001T192537Z-5e84bc2d</code> $2.14 ($2.13–$2.15) vs $1.66: <b class='v-exp'>MORE EXPENSIVE</b> +28.8%, noise bound 1.0%, output length -0.1%</li><li><code>20261001T192618Z-c00f5d81</code> $2.14 ($2.13–$2.15) vs $1.66: <b class='v-exp'>MORE EXPENSIVE</b> +28.5%, noise bound 1.0%, output length -0.2%</li><li><code>20261001T192700Z-d565005e</code> $2.13 ($2.13–$2.14) vs $1.66: <b class='v-exp'>MORE EXPENSIVE</b> +28.1%, noise bound 0.8%, output length -0.0%</li></ul>
   <pre class='ix-share'>## Throttle check: Qwen/Qwen2.5-72B-Instruct
@@ -499,6 +504,7 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
     <div><dt>Baseline repeats</dt><dd>$6.42, $6.22, $6.10, $5.93 (noise bound 15.0%)</dd></div>
     <div><dt>Method</dt><dd>throttle check (throttle-pro 0.5.1), re-judged with the OUTPUT CHANGED rule. Date: 2026-09-30.</dd></div>
     <div><dt>Source</dt><dd>the saved check history (summary below is Throttle's own sanitized <code>--share-id</code> output)</dd></div>
+    
   </dl>
   <p class="ix-checks-h">Every check of this change</p><ul class="ix-checks"><li><code>20260930T064318Z-aa845aa6</code> $2.27 ($1.99–$2.54) vs $5.93: <b class='v-cheap'>CHEAPER</b> -61.7%, noise bound 15.0%, output length -2.1%</li><li><code>20260930T064345Z-bef600a8</code> $2.01 ($1.96–$2.06) vs $5.93: <b class='v-cheap'>CHEAPER</b> -66.1%, noise bound 15.0%, output length +0.0%</li></ul>
   <pre class='ix-share'>## Throttle check: llama3.2:1b
@@ -552,6 +558,7 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
     <div><dt>Baseline repeats</dt><dd>$5.17, $5.22, $5.28, $5.18 (noise bound 3.9%)</dd></div>
     <div><dt>Method</dt><dd>throttle check (throttle-pro 0.5.1), re-judged with the OUTPUT CHANGED rule. Date: 2026-10-01.</dd></div>
     <div><dt>Source</dt><dd>the saved check history (summary below is Throttle's own sanitized <code>--share-id</code> output)</dd></div>
+    
   </dl>
   <p class="ix-checks-h">Every check of this change</p><ul class="ix-checks"><li><code>20261001T034603Z-393086ba</code> $4.64 ($4.54–$4.74) vs $5.18: <b class='v-cheap'>CHEAPER</b> -10.3%, noise bound 4.5%, output length +0.0%</li><li><code>20261001T034701Z-3909ebcc</code> $4.69 ($4.42–$4.95) vs $5.18: <b class='v-cheap'>CHEAPER</b> -9.4%, noise bound 4.5%, output length +0.3%</li><li><code>20261001T035022Z-29452cbf</code> $4.70 ($4.53–$4.87) vs $5.18: <b class='v-cheap'>CHEAPER</b> -9.2%, noise bound 3.9%, output length -0.3%</li></ul>
   <pre class='ix-share'>## Throttle check: llama3.2:3b-instruct-q8_0
@@ -606,6 +613,7 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
     <div><dt>Baseline repeats</dt><dd>$8.49, $8.68, $8.71, $8.63 (noise bound 5.0%)</dd></div>
     <div><dt>Method</dt><dd>throttle check (throttle-pro 0.4.2), re-judged with the OUTPUT CHANGED rule. Date: 2026-09-27.</dd></div>
     <div><dt>Source</dt><dd>the saved check history (summary below is Throttle's own sanitized <code>--share-id</code> output)</dd></div>
+    
   </dl>
   <p class="ix-checks-h">Every check of this change</p><ul class="ix-checks"><li><code>20260927T194325Z-40935488</code> $5.54 ($5.51–$5.57) vs $8.63: <b class='v-cheap'>CHEAPER</b> -35.9%, noise bound 5.0%, output length +0.0%</li><li><code>20260927T194337Z-41f5e1f0</code> $5.91 ($4.85–$6.97) vs $8.63: <b class='v-cheap'>CHEAPER</b> -31.6%, noise bound 5.0%, output length +0.0%</li></ul>
   <pre class='ix-share'>## Throttle check: llama3.2:1b
@@ -659,6 +667,7 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
     <div><dt>Baseline repeats</dt><dd>$0.748, $0.746, $0.745</dd></div>
     <div><dt>Method</dt><dd>throttle golden: six-position counterbalanced protocol (3 baseline, 3 candidate positions), decision_eligible: true. Date: 2026-08-17.</dd></div>
     <div><dt>Source</dt><dd><a href="https://github.com/KushagraKanaujia/throttle/tree/main/validation/golden-live-20260817" target="_blank" rel="noopener">raw artifacts in the Throttle repo</a></dd></div>
+    <div><dt>Guide</dt><dd><a href="/guides/vllm-cost-per-token">vLLM cost per token</a></dd></div>
   </dl>
   
   
@@ -690,6 +699,8 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
     <a class="brand" href="/"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg><span>throttle</span></a>
     <p>Measures, caches and reports. Provisions nothing and never changes your server.</p>
     <nav aria-label="Footer">
+      <a href="/cost-index">Cost Index</a>
+      <a href="/guides">Guides</a>
       <a href="/audit">Cost Audit</a>
       <a href="/blog">Blog</a>
       <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a>

@@ -128,3 +128,14 @@
   .prose ol.deliverables li { padding: 14px 14px 14px 52px; }
   .prose ol.deliverables li::before { left: 14px; top: 14px; }
 }
+
+/* Guides: cost calculator */
+.calc { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 16px; margin: 1.4em 0; padding: 20px; border: 1px solid var(--line-2); border-radius: 14px; background: rgba(15,17,21,.6); }
+.calc label { display: grid; gap: 6px; font-size: 14px; color: #c3c8cf; }
+.calc input { font: 500 16px/1.2 var(--mono); color: var(--text); background: #0b0d10; border: 1px solid var(--line-2); border-radius: 10px; padding: 10px 12px; width: 100%; box-sizing: border-box; }
+.calc input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.calc-out { grid-column: 1 / -1; display: grid; gap: 4px; padding-top: 6px; border-top: 1px solid var(--line-2); color: #c3c8cf; }
+.calc-big { font: 700 30px/1.1 var(--sans); color: var(--accent); }
+.calc-sub { font-size: 14px; color: #9aa1aa; }
+.prose .note { font-size: 14.5px; color: #9aa1aa; }
+@media (max-width: 560px) { .calc { grid-template-columns: 1fr; padding: 16px; } }

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>document.documentElement.classList.add("js")</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LLM cost per million tokens: formula &amp; calculator · Throttle</title>
+<meta name="description" content="How to calculate LLM inference cost per million tokens from your GPU price and throughput, with a calculator, a worked example from a real AMD MI300X run, and the pitfalls that make the number wrong.">
+<meta name="author" content="Kushagra Kanaujia">
+<meta name="theme-color" content="#07080a">
+<link rel="canonical" href="https://www.throttle-pro.com/guides/llm-cost-per-million-tokens">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Throttle">
+<meta property="og:title" content="LLM cost per million tokens: formula &amp; calculator · Throttle">
+<meta property="og:description" content="How to calculate LLM inference cost per million tokens from your GPU price and throughput, with a calculator, a worked example from a real AMD MI300X run, and the pitfalls that make the number wrong.">
+<meta property="og:url" content="https://www.throttle-pro.com/guides/llm-cost-per-million-tokens">
+<meta property="og:image" content="https://www.throttle-pro.com/assets/media/index-og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="LLM cost per million tokens: formula &amp; calculator · Throttle">
+<meta name="twitter:description" content="How to calculate LLM inference cost per million tokens from your GPU price and throughput, with a calculator, a worked example from a real AMD MI300X run, and the pitfalls that make the number wrong.">
+<meta name="twitter:image" content="https://www.throttle-pro.com/assets/media/index-og.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "LLM cost per million tokens: the formula, a calculator, and real numbers", "description": "How to calculate LLM inference cost per million tokens from your GPU price and throughput, with a calculator, a worked example from a real AMD MI300X run, and the pitfalls that make the number wrong.", "datePublished": "2026-10-03", "dateModified": "2026-10-03", "mainEntityOfPage": "https://www.throttle-pro.com/guides/llm-cost-per-million-tokens", "image": "https://www.throttle-pro.com/assets/media/index-og.png", "wordCount": 679, "keywords": "llm cost per million tokens, llm inference cost calculator, cost per token llm", "author": {"@type": "Person", "name": "Kushagra Kanaujia", "url": "https://github.com/KushagraKanaujia"}, "publisher": {"@type": "Organization", "name": "Throttle", "url": "https://www.throttle-pro.com/", "logo": {"@type": "ImageObject", "url": "https://www.throttle-pro.com/assets/favicon.svg"}}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do you calculate LLM cost per million tokens?", "acceptedAnswer": {"@type": "Answer", "text": "Divide the hourly price of every GPU the model uses by the server's aggregate output tokens per hour, then multiply by one million: $/hr ÷ (tokens/s × 3600) × 1,000,000."}}, {"@type": "Question", "name": "What is a typical cost per million tokens for a self-hosted model?", "acceptedAnswer": {"@type": "Answer", "text": "It depends on the model, GPU and concurrency. Measured examples on one AMD MI300X at $2.99/hr: Qwen2.5-7B about $0.227 and Qwen2.5-72B about $1.67 per million output tokens, at 32 concurrent requests."}}, {"@type": "Question", "name": "Should I count input tokens too?", "acceptedAnswer": {"@type": "Answer", "text": "Throttle reports $/M for output tokens, input tokens and total tokens from the same GPU spend. Output tokens are usually what you compare, since decoding dominates GPU time for chat-style workloads."}}, {"@type": "Question", "name": "Why does my cost per token change between runs?", "acceptedAnswer": {"@type": "Answer", "text": "Load, thermals, other tenants and batching vary. Measure the run-to-run noise with repeat checks before trusting a small difference."}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Guides", "item": "https://www.throttle-pro.com/guides"}, {"@type": "ListItem", "position": 2, "name": "LLM cost per million tokens: the formula, a calculator, and real numbers", "item": "https://www.throttle-pro.com/guides/llm-cost-per-million-tokens"}]}</script>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/site.css?v=a54ae2d5">
+<link rel="stylesheet" href="/assets/css/blog.css?v=guides1">
+<script src="/assets/js/site.js?v=dd1c358f" defer></script>
+<script src="/assets/js/calc.js?v=1" defer></script>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="glow" aria-hidden="true"></div>
+
+<header class="nav">
+  <a class="brand" href="/" aria-label="Throttle home">
+    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg>
+    <span>throttle</span>
+  </a>
+  <nav class="nav-links" aria-label="Pages">
+    <a href="/cost-index">Cost Index</a>
+    <a href="/guides" aria-current="page">Guides</a>
+    <a href="/audit">Audit</a>
+    <a href="/blog">Blog</a>
+  </nav>
+  <div class="nav-cta">
+    <a class="nav-gh" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener" aria-label="Throttle on GitHub">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      <span>GitHub</span>
+    </a>
+    <a class="btn btn-accent btn-sm" href="/#install">Install</a>
+  </div>
+</header>
+
+<main id="top">
+  <article class="post-wrap">
+    <header class="post-head">
+      <a class="crumb" href="/guides"><span aria-hidden="true">←</span> All guides</a>
+      <span class="kicker">Calculator</span>
+      <h1>LLM cost per million tokens: the formula, a calculator, and real numbers</h1>
+      <p class="post-lede">If you serve your own model, every token has a price. Here is the formula, a calculator you can use now, and a worked example from a real run.</p>
+      <div class="byline"><b>Kushagra Kanaujia</b><span class="sep"></span><span>Founder, Throttle</span><span class="sep"></span><time datetime="2026-10-03">Oct 3, 2026</time><span class="sep"></span><span>3 min read</span></div>
+    </header>
+    <div class="prose">
+<h2 id="formula">The formula</h2>
+<p>A self-hosted GPU costs the same per hour whether it is busy or idle. What changes with your config is how many tokens it produces in that hour. So cost per million output tokens is:</p>
+<pre class="lang-formula"><code>$ per million tokens = GPU $ per hour ÷ (tokens per second × 3600) × 1,000,000</code></pre>
+<p>Two inputs. The hourly price is what you pay for every GPU the model runs on. Tokens per second is the <em>aggregate</em> output throughput of the server at your real concurrency, not one request's streaming speed.</p>
+
+<h2 id="calculator">Calculator</h2>
+<form class="calc" id="calc" aria-label="Cost per million tokens calculator" onsubmit="return false">
+  <label>GPU price per hour (each, $)<input name="rate" type="number" min="0" step="0.01" value="2.99" inputmode="decimal"></label>
+  <label>Number of GPUs<input name="gpus" type="number" min="1" step="1" value="1" inputmode="numeric"></label>
+  <label>Output tokens per second (whole server)<input name="tps" type="number" min="0" step="1" value="3656" inputmode="numeric"></label>
+  <label>Output tokens per month (optional)<input name="monthly" type="number" min="0" step="1000000" value="1000000000" inputmode="numeric"></label>
+  <output class="calc-out" name="out" for="rate gpus tps monthly" aria-live="polite"></output>
+</form>
+<p class="note">The defaults are a real measurement: Qwen2.5-7B-Instruct on one AMD MI300X with vLLM, 32 concurrent requests, at Hot Aisle's $2.99/hr list price. The tokens per second value is the hard part: it has to be measured on your stack, at your concurrency.</p>
+
+<h2 id="worked-example">Worked example: 7B and 72B on an MI300X</h2>
+<div class="table-scroll"><table>
+<thead><tr><th>Setup</th><th>$/hr</th><th>Output tok/s</th><th>$ per M output tokens</th></tr></thead>
+<tbody>
+<tr><td>Qwen2.5-7B, 1× MI300X</td><td>$2.99</td><td>~3,656</td><td><b>$0.227</b></td></tr>
+<tr><td>Qwen2.5-72B, 1× MI300X</td><td>$2.99</td><td>~498</td><td><b>$1.67</b></td></tr>
+<tr><td>Qwen2.5-72B, 2× MI300X (tensor parallel 2)</td><td>$5.98</td><td>~777</td><td><b>$2.14</b></td></tr>
+</tbody></table></div>
+<p>Check the first row: 2.99 ÷ (3,656 × 3,600) × 1,000,000 = $0.227. The last row shows why the formula matters: two GPUs made the 72B model 1.56× faster but each token 28% more expensive, because the hourly price doubled. <a href="/guides/tensor-parallel-cost">More on that</a>.</p>
+
+<h2 id="pitfalls">Four ways the number goes wrong</h2>
+<p><b>1. Measuring one request.</b> A single stream at 40 tok/s says nothing about a server batching 32 requests. Measure at the concurrency you run in production.</p>
+<p><b>2. A warm cache.</b> Send the same prompt repeatedly and a prefix cache serves most of it, so your cost looks lower than real traffic will be. Throttle tags each request with a unique prefix by default (cold cache) so a cache can't flatter the result.</p>
+<p><b>3. Ignoring noise.</b> The same untouched server can move a lot between runs. Four checks of one unchanged Ollama server came back at $8.77, $8.86, $11.26 and $10.02 per million output tokens. A 10% "saving" inside that spread is not a saving. <a href="/blog/i-changed-nothing-27-percent-more-expensive">The full story</a>.</p>
+<p><b>4. Forgetting the answers.</b> A cheaper token is not a saving if the output changed. On one run, vLLM's on-the-fly FP8 made a 32B model look 41% cheaper while it answered with "!!!!!!". <a href="/guides/fp8-quantization-cost-vs-quality">See the FP8 guide</a>.</p>
+
+<h2 id="measure">Measure it instead of estimating it</h2>
+<p>The calculator is only as good as the throughput you type in. <code>throttle check</code> measures it against your own OpenAI-compatible endpoint and prints $ per million tokens with a 95% confidence interval:</p>
+<pre class="lang-sh"><code>pipx install throttle-pro
+
+throttle check \
+  --url http://localhost:8000 \
+  --model Qwen/Qwen2.5-7B-Instruct \
+  --gpu-hourly-rate 2.99</code></pre>
+<p>Run it again after any config change and it compares the two, calling a winner only when the change beats your measured run-to-run noise. For the step-by-step on vLLM, SGLang and Ollama, see <a href="/blog/cost-per-million-tokens-self-hosted-llm">how to measure cost per million tokens on a self-hosted LLM</a>.</p>
+<h2 id="faq">FAQ</h2>
+<div class="faq">
+<details><summary>How do you calculate LLM cost per million tokens?</summary><p>Divide the hourly price of every GPU the model uses by the server&#x27;s aggregate output tokens per hour, then multiply by one million: $/hr ÷ (tokens/s × 3600) × 1,000,000.</p></details>
+<details><summary>What is a typical cost per million tokens for a self-hosted model?</summary><p>It depends on the model, GPU and concurrency. Measured examples on one AMD MI300X at $2.99/hr: Qwen2.5-7B about $0.227 and Qwen2.5-72B about $1.67 per million output tokens, at 32 concurrent requests.</p></details>
+<details><summary>Should I count input tokens too?</summary><p>Throttle reports $/M for output tokens, input tokens and total tokens from the same GPU spend. Output tokens are usually what you compare, since decoding dominates GPU time for chat-style workloads.</p></details>
+<details><summary>Why does my cost per token change between runs?</summary><p>Load, thermals, other tenants and batching vary. Measure the run-to-run noise with repeat checks before trusting a small difference.</p></details>
+</div>
+    </div>
+    <aside class="post-cta" aria-label="Try Throttle">
+      <h2>Measure your own server</h2>
+      <p>Throttle is an open-source CLI (MIT) for any OpenAI-compatible endpoint: vLLM, SGLang, Ollama, LMDeploy. It runs on your machine, and the only traffic it sends goes to your own endpoint.</p>
+      <div class="cta-row">
+        <button class="copy magnetic" type="button" data-copy="pipx install throttle-pro" aria-label="Copy install command">
+          <span class="prompt">$</span><code>pipx install throttle-pro</code><span class="copy-state" aria-live="polite">copy</span>
+        </button>
+        <a class="btn btn-ghost magnetic" href="/cost-index">See the Cost Index</a>
+      </div>
+    </aside>
+    <section class="more" aria-label="Related guides">
+      <h2>Related guides</h2>
+      <div class="cards">
+    <a class="post-card" href="/guides/vllm-cost-per-token">
+      <span class="kicker">Guide</span>
+      <h3>vLLM cost per token: measure it, then change one flag at a time</h3>
+      <p>Measure vLLM cost per million tokens on your own GPU, then test max-num-seqs, tensor parallel size and FP8 one at a time. Real results from AMD MI300X and NVIDIA A100 runs.</p>
+      <span class="meta"><span>Guide</span><span class="arrow">→</span></span>
+    </a>
+    <a class="post-card" href="/guides/self-hosted-llm-cost">
+      <span class="kicker">Guide</span>
+      <h3>Self-hosted LLM cost: how to compare it with an API, honestly</h3>
+      <p>What does a self-hosted LLM really cost? How to turn GPU rental prices into dollars per million tokens, why utilization decides the answer, and real measurements on AMD MI300X.</p>
+      <span class="meta"><span>Guide</span><span class="arrow">→</span></span>
+    </a>
+      </div>
+    </section>
+  </article>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <a class="brand" href="/"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg><span>throttle</span></a>
+    <p>Measures and reports. Provisions nothing and never changes your server.</p>
+    <nav aria-label="Footer">
+      <a href="/cost-index">Cost Index</a>
+      <a href="/guides">Guides</a>
+      <a href="/audit">Cost Audit</a>
+      <a href="/blog">Blog</a>
+      <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://pypi.org/project/throttle-pro/" target="_blank" rel="noopener">PyPI</a>
+      <a href="https://github.com/KushagraKanaujia/throttle/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>

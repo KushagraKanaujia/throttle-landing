@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>document.documentElement.classList.add("js")</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FP8 quantization in vLLM: cost vs quality · Throttle</title>
+<meta name="description" content="Real AMD MI300X results for FP8 quantization in vLLM: pre-quantized FP8 cut 72B cost per token by 32% with correct answers, while on-the-fly FP8 looked 41–47% cheaper but produced broken output.">
+<meta name="author" content="Kushagra Kanaujia">
+<meta name="theme-color" content="#07080a">
+<link rel="canonical" href="https://www.throttle-pro.com/guides/fp8-quantization-cost-vs-quality">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Throttle">
+<meta property="og:title" content="FP8 quantization in vLLM: cost vs quality · Throttle">
+<meta property="og:description" content="Real AMD MI300X results for FP8 quantization in vLLM: pre-quantized FP8 cut 72B cost per token by 32% with correct answers, while on-the-fly FP8 looked 41–47% cheaper but produced broken output.">
+<meta property="og:url" content="https://www.throttle-pro.com/guides/fp8-quantization-cost-vs-quality">
+<meta property="og:image" content="https://www.throttle-pro.com/assets/media/index-og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="FP8 quantization in vLLM: cost vs quality · Throttle">
+<meta name="twitter:description" content="Real AMD MI300X results for FP8 quantization in vLLM: pre-quantized FP8 cut 72B cost per token by 32% with correct answers, while on-the-fly FP8 looked 41–47% cheaper but produced broken output.">
+<meta name="twitter:image" content="https://www.throttle-pro.com/assets/media/index-og.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "FP8 quantization in vLLM: 47% cheaper tokens, until you read the answers", "description": "Real AMD MI300X results for FP8 quantization in vLLM: pre-quantized FP8 cut 72B cost per token by 32% with correct answers, while on-the-fly FP8 looked 41–47% cheaper but produced broken output.", "datePublished": "2026-10-03", "dateModified": "2026-10-03", "mainEntityOfPage": "https://www.throttle-pro.com/guides/fp8-quantization-cost-vs-quality", "image": "https://www.throttle-pro.com/assets/media/index-og.png", "wordCount": 600, "keywords": "fp8 quantization vllm, fp8 quantization llm quality, quantization cost per token", "author": {"@type": "Person", "name": "Kushagra Kanaujia", "url": "https://github.com/KushagraKanaujia"}, "publisher": {"@type": "Organization", "name": "Throttle", "url": "https://www.throttle-pro.com/", "logo": {"@type": "ImageObject", "url": "https://www.throttle-pro.com/assets/favicon.svg"}}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Does FP8 quantization reduce LLM cost per token?", "acceptedAnswer": {"@type": "Answer", "text": "Usually. In our MI300X runs, pre-quantized FP8 cut cost per million output tokens by 32% on Qwen2.5-72B and 18% on Qwen2.5-7B with correct answers."}}, {"@type": "Question", "name": "Is vLLM's on-the-fly FP8 safe to use?", "acceptedAnswer": {"@type": "Answer", "text": "Check your own build. In our vLLM 0.23.1 ROCm runs, on-the-fly --quantization fp8 produced broken output on Qwen2.5-32B while looking 41% cheaper. Pre-quantized checkpoints did not have this problem."}}, {"@type": "Question", "name": "How do I know if quantization broke my model?", "acceptedAnswer": {"@type": "Answer", "text": "Compare a few answers at temperature 0 against the unquantized model, and watch output length per request: a jump, or every request hitting max tokens, is a red flag."}}, {"@type": "Question", "name": "What is the difference between pre-quantized and on-the-fly FP8?", "acceptedAnswer": {"@type": "Answer", "text": "A pre-quantized checkpoint stores FP8 weights calibrated ahead of time. On-the-fly FP8 converts BF16 weights when vLLM loads the model."}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Guides", "item": "https://www.throttle-pro.com/guides"}, {"@type": "ListItem", "position": 2, "name": "FP8 quantization in vLLM: 47% cheaper tokens, until you read the answers", "item": "https://www.throttle-pro.com/guides/fp8-quantization-cost-vs-quality"}]}</script>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/site.css?v=a54ae2d5">
+<link rel="stylesheet" href="/assets/css/blog.css?v=guides1">
+<script src="/assets/js/site.js?v=dd1c358f" defer></script>
+
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="glow" aria-hidden="true"></div>
+
+<header class="nav">
+  <a class="brand" href="/" aria-label="Throttle home">
+    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg>
+    <span>throttle</span>
+  </a>
+  <nav class="nav-links" aria-label="Pages">
+    <a href="/cost-index">Cost Index</a>
+    <a href="/guides" aria-current="page">Guides</a>
+    <a href="/audit">Audit</a>
+    <a href="/blog">Blog</a>
+  </nav>
+  <div class="nav-cta">
+    <a class="nav-gh" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener" aria-label="Throttle on GitHub">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      <span>GitHub</span>
+    </a>
+    <a class="btn btn-accent btn-sm" href="/#install">Install</a>
+  </div>
+</header>
+
+<main id="top">
+  <article class="post-wrap">
+    <header class="post-head">
+      <a class="crumb" href="/guides"><span aria-hidden="true">←</span> All guides</a>
+      <span class="kicker">Case study</span>
+      <h1>FP8 quantization in vLLM: 47% cheaper tokens, until you read the answers</h1>
+      <p class="post-lede">FP8 is the easiest cost cut in vLLM: one flag. We measured it on an AMD MI300X, and the biggest saving came with broken answers.</p>
+      <div class="byline"><b>Kushagra Kanaujia</b><span class="sep"></span><span>Founder, Throttle</span><span class="sep"></span><time datetime="2026-10-03">Oct 3, 2026</time><span class="sep"></span><span>3 min read</span></div>
+    </header>
+    <div class="prose">
+<h2 id="setup">The setup</h2>
+<p>vLLM 0.23.1 on ROCm, one MI300X per server at Hot Aisle's $2.99/hr list price, 32 concurrent requests, 256 max output tokens, cold cache. Every BF16 baseline was checked four times to measure noise; every FP8 result three times.</p>
+
+<h2 id="results">Results</h2>
+<div class="table-scroll"><table>
+<thead><tr><th>Model</th><th>BF16</th><th>FP8 type</th><th>FP8 $/M</th><th>Answers</th></tr></thead>
+<tbody>
+<tr><td>Qwen2.5-72B</td><td>$1.67</td><td>Pre-quantized (RedHatAI FP8-dynamic)</td><td><b>$1.13 (−32%)</b></td><td>Correct</td></tr>
+<tr><td>Qwen2.5-7B</td><td>$0.227</td><td>Pre-quantized</td><td><b>$0.186 (−18%)</b></td><td>Correct</td></tr>
+<tr><td>Qwen2.5-32B</td><td>$0.76</td><td>On the fly (<code>--quantization fp8</code>)</td><td>$0.45 (−41%)</td><td>Broken: "!!!!!!"</td></tr>
+<tr><td>Qwen2.5-72B</td><td>$1.67</td><td>On the fly</td><td>$0.87 (−47%)</td><td>Every request hit the token limit</td></tr>
+</tbody></table></div>
+
+<h2 id="trap">The trap</h2>
+<p>Asked to summarize the causes of World War I in about 80 words, the BF16 32B model wrote an 89-token answer. The on-the-fly FP8 version wrote 256 exclamation marks and stopped only because it hit the token limit. Across the whole run, every FP8 request ran to the 256-token cap: 8,192 output tokens per batch of 32 requests, against 6,883 for BF16.</p>
+<p>That is exactly why its cost per token looked so good. A model that never stops generates tokens quickly, and cost per token only counts tokens, not whether they mean anything. The pre-quantized checkpoints produced output lengths within a few percent of BF16 (72B: 6,361 vs 6,328 tokens per batch) and answered correctly.</p>
+<p>The 72B on-the-fly run showed the same signal, every request at the cap, though we did not read its answers before the server stopped, so we only call it unverified. These results are for this vLLM ROCm build; other versions and GPUs may behave differently, which is the point: check yours.</p>
+
+<h2 id="how-to-check">How to check FP8 on your own server</h2>
+<p>Measure BF16 three times, switch to FP8, measure again, and read a handful of answers from both. The cheapest check of all is output length: at temperature 0 the same prompts should get answers of about the same length.</p>
+<pre class="lang-sh"><code>pipx install throttle-pro
+
+throttle check \
+  --url http://localhost:8000 \
+  --model Qwen/Qwen2.5-72B-Instruct \
+  --gpu-hourly-rate 2.99</code></pre>
+<p>The next Throttle release adds an <b>OUTPUT CHANGED</b> verdict: when the answers' length per request moves more than 10% or many more requests hit the token limit, it refuses to call the change CHEAPER. Replayed on the runs above, it flags both on-the-fly FP8 results and leaves the pre-quantized ones as CHEAPER.</p>
+
+<h2 id="takeaways">Takeaways</h2>
+<ul>
+<li>Prefer pre-quantized FP8 checkpoints over on-the-fly quantization when one exists for your model.</li>
+<li>A big drop in cost per token is a reason to read the answers, not to ship.</li>
+<li>Six spot-check prompts catch broken output; they don't measure accuracy. Run your own evals before production.</li>
+</ul>
+<h2 id="faq">FAQ</h2>
+<div class="faq">
+<details><summary>Does FP8 quantization reduce LLM cost per token?</summary><p>Usually. In our MI300X runs, pre-quantized FP8 cut cost per million output tokens by 32% on Qwen2.5-72B and 18% on Qwen2.5-7B with correct answers.</p></details>
+<details><summary>Is vLLM&#x27;s on-the-fly FP8 safe to use?</summary><p>Check your own build. In our vLLM 0.23.1 ROCm runs, on-the-fly --quantization fp8 produced broken output on Qwen2.5-32B while looking 41% cheaper. Pre-quantized checkpoints did not have this problem.</p></details>
+<details><summary>How do I know if quantization broke my model?</summary><p>Compare a few answers at temperature 0 against the unquantized model, and watch output length per request: a jump, or every request hitting max tokens, is a red flag.</p></details>
+<details><summary>What is the difference between pre-quantized and on-the-fly FP8?</summary><p>A pre-quantized checkpoint stores FP8 weights calibrated ahead of time. On-the-fly FP8 converts BF16 weights when vLLM loads the model.</p></details>
+</div>
+    </div>
+    <aside class="post-cta" aria-label="Try Throttle">
+      <h2>Measure your own server</h2>
+      <p>Throttle is an open-source CLI (MIT) for any OpenAI-compatible endpoint: vLLM, SGLang, Ollama, LMDeploy. It runs on your machine, and the only traffic it sends goes to your own endpoint.</p>
+      <div class="cta-row">
+        <button class="copy magnetic" type="button" data-copy="pipx install throttle-pro" aria-label="Copy install command">
+          <span class="prompt">$</span><code>pipx install throttle-pro</code><span class="copy-state" aria-live="polite">copy</span>
+        </button>
+        <a class="btn btn-ghost magnetic" href="/cost-index">See the Cost Index</a>
+      </div>
+    </aside>
+    <section class="more" aria-label="Related guides">
+      <h2>Related guides</h2>
+      <div class="cards">
+    <a class="post-card" href="/guides/vllm-cost-per-token">
+      <span class="kicker">Guide</span>
+      <h3>vLLM cost per token: measure it, then change one flag at a time</h3>
+      <p>Measure vLLM cost per million tokens on your own GPU, then test max-num-seqs, tensor parallel size and FP8 one at a time. Real results from AMD MI300X and NVIDIA A100 runs.</p>
+      <span class="meta"><span>Guide</span><span class="arrow">→</span></span>
+    </a>
+    <a class="post-card" href="/guides/llm-cost-per-million-tokens">
+      <span class="kicker">Calculator</span>
+      <h3>LLM cost per million tokens: the formula, a calculator, and real numbers</h3>
+      <p>How to calculate LLM inference cost per million tokens from your GPU price and throughput, with a calculator, a worked example from a real AMD MI300X run, and the pitfalls that make the number wrong.</p>
+      <span class="meta"><span>Guide</span><span class="arrow">→</span></span>
+    </a>
+      </div>
+    </section>
+  </article>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <a class="brand" href="/"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg><span>throttle</span></a>
+    <p>Measures and reports. Provisions nothing and never changes your server.</p>
+    <nav aria-label="Footer">
+      <a href="/cost-index">Cost Index</a>
+      <a href="/guides">Guides</a>
+      <a href="/audit">Cost Audit</a>
+      <a href="/blog">Blog</a>
+      <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://pypi.org/project/throttle-pro/" target="_blank" rel="noopener">PyPI</a>
+      <a href="https://github.com/KushagraKanaujia/throttle/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>

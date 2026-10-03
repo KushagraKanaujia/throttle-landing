@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <script>document.documentElement.classList.add("js")</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Throttle: cut your LLM cost per token</title>
-<meta name="description" content="Throttle measures what your LLM inference costs per million tokens, re-checks after every config change, and only calls a winner when the change beats your measured noise. Open-source CLI, MIT.">
+<title>Throttle: measure and cut LLM cost per million tokens</title>
+<meta name="description" content="Throttle measures what your self-hosted LLM costs per million tokens on vLLM, SGLang or Ollama, re-checks after every config change, and only calls a winner when the change beats your measured noise. Open-source CLI, MIT.">
 <meta name="theme-color" content="#07080a">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Throttle: every config change sends you a new bill">
+<meta property="og:title" content="Throttle: measure and cut LLM cost per million tokens">
 <meta property="og:description" content="Measure dollars per million tokens, re-check after every vLLM flag, batch size, model, quantization or GPU change, and get a verdict that refuses to lie. Open-source CLI.">
 <!-- SITE_URL: https://www.throttle-pro.com/ (apex redirects to www on Vercel) -->
 <link rel="canonical" href="https://www.throttle-pro.com/">
@@ -17,10 +17,13 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Throttle: every config change sends you a new bill">
+<meta name="twitter:title" content="Throttle: measure and cut LLM cost per million tokens">
 <meta name="twitter:description" content="Dollars per million tokens, measured, with 95% confidence intervals. Overlap is reported as inconclusive.">
 <meta name="twitter:image" content="https://www.throttle-pro.com/assets/og.png">
-<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Throttle", "applicationCategory": "DeveloperApplication", "operatingSystem": "macOS, Linux, Windows", "description": "Open-source CLI that measures self-hosted LLM inference cost in dollars per million tokens, with 95% confidence intervals and noise-calibrated verdicts for config changes on vLLM, SGLang, Ollama and other OpenAI-compatible servers.", "url": "https://www.throttle-pro.com/", "downloadUrl": "https://pypi.org/project/throttle-pro/", "softwareHelp": "https://www.throttle-pro.com/guides", "license": "https://opensource.org/licenses/MIT", "codeRepository": "https://github.com/KushagraKanaujia/throttle", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "author": {"@type": "Person", "name": "Kushagra Kanaujia", "url": "https://github.com/KushagraKanaujia"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Throttle", "url": "https://www.throttle-pro.com/", "logo": "https://www.throttle-pro.com/assets/favicon.svg", "sameAs": ["https://github.com/KushagraKanaujia/throttle", "https://pypi.org/project/throttle-pro/"]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "Throttle", "url": "https://www.throttle-pro.com/"}</script>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -40,6 +43,7 @@
   </a>
   <nav class="nav-links" aria-label="Pages">
     <a href="/cost-index">Cost Index</a>
+    <a href="/guides">Guides</a>
     <a href="/audit">Audit</a>
     <a href="/blog">Blog</a>
   </nav>
@@ -189,6 +193,7 @@
       <p>Open-source CLI, MIT. Measures and reports; never changes your server.</p>
       <nav aria-label="Footer">
         <a href="/cost-index">Cost Index</a>
+        <a href="/guides">Guides</a>
         <a href="/audit">Audit</a>
         <a href="/blog">Blog</a>
         <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a>

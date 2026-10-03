@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>document.documentElement.classList.add("js")</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>vLLM cost per token: measure it, flag by flag · Throttle</title>
+<meta name="description" content="Measure vLLM cost per million tokens on your own GPU, then test max-num-seqs, tensor parallel size and FP8 one at a time. Real results from AMD MI300X and NVIDIA A100 runs.">
+<meta name="author" content="Kushagra Kanaujia">
+<meta name="theme-color" content="#07080a">
+<link rel="canonical" href="https://www.throttle-pro.com/guides/vllm-cost-per-token">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Throttle">
+<meta property="og:title" content="vLLM cost per token: measure it, flag by flag · Throttle">
+<meta property="og:description" content="Measure vLLM cost per million tokens on your own GPU, then test max-num-seqs, tensor parallel size and FP8 one at a time. Real results from AMD MI300X and NVIDIA A100 runs.">
+<meta property="og:url" content="https://www.throttle-pro.com/guides/vllm-cost-per-token">
+<meta property="og:image" content="https://www.throttle-pro.com/assets/media/index-og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="vLLM cost per token: measure it, flag by flag · Throttle">
+<meta name="twitter:description" content="Measure vLLM cost per million tokens on your own GPU, then test max-num-seqs, tensor parallel size and FP8 one at a time. Real results from AMD MI300X and NVIDIA A100 runs.">
+<meta name="twitter:image" content="https://www.throttle-pro.com/assets/media/index-og.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "vLLM cost per token: measure it, then change one flag at a time", "description": "Measure vLLM cost per million tokens on your own GPU, then test max-num-seqs, tensor parallel size and FP8 one at a time. Real results from AMD MI300X and NVIDIA A100 runs.", "datePublished": "2026-10-03", "dateModified": "2026-10-03", "mainEntityOfPage": "https://www.throttle-pro.com/guides/vllm-cost-per-token", "image": "https://www.throttle-pro.com/assets/media/index-og.png", "wordCount": 610, "keywords": "vllm cost per token, vllm cost per million tokens, vllm max_num_seqs cost", "author": {"@type": "Person", "name": "Kushagra Kanaujia", "url": "https://github.com/KushagraKanaujia"}, "publisher": {"@type": "Organization", "name": "Throttle", "url": "https://www.throttle-pro.com/", "logo": {"@type": "ImageObject", "url": "https://www.throttle-pro.com/assets/favicon.svg"}}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do I measure vLLM cost per million tokens?", "acceptedAnswer": {"@type": "Answer", "text": "Run vLLM, then point throttle check at its OpenAI-compatible endpoint with your GPU's hourly price. It sends a fixed workload, measures aggregate output tokens per second, and reports $ per million tokens with a 95% confidence interval."}}, {"@type": "Question", "name": "Which vLLM flags affect cost per token the most?", "acceptedAnswer": {"@type": "Answer", "text": "Batching limits (max-num-seqs, max-num-batched-tokens), tensor parallel size and quantization had the largest effects in our runs, from −68.6% to +208%."}}, {"@type": "Question", "name": "Does a higher max-num-seqs always reduce cost?", "acceptedAnswer": {"@type": "Answer", "text": "Not always. It lets vLLM batch more requests, which helps under load, but the effect depends on your concurrency and memory. Measure it."}}, {"@type": "Question", "name": "Is the vLLM default config the cheapest?", "acceptedAnswer": {"@type": "Answer", "text": "Often close, not guaranteed. In our MI300X run, lowering max-num-seqs from the default to 8 tripled cost per token at 32 concurrent requests."}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Guides", "item": "https://www.throttle-pro.com/guides"}, {"@type": "ListItem", "position": 2, "name": "vLLM cost per token: measure it, then change one flag at a time", "item": "https://www.throttle-pro.com/guides/vllm-cost-per-token"}]}</script>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/site.css?v=a54ae2d5">
+<link rel="stylesheet" href="/assets/css/blog.css?v=guides1">
+<script src="/assets/js/site.js?v=dd1c358f" defer></script>
+
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="glow" aria-hidden="true"></div>
+
+<header class="nav">
+  <a class="brand" href="/" aria-label="Throttle home">
+    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg>
+    <span>throttle</span>
+  </a>
+  <nav class="nav-links" aria-label="Pages">
+    <a href="/cost-index">Cost Index</a>
+    <a href="/guides" aria-current="page">Guides</a>
+    <a href="/audit">Audit</a>
+    <a href="/blog">Blog</a>
+  </nav>
+  <div class="nav-cta">
+    <a class="nav-gh" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener" aria-label="Throttle on GitHub">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      <span>GitHub</span>
+    </a>
+    <a class="btn btn-accent btn-sm" href="/#install">Install</a>
+  </div>
+</header>
+
+<main id="top">
+  <article class="post-wrap">
+    <header class="post-head">
+      <a class="crumb" href="/guides"><span aria-hidden="true">←</span> All guides</a>
+      <span class="kicker">Guide</span>
+      <h1>vLLM cost per token: measure it, then change one flag at a time</h1>
+      <p class="post-lede">vLLM gives you dozens of flags. Each one moves your cost per token, sometimes by 3×. Measure first, change one thing, measure again.</p>
+      <div class="byline"><b>Kushagra Kanaujia</b><span class="sep"></span><span>Founder, Throttle</span><span class="sep"></span><time datetime="2026-10-03">Oct 3, 2026</time><span class="sep"></span><span>3 min read</span></div>
+    </header>
+    <div class="prose">
+<h2 id="baseline">Step 1: a baseline with vLLM defaults</h2>
+<p>Start vLLM the way you run it in production and leave everything else at its defaults:</p>
+<pre class="lang-sh"><code>vllm serve Qwen/Qwen2.5-7B-Instruct --port 8000</code></pre>
+<p>Then measure it three times without changing anything. The repeats are not wasted: they measure your run-to-run noise, which every later comparison is judged against.</p>
+<pre class="lang-sh"><code>pipx install throttle-pro
+
+throttle check \
+  --url http://localhost:8000 \
+  --model Qwen/Qwen2.5-7B-Instruct \
+  --gpu-hourly-rate 2.99</code></pre>
+<p>On one AMD MI300X with vLLM 0.23.1 (ROCm), 32 concurrent requests and 256 max output tokens, four baseline checks came back at $0.227, $0.230, $0.228 and $0.227 per million output tokens: under 1% spread, which gave a noise bound of 2.8%.</p>
+
+<h2 id="one-change">Step 2: change one thing</h2>
+<p>Restart vLLM with exactly one flag changed, label the check, and compare it with the baseline:</p>
+<pre class="lang-sh"><code>vllm serve Qwen/Qwen2.5-7B-Instruct --port 8000 --max-num-seqs 8
+
+throttle check --url http://localhost:8000 \
+  --model Qwen/Qwen2.5-7B-Instruct --gpu-hourly-rate 2.99 \
+  --label seqs8 --config max_num_seqs=8</code></pre>
+<p>Throttle prints the before and after, both confidence intervals, what changed in the server config, and one verdict: CHEAPER, MORE EXPENSIVE, NO WINNER or NOT CALIBRATED.</p>
+
+<h2 id="results">What real flag changes did</h2>
+<div class="table-scroll"><table>
+<thead><tr><th>Change</th><th>Hardware</th><th>Before</th><th>After</th><th>Verdict</th></tr></thead>
+<tbody>
+<tr><td><code>--max-num-seqs 8</code> at 32 concurrent requests</td><td>1× MI300X, 7B</td><td>$0.227/M</td><td>$0.700/M</td><td>MORE EXPENSIVE, +208%</td></tr>
+<tr><td><code>max_num_seqs</code> 1 → 8 (deliberately bad baseline)</td><td>1× A100, 0.5B</td><td>$0.746/M</td><td>$0.234/M</td><td>CHEAPER, −68.6%</td></tr>
+<tr><td>Pre-quantized FP8 checkpoint</td><td>1× MI300X, 72B</td><td>$1.67/M</td><td>$1.13/M</td><td>CHEAPER, −32%</td></tr>
+<tr><td>Tensor parallel 1 → 2</td><td>MI300X, 72B</td><td>$1.67/M</td><td>$2.14/M</td><td>+28% per token</td></tr>
+</tbody></table></div>
+<p>The same flag can help or hurt. <code>max_num_seqs</code> caps how many sequences vLLM batches: raising it from 1 cut cost by two thirds on the A100, while lowering the default to 8 under 32 concurrent requests tripled it on the MI300X. That is why the number has to be measured on your workload, not copied from a blog. Every row has raw data on the <a href="/cost-index">Cost Index</a>.</p>
+
+<h2 id="what-to-try">Flags worth testing</h2>
+<ul>
+<li><b><code>--max-num-seqs</code> and <code>--max-num-batched-tokens</code></b>: batching limits. Too low leaves the GPU idle under load.</li>
+<li><b><code>--tensor-parallel-size</code></b>: more GPUs buy latency, not cheaper tokens. See <a href="/guides/tensor-parallel-cost">tensor parallel cost</a>.</li>
+<li><b>Quantization</b>: often the biggest win, and the biggest risk to answer quality. See <a href="/guides/fp8-quantization-cost-vs-quality">FP8 cost vs quality</a>.</li>
+<li><b><code>--enable-prefix-caching</code></b>: only helps if your real prompts share prefixes. Measure it with <code>--warm-cache</code> if they do, and cold if they don't.</li>
+</ul>
+
+<h2 id="ci">Step 3: keep checking</h2>
+<p>vLLM upgrades, model swaps and config drift all move cost silently. <code>throttle check --fail-if-costlier 5</code> exits non-zero when a change is calibrated MORE EXPENSIVE by 5% or more, so it can gate a deploy in CI.</p>
+<h2 id="faq">FAQ</h2>
+<div class="faq">
+<details><summary>How do I measure vLLM cost per million tokens?</summary><p>Run vLLM, then point throttle check at its OpenAI-compatible endpoint with your GPU&#x27;s hourly price. It sends a fixed workload, measures aggregate output tokens per second, and reports $ per million tokens with a 95% confidence interval.</p></details>
+<details><summary>Which vLLM flags affect cost per token the most?</summary><p>Batching limits (max-num-seqs, max-num-batched-tokens), tensor parallel size and quantization had the largest effects in our runs, from −68.6% to +208%.</p></details>
+<details><summary>Does a higher max-num-seqs always reduce cost?</summary><p>Not always. It lets vLLM batch more requests, which helps under load, but the effect depends on your concurrency and memory. Measure it.</p></details>
+<details><summary>Is the vLLM default config the cheapest?</summary><p>Often close, not guaranteed. In our MI300X run, lowering max-num-seqs from the default to 8 tripled cost per token at 32 concurrent requests.</p></details>
+</div>
+    </div>
+    <aside class="post-cta" aria-label="Try Throttle">
+      <h2>Measure your own server</h2>
+      <p>Throttle is an open-source CLI (MIT) for any OpenAI-compatible endpoint: vLLM, SGLang, Ollama, LMDeploy. It runs on your machine, and the only traffic it sends goes to your own endpoint.</p>
+      <div class="cta-row">
+        <button class="copy magnetic" type="button" data-copy="pipx install throttle-pro" aria-label="Copy install command">
+          <span class="prompt">$</span><code>pipx install throttle-pro</code><span class="copy-state" aria-live="polite">copy</span>
+        </button>
+        <a class="btn btn-ghost magnetic" href="/cost-index">See the Cost Index</a>
+      </div>
+    </aside>
+    <section class="more" aria-label="Related guides">
+      <h2>Related guides</h2>
+      <div class="cards">
+    <a class="post-card" href="/guides/llm-cost-per-million-tokens">
+      <span class="kicker">Calculator</span>
+      <h3>LLM cost per million tokens: the formula, a calculator, and real numbers</h3>
+      <p>How to calculate LLM inference cost per million tokens from your GPU price and throughput, with a calculator, a worked example from a real AMD MI300X run, and the pitfalls that make the number wrong.</p>
+      <span class="meta"><span>Guide</span><span class="arrow">→</span></span>
+    </a>
+    <a class="post-card" href="/guides/tensor-parallel-cost">
+      <span class="kicker">Case study</span>
+      <h3>Tensor parallel size and cost: one GPU vs two for a 72B model</h3>
+      <p>Does tensor_parallel_size 2 make tokens cheaper? A measured 1:1 on AMD MI300X: Qwen2.5-72B cost $1.67 per million tokens on one GPU and $2.14 on two, 1.56× faster but 28% more per token.</p>
+      <span class="meta"><span>Guide</span><span class="arrow">→</span></span>
+    </a>
+      </div>
+    </section>
+  </article>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <a class="brand" href="/"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg><span>throttle</span></a>
+    <p>Measures and reports. Provisions nothing and never changes your server.</p>
+    <nav aria-label="Footer">
+      <a href="/cost-index">Cost Index</a>
+      <a href="/guides">Guides</a>
+      <a href="/audit">Cost Audit</a>
+      <a href="/blog">Blog</a>
+      <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://pypi.org/project/throttle-pro/" target="_blank" rel="noopener">PyPI</a>
+      <a href="https://github.com/KushagraKanaujia/throttle/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>

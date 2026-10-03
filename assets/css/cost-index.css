@@ -83,3 +83,7 @@
   .ix-table tr.ix-detail td { border: 1px solid var(--line-2); border-radius: 12px; }
   .ix-change { max-width: none; min-width: 0; overflow-wrap: anywhere; }
 }
+
+.ix-guides { margin: 14px 0 0; font-size: 15px; color: #9aa1aa; line-height: 1.6; }
+.ix-guides a { color: var(--text); text-decoration: underline; text-decoration-color: rgba(255,255,255,.25); text-underline-offset: 3px; }
+.ix-guides a:hover { text-decoration-color: var(--accent); }
