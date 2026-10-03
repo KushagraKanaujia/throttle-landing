@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>document.documentElement.classList.add("js")</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LLM inference cost guides: vLLM, FP8, GPUs · Throttle</title>
+<meta name="description" content="Practical guides to self-hosted LLM inference cost: calculate cost per million tokens, measure vLLM, and test FP8 quantization and tensor parallelism, with real measured numbers.">
+<meta name="author" content="Kushagra Kanaujia">
+<meta name="theme-color" content="#07080a">
+<link rel="canonical" href="https://www.throttle-pro.com/guides">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Throttle">
+<meta property="og:title" content="LLM inference cost guides: vLLM, FP8, GPUs · Throttle">
+<meta property="og:description" content="Practical guides to self-hosted LLM inference cost: calculate cost per million tokens, measure vLLM, and test FP8 quantization and tensor parallelism, with real measured numbers.">
+<meta property="og:url" content="https://www.throttle-pro.com/guides">
+<meta property="og:image" content="https://www.throttle-pro.com/assets/media/index-og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="LLM inference cost guides: vLLM, FP8, GPUs · Throttle">
+<meta name="twitter:description" content="Practical guides to self-hosted LLM inference cost: calculate cost per million tokens, measure vLLM, and test FP8 quantization and tensor parallelism, with real measured numbers.">
+<meta name="twitter:image" content="https://www.throttle-pro.com/assets/media/index-og.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CollectionPage", "name": "Throttle guides: LLM inference cost", "url": "https://www.throttle-pro.com/guides", "hasPart": [{"@type": "TechArticle", "headline": "LLM cost per million tokens: the formula, a calculator, and real numbers", "url": "https://www.throttle-pro.com/guides/llm-cost-per-million-tokens"}, {"@type": "TechArticle", "headline": "vLLM cost per token: measure it, then change one flag at a time", "url": "https://www.throttle-pro.com/guides/vllm-cost-per-token"}, {"@type": "TechArticle", "headline": "FP8 quantization in vLLM: 47% cheaper tokens, until you read the answers", "url": "https://www.throttle-pro.com/guides/fp8-quantization-cost-vs-quality"}, {"@type": "TechArticle", "headline": "Tensor parallel size and cost: one GPU vs two for a 72B model", "url": "https://www.throttle-pro.com/guides/tensor-parallel-cost"}, {"@type": "TechArticle", "headline": "Self-hosted LLM cost: how to compare it with an API, honestly", "url": "https://www.throttle-pro.com/guides/self-hosted-llm-cost"}]}</script>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/site.css?v=a54ae2d5">
+<link rel="stylesheet" href="/assets/css/blog.css?v=guides1">
+<script src="/assets/js/site.js?v=dd1c358f" defer></script>
+
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="glow" aria-hidden="true"></div>
+
+<header class="nav">
+  <a class="brand" href="/" aria-label="Throttle home">
+    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg>
+    <span>throttle</span>
+  </a>
+  <nav class="nav-links" aria-label="Pages">
+    <a href="/cost-index">Cost Index</a>
+    <a href="/guides" aria-current="page">Guides</a>
+    <a href="/audit">Audit</a>
+    <a href="/blog">Blog</a>
+  </nav>
+  <div class="nav-cta">
+    <a class="nav-gh" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener" aria-label="Throttle on GitHub">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      <span>GitHub</span>
+    </a>
+    <a class="btn btn-accent btn-sm" href="/#install">Install</a>
+  </div>
+</header>
+
+<main id="top">
+  <article class="post-wrap">
+    <header class="post-head">
+      <span class="kicker">Guides</span>
+      <h1>What LLM inference really costs</h1>
+      <p class="post-lede">How to calculate and measure cost per million tokens on your own GPUs, and what real config changes did to it. Every number comes from a measured run.</p>
+    </header>
+    <div class="cards">
+    <a class="post-card" href="/guides/llm-cost-per-million-tokens">
+      <span class="kicker">Calculator</span>
+      <h3>LLM cost per million tokens: the formula, a calculator, and real numbers</h3>
+      <p>How to calculate LLM inference cost per million tokens from your GPU price and throughput, with a calculator, a worked example from a real AMD MI300X run, and the pitfalls that make the number wrong.</p>
+      <span class="meta"><span>Guide</span><span class="arrow">→</span></span>
+    </a>
+    <a class="post-card" href="/guides/vllm-cost-per-token">
+      <span class="kicker">Guide</span>
+      <h3>vLLM cost per token: measure it, then change one flag at a time</h3>
+      <p>Measure vLLM cost per million tokens on your own GPU, then test max-num-seqs, tensor parallel size and FP8 one at a time. Real results from AMD MI300X and NVIDIA A100 runs.</p>
+      <span class="meta"><span>Guide</span><span class="arrow">→</span></span>
+    </a>
+    <a class="post-card" href="/guides/fp8-quantization-cost-vs-quality">
+      <span class="kicker">Case study</span>
+      <h3>FP8 quantization in vLLM: 47% cheaper tokens, until you read the answers</h3>
+      <p>Real AMD MI300X results for FP8 quantization in vLLM: pre-quantized FP8 cut 72B cost per token by 32% with correct answers, while on-the-fly FP8 looked 41–47% cheaper but produced broken output.</p>
+      <span class="meta"><span>Guide</span><span class="arrow">→</span></span>
+    </a>
+    <a class="post-card" href="/guides/tensor-parallel-cost">
+      <span class="kicker">Case study</span>
+      <h3>Tensor parallel size and cost: one GPU vs two for a 72B model</h3>
+      <p>Does tensor_parallel_size 2 make tokens cheaper? A measured 1:1 on AMD MI300X: Qwen2.5-72B cost $1.67 per million tokens on one GPU and $2.14 on two, 1.56× faster but 28% more per token.</p>
+      <span class="meta"><span>Guide</span><span class="arrow">→</span></span>
+    </a>
+    <a class="post-card" href="/guides/self-hosted-llm-cost">
+      <span class="kicker">Guide</span>
+      <h3>Self-hosted LLM cost: how to compare it with an API, honestly</h3>
+      <p>What does a self-hosted LLM really cost? How to turn GPU rental prices into dollars per million tokens, why utilization decides the answer, and real measurements on AMD MI300X.</p>
+      <span class="meta"><span>Guide</span><span class="arrow">→</span></span>
+    </a>
+    </div>
+    <aside class="post-cta" aria-label="Try Throttle">
+      <h2>Measure your own server</h2>
+      <p>Throttle is an open-source CLI (MIT) for any OpenAI-compatible endpoint: vLLM, SGLang, Ollama, LMDeploy. It runs on your machine, and the only traffic it sends goes to your own endpoint.</p>
+      <div class="cta-row">
+        <button class="copy magnetic" type="button" data-copy="pipx install throttle-pro" aria-label="Copy install command">
+          <span class="prompt">$</span><code>pipx install throttle-pro</code><span class="copy-state" aria-live="polite">copy</span>
+        </button>
+        <a class="btn btn-ghost magnetic" href="/cost-index">See the Cost Index</a>
+      </div>
+    </aside>
+  </article>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <a class="brand" href="/"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg><span>throttle</span></a>
+    <p>Measures and reports. Provisions nothing and never changes your server.</p>
+    <nav aria-label="Footer">
+      <a href="/cost-index">Cost Index</a>
+      <a href="/guides">Guides</a>
+      <a href="/audit">Cost Audit</a>
+      <a href="/blog">Blog</a>
+      <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://pypi.org/project/throttle-pro/" target="_blank" rel="noopener">PyPI</a>
+      <a href="https://github.com/KushagraKanaujia/throttle/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>document.documentElement.classList.add("js")</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Self-hosted LLM cost vs API, per token · Throttle</title>
+<meta name="description" content="What does a self-hosted LLM really cost? How to turn GPU rental prices into dollars per million tokens, why utilization decides the answer, and real measurements on AMD MI300X.">
+<meta name="author" content="Kushagra Kanaujia">
+<meta name="theme-color" content="#07080a">
+<link rel="canonical" href="https://www.throttle-pro.com/guides/self-hosted-llm-cost">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Throttle">
+<meta property="og:title" content="Self-hosted LLM cost vs API, per token · Throttle">
+<meta property="og:description" content="What does a self-hosted LLM really cost? How to turn GPU rental prices into dollars per million tokens, why utilization decides the answer, and real measurements on AMD MI300X.">
+<meta property="og:url" content="https://www.throttle-pro.com/guides/self-hosted-llm-cost">
+<meta property="og:image" content="https://www.throttle-pro.com/assets/media/index-og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Self-hosted LLM cost vs API, per token · Throttle">
+<meta name="twitter:description" content="What does a self-hosted LLM really cost? How to turn GPU rental prices into dollars per million tokens, why utilization decides the answer, and real measurements on AMD MI300X.">
+<meta name="twitter:image" content="https://www.throttle-pro.com/assets/media/index-og.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Self-hosted LLM cost: how to compare it with an API, honestly", "description": "What does a self-hosted LLM really cost? How to turn GPU rental prices into dollars per million tokens, why utilization decides the answer, and real measurements on AMD MI300X.", "datePublished": "2026-10-03", "dateModified": "2026-10-03", "mainEntityOfPage": "https://www.throttle-pro.com/guides/self-hosted-llm-cost", "image": "https://www.throttle-pro.com/assets/media/index-og.png", "wordCount": 649, "keywords": "self hosted llm cost, self-hosted llm vs api cost, cost to run a 72b model", "author": {"@type": "Person", "name": "Kushagra Kanaujia", "url": "https://github.com/KushagraKanaujia"}, "publisher": {"@type": "Organization", "name": "Throttle", "url": "https://www.throttle-pro.com/", "logo": {"@type": "ImageObject", "url": "https://www.throttle-pro.com/assets/favicon.svg"}}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is self-hosting an LLM cheaper than using an API?", "acceptedAnswer": {"@type": "Answer", "text": "It can be when the GPU is busy most of the time. Measure your cost per token under load, divide by your utilization, and compare with the API's per-million price for a comparable model."}}, {"@type": "Question", "name": "How do I calculate the cost of a self-hosted LLM?", "acceptedAnswer": {"@type": "Answer", "text": "Measure output tokens per second at your real concurrency, then: GPU $/hr ÷ (tokens/s × 3600) × 1,000,000 gives $ per million tokens while serving."}}, {"@type": "Question", "name": "What does it cost to run a 72B model?", "acceptedAnswer": {"@type": "Answer", "text": "Measured on one AMD MI300X at $2.99/hr: about $1.67 per million output tokens in BF16 and $1.13 with a pre-quantized FP8 checkpoint, at 32 concurrent requests."}}, {"@type": "Question", "name": "Why is my real self-hosted cost higher than the benchmark?", "acceptedAnswer": {"@type": "Answer", "text": "Idle time. A GPU billed by the hour costs the same when nobody is using it, so low utilization raises the effective cost per token."}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Guides", "item": "https://www.throttle-pro.com/guides"}, {"@type": "ListItem", "position": 2, "name": "Self-hosted LLM cost: how to compare it with an API, honestly", "item": "https://www.throttle-pro.com/guides/self-hosted-llm-cost"}]}</script>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/site.css?v=a54ae2d5">
+<link rel="stylesheet" href="/assets/css/blog.css?v=guides1">
+<script src="/assets/js/site.js?v=dd1c358f" defer></script>
+
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="glow" aria-hidden="true"></div>
+
+<header class="nav">
+  <a class="brand" href="/" aria-label="Throttle home">
+    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg>
+    <span>throttle</span>
+  </a>
+  <nav class="nav-links" aria-label="Pages">
+    <a href="/cost-index">Cost Index</a>
+    <a href="/guides" aria-current="page">Guides</a>
+    <a href="/audit">Audit</a>
+    <a href="/blog">Blog</a>
+  </nav>
+  <div class="nav-cta">
+    <a class="nav-gh" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener" aria-label="Throttle on GitHub">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      <span>GitHub</span>
+    </a>
+    <a class="btn btn-accent btn-sm" href="/#install">Install</a>
+  </div>
+</header>
+
+<main id="top">
+  <article class="post-wrap">
+    <header class="post-head">
+      <a class="crumb" href="/guides"><span aria-hidden="true">←</span> All guides</a>
+      <span class="kicker">Guide</span>
+      <h1>Self-hosted LLM cost: how to compare it with an API, honestly</h1>
+      <p class="post-lede">An API price is per token. A GPU price is per hour. To compare them you need one number your provider won&#x27;t give you: your own cost per million tokens.</p>
+      <div class="byline"><b>Kushagra Kanaujia</b><span class="sep"></span><span>Founder, Throttle</span><span class="sep"></span><time datetime="2026-10-03">Oct 3, 2026</time><span class="sep"></span><span>3 min read</span></div>
+    </header>
+    <div class="prose">
+<h2 id="two-prices">Two kinds of price</h2>
+<p>A hosted API charges per million tokens, whether you send one request a day or a thousand a second. A rented or owned GPU charges per hour, whether it is busy or idle. The only way to compare them is to convert the GPU's hourly price into a price per token, using the throughput your server actually achieves:</p>
+<pre class="lang-formula"><code>$ per million tokens = GPU $ per hour ÷ (tokens per second × 3600) × 1,000,000</code></pre>
+<p>Try it with your numbers in the <a href="/guides/llm-cost-per-million-tokens#calculator">calculator</a>.</p>
+
+<h2 id="utilization">Utilization decides the answer</h2>
+<p>That formula assumes the GPU is serving traffic the whole hour. Real servers aren't. If your server is busy 30% of the time, your effective cost per token is about 3.3× the measured one, because you pay for the idle 70% too. This is the main reason teams who self-host for cost savings are sometimes surprised: the per-token cost under load can be very low, and the per-token cost averaged over the month much higher.</p>
+<p>So you need two numbers: cost per token while serving (measured), and how much of the time you are serving (from your traffic). Multiply the first by 1 ÷ utilization.</p>
+
+<h2 id="measured">Measured examples</h2>
+<div class="table-scroll"><table>
+<thead><tr><th>Model</th><th>Hardware</th><th>Config</th><th>$ per M output tokens</th></tr></thead>
+<tbody>
+<tr><td>Qwen2.5-7B</td><td>1× MI300X, $2.99/hr</td><td>vLLM defaults</td><td>$0.227</td></tr>
+<tr><td>Qwen2.5-7B</td><td>1× MI300X</td><td>Pre-quantized FP8</td><td>$0.186</td></tr>
+<tr><td>Qwen2.5-72B</td><td>1× MI300X</td><td>vLLM defaults, BF16</td><td>$1.67</td></tr>
+<tr><td>Qwen2.5-72B</td><td>1× MI300X</td><td>Pre-quantized FP8</td><td>$1.13</td></tr>
+<tr><td>Qwen2.5-72B</td><td>2× MI300X, $5.98/hr</td><td>Tensor parallel 2</td><td>$2.14</td></tr>
+</tbody></table></div>
+<p>All at 32 concurrent requests and 256 max output tokens, i.e. a busy server. These are the "while serving" numbers; adjust for your utilization. Compare them with the per-million price your API provider lists for a comparable model, and remember API prices include their idle capacity, reliability and operations.</p>
+
+<h2 id="hidden">Costs the formula leaves out</h2>
+<p>The GPU hour is the biggest line, not the only one: storage for model weights, network egress, and the engineering time to keep the server patched, monitored and upgraded. Those don't change with your serving config, so they don't belong in cost per token, but they do belong in the decision.</p>
+
+<h2 id="config">Your config is part of the price</h2>
+<p>On the same hardware, serving config moved cost per token from −68.6% to +208% in our runs: batching limits, GPU count and quantization. A self-hosted cost estimate without a measured config is a guess. See <a href="/guides/vllm-cost-per-token">vLLM cost per token</a> for the flags that mattered.</p>
+
+<h2 id="measure">Measure before you decide</h2>
+<p>If you already run a model, measure its cost per token against your own endpoint:</p>
+<pre class="lang-sh"><code>pipx install throttle-pro
+
+throttle check \
+  --url http://localhost:8000 \
+  --model your-model \
+  --gpu-hourly-rate 2.99</code></pre>
+<p>It works with any OpenAI-compatible server (vLLM, SGLang, Ollama, LMDeploy), labels the GPU price you typed as an assumption, and measures everything else. If you want this done on your stack with a written report, that's the <a href="/audit">Cost Audit</a>.</p>
+<h2 id="faq">FAQ</h2>
+<div class="faq">
+<details><summary>Is self-hosting an LLM cheaper than using an API?</summary><p>It can be when the GPU is busy most of the time. Measure your cost per token under load, divide by your utilization, and compare with the API&#x27;s per-million price for a comparable model.</p></details>
+<details><summary>How do I calculate the cost of a self-hosted LLM?</summary><p>Measure output tokens per second at your real concurrency, then: GPU $/hr ÷ (tokens/s × 3600) × 1,000,000 gives $ per million tokens while serving.</p></details>
+<details><summary>What does it cost to run a 72B model?</summary><p>Measured on one AMD MI300X at $2.99/hr: about $1.67 per million output tokens in BF16 and $1.13 with a pre-quantized FP8 checkpoint, at 32 concurrent requests.</p></details>
+<details><summary>Why is my real self-hosted cost higher than the benchmark?</summary><p>Idle time. A GPU billed by the hour costs the same when nobody is using it, so low utilization raises the effective cost per token.</p></details>
+</div>
+    </div>
+    <aside class="post-cta" aria-label="Try Throttle">
+      <h2>Measure your own server</h2>
+      <p>Throttle is an open-source CLI (MIT) for any OpenAI-compatible endpoint: vLLM, SGLang, Ollama, LMDeploy. It runs on your machine, and the only traffic it sends goes to your own endpoint.</p>
+      <div class="cta-row">
+        <button class="copy magnetic" type="button" data-copy="pipx install throttle-pro" aria-label="Copy install command">
+          <span class="prompt">$</span><code>pipx install throttle-pro</code><span class="copy-state" aria-live="polite">copy</span>
+        </button>
+        <a class="btn btn-ghost magnetic" href="/cost-index">See the Cost Index</a>
+      </div>
+    </aside>
+    <section class="more" aria-label="Related guides">
+      <h2>Related guides</h2>
+      <div class="cards">
+    <a class="post-card" href="/guides/llm-cost-per-million-tokens">
+      <span class="kicker">Calculator</span>
+      <h3>LLM cost per million tokens: the formula, a calculator, and real numbers</h3>
+      <p>How to calculate LLM inference cost per million tokens from your GPU price and throughput, with a calculator, a worked example from a real AMD MI300X run, and the pitfalls that make the number wrong.</p>
+      <span class="meta"><span>Guide</span><span class="arrow">→</span></span>
+    </a>
+    <a class="post-card" href="/guides/vllm-cost-per-token">
+      <span class="kicker">Guide</span>
+      <h3>vLLM cost per token: measure it, then change one flag at a time</h3>
+      <p>Measure vLLM cost per million tokens on your own GPU, then test max-num-seqs, tensor parallel size and FP8 one at a time. Real results from AMD MI300X and NVIDIA A100 runs.</p>
+      <span class="meta"><span>Guide</span><span class="arrow">→</span></span>
+    </a>
+      </div>
+    </section>
+  </article>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <a class="brand" href="/"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg><span>throttle</span></a>
+    <p>Measures and reports. Provisions nothing and never changes your server.</p>
+    <nav aria-label="Footer">
+      <a href="/cost-index">Cost Index</a>
+      <a href="/guides">Guides</a>
+      <a href="/audit">Cost Audit</a>
+      <a href="/blog">Blog</a>
+      <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://pypi.org/project/throttle-pro/" target="_blank" rel="noopener">PyPI</a>
+      <a href="https://github.com/KushagraKanaujia/throttle/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>
