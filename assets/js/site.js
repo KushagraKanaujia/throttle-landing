@@ -275,28 +275,6 @@
     update();
   })();
 
-  /* ---------- early-access form (Formspree) ---------- */
-  (function form() {
-    var f = $('#ea-form'); if (!f || !window.fetch || !window.FormData) return;
-    var status = $('.form-status', f), btn = $('button[type=submit]', f), label = $('.btn-label', btn);
-    f.addEventListener('submit', function (e) {
-      e.preventDefault();
-      status.className = 'form-status'; status.textContent = ''; btn.disabled = true; label.textContent = 'Sending…';
-      fetch(f.action, { method: 'POST', body: new FormData(f), headers: { Accept: 'application/json' } })
-        .then(function (r) {
-          if (!r.ok) throw new Error('bad');
-          f.reset(); status.className = 'form-status ok';
-          status.textContent = "You're in at the $19/month launch price. You'll hear from the founder directly.";
-          label.textContent = 'Request sent';
-        })
-        .catch(function () {
-          status.className = 'form-status err';
-          status.textContent = 'Could not send. Please try again, or open an issue on GitHub.';
-          label.textContent = 'Request early access'; btn.disabled = false;
-        });
-    });
-  })();
-
   /* ---------- console screenshots: tabs ---------- */
   (function () {
     var frame = $('.console-frame'); if (!frame) return;

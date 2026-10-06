@@ -107,3 +107,8 @@
   .hh-down svg { animation: none; }
 }
 .anchor { position: absolute; top: 0; }
+.cta-steps { list-style: none; margin: 0; padding: 0; counter-reset: cs; display: grid; gap: 16px; }
+.cta-steps li { counter-increment: cs; position: relative; padding-left: 40px; color: #a9afb7; font-size: 16px; line-height: 1.55; }
+.cta-steps li::before { content: "0" counter(cs); position: absolute; left: 0; top: 2px; font: 500 13px/1.4 var(--mono); color: var(--accent); }
+.cta-steps b { color: var(--text); font-weight: 600; }
+.cta-steps code { font-size: .86em; }

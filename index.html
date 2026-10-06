@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <script>document.documentElement.classList.add("js")</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Throttle: measure and cut LLM cost per million tokens</title>
-<meta name="description" content="Throttle measures what your self-hosted LLM costs per million tokens on vLLM, SGLang or Ollama, re-checks after every config change, and only calls a winner when the change beats your measured noise. Open-source CLI, MIT.">
+<title>Throttle: find and prove inference savings for agent workloads on your own GPUs</title>
+<meta name="description" content="Throttle finds and proves inference savings for agent workloads on self-hosted GPUs: dollars per million tokens with 95% confidence intervals on vLLM, SGLang or Ollama, and only changes that beat your measured noise with unchanged outputs count. Open-source CLI, MIT.">
 <meta name="theme-color" content="#07080a">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Throttle: measure and cut LLM cost per million tokens">
-<meta property="og:description" content="Measure dollars per million tokens, re-check after every vLLM flag, batch size, model, quantization or GPU change, and get a verdict that refuses to lie. Open-source CLI.">
+<meta property="og:title" content="Throttle: find and prove inference savings for agent workloads on your own GPUs">
+<meta property="og:description" content="Find and prove inference savings for agent workloads on your own GPUs. Dollars per million tokens with 95% intervals, and only changes that beat the noise count. Open-source CLI.">
 <!-- SITE_URL: https://www.throttle-pro.com/ (apex redirects to www on Vercel) -->
 <link rel="canonical" href="https://www.throttle-pro.com/">
 <meta property="og:url" content="https://www.throttle-pro.com/">
@@ -17,7 +17,7 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Throttle: measure and cut LLM cost per million tokens">
+<meta name="twitter:title" content="Throttle: find and prove inference savings for agent workloads on your own GPUs">
 <meta name="twitter:description" content="Dollars per million tokens, measured, with 95% confidence intervals. Overlap is reported as inconclusive.">
 <meta name="twitter:image" content="https://www.throttle-pro.com/assets/og.png">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Throttle", "applicationCategory": "DeveloperApplication", "operatingSystem": "macOS, Linux, Windows", "description": "Open-source CLI that measures self-hosted LLM inference cost in dollars per million tokens, with 95% confidence intervals and noise-calibrated verdicts for config changes on vLLM, SGLang, Ollama and other OpenAI-compatible servers.", "url": "https://www.throttle-pro.com/", "downloadUrl": "https://pypi.org/project/throttle-pro/", "softwareHelp": "https://www.throttle-pro.com/guides", "license": "https://opensource.org/licenses/MIT", "codeRepository": "https://github.com/KushagraKanaujia/throttle", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "author": {"@type": "Person", "name": "Kushagra Kanaujia", "url": "https://github.com/KushagraKanaujia"}}</script>
@@ -28,7 +28,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/site.css?v=a54ae2d5">
-<link rel="stylesheet" href="assets/css/home.css?v=1">
+<link rel="stylesheet" href="assets/css/home.css?v=2">
 <link rel="preload" as="image" href="assets/media/hero/hero-1080-poster.jpg">
 <script src="assets/js/site.js?v=dd1c358f" defer></script>
 <script src="assets/js/home.js?v=1" defer></script>
@@ -44,7 +44,7 @@
   <nav class="nav-links" aria-label="Pages">
     <a href="/cost-index">Cost Index</a>
     <a href="/guides">Guides</a>
-    <a href="/pilot">Free pilot</a>
+    <a href="/pilot">Pilot</a>
     <a href="/blog">Blog</a>
   </nav>
   <div class="nav-cta">
@@ -64,13 +64,13 @@
   </div>
   <div class="hh-in">
     <a class="hh-pill" href="/cost-index"><i></i> New: the <b>Throttle Cost Index</b> →</a>
-    <h1>Cut your LLM<span class="hh-l2">cost per token.</span></h1>
-    <p class="hh-sub">Qwen2.5-72B on one MI300X: <b>$1.67</b> per million tokens. On two: <b>$2.14</b>. Measured, not guessed.</p>
+    <h1>Find and prove inference savings<span class="hh-l2">for agent workloads on your own GPUs.</span></h1>
+    <p class="hh-sub">Throttle measures your agent workload's $ per million tokens with a 95% interval, keeps only the config changes that beat the noise, and proves the savings. Qwen2.5-72B on one MI300X: <b>$1.67</b> per million tokens. On two: <b>$2.14</b>. Measured, not guessed.</p>
     <div class="hh-actions" id="install">
       <button class="pill-btn pill-copy" type="button" data-copy="pipx install throttle-pro" aria-label="Copy install command: pipx install throttle-pro">
         <span>$ pipx install throttle-pro</span><span class="copy-state" aria-live="polite">copy</span>
       </button>
-      <a class="pill-btn pill-ghost" href="/cost-index">See the Cost Index <span class="arrow">→</span></a>
+      <a class="pill-btn pill-ghost" href="/pilot">Start a Throttle Pilot <span class="arrow">→</span></a>
     </div>
     <a class="hh-film" href="#film" data-film-open><span aria-hidden="true">▶</span> Watch the 75-second film</a>
   </div>
@@ -152,34 +152,27 @@
   </div>
 </section>
 
-<section class="hs" id="early-access">
+<section class="hs" id="pilot">
   <span id="pricing" class="anchor" aria-hidden="true"></span>
-  <span id="pilot" class="anchor" aria-hidden="true"></span>
   <div class="wrap">
-    <h2 class="hs-h reveal">Want your number? <em>I’ll measure it with you, free.</em></h2>
+    <h2 class="hs-h reveal">Throttle Pilot. <em>We find savings on your agent workload and prove them.</em></h2>
     <div class="cta2">
       <article class="cta-card reveal">
-        <span class="k">free pilot · 1–2 weeks</span>
-        <h3>Your true $ per million tokens</h3>
-        <div class="price">Free<small>for honest feedback</small></div>
-        <p>I set Throttle up on your stack with you, measure your real cost, give verdicts on the changes you’re considering, and leave a CI gate that fails a costlier deploy.</p>
-        <a class="btn btn-accent btn-block" href="mailto:kushthrottle@gmail.com?subject=Throttle%20free%20pilot">Book a 15-minute call <span class="arrow">→</span></a>
-        <p class="fine">No savings guarantee. <a href="/pilot">How the pilot works</a></p>
+        <span class="k">throttle pilot · at most 5 design partners per round</span>
+        <h3>Free for 2 weeks</h3>
+        <div class="price">20%<small>of verified monthly savings</small></div>
+        <p>After the 2 free weeks: 20% of verified monthly savings, priced at the conservative end of the 95% interval. $500/month floor. Cancel anytime.</p>
+        <a class="btn btn-accent btn-block" href="mailto:kushthrottle@gmail.com?subject=Throttle%20pilot">Apply for the pilot <span class="arrow">→</span></a>
+        <p class="fine">For agent workloads on GPUs you own or rent. <a href="/pilot">How the pilot works</a></p>
       </article>
       <article class="cta-card reveal">
-        <span class="k">pro · early access</span>
-        <h3>Scheduled checks and alerts</h3>
-        <div class="price">Free<small>early access for pilot teams</small></div>
-        <form class="form" id="ea-form" action="https://formspree.io/f/mkjwyvjo" method="POST">
-          <input type="hidden" name="_subject" value="Throttle Pro early access">
-          <input type="hidden" name="plan" value="pro-early-access">
-          <label for="f-email">Email</label>
-          <input id="f-email" name="email" type="email" required autocomplete="email" placeholder="you@company.com">
-          <label for="f-stack">What do you run?</label>
-          <textarea id="f-stack" name="stack" rows="2" required placeholder="e.g. vLLM on 2× L40S, Llama 3.1 8B AWQ"></textarea>
-          <button class="btn btn-ghost btn-block" type="submit"><span class="btn-label">Request early access</span> <span class="arrow">→</span></button>
-          <p class="form-status" role="status" aria-live="polite"></p>
-        </form>
+        <span class="k">how it works</span>
+        <h3>Baseline, test, prove</h3>
+        <ol class="cta-steps">
+          <li><b>Baseline.</b> We measure your agent workload&rsquo;s $ per million tokens with a 95% interval, on your own GPUs.</li>
+          <li><b>Test.</b> We try config changes and keep only the winners that beat the noise with unchanged outputs.</li>
+          <li><b>Prove.</b> Each month you get a verified-savings statement (<code>throttle savings</code>), priced at the conservative end of the interval.</li>
+        </ol>
       </article>
     </div>
   </div>
@@ -195,7 +188,7 @@
       <nav aria-label="Footer">
         <a href="/cost-index">Cost Index</a>
         <a href="/guides">Guides</a>
-        <a href="/pilot">Free pilot</a>
+        <a href="/pilot">Pilot</a>
         <a href="/blog">Blog</a>
         <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a>
         <a href="https://pypi.org/project/throttle-pro/" target="_blank" rel="noopener">PyPI</a>
