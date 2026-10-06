@@ -41,8 +41,13 @@
     },
     {
       "source": "/audit/book",
-      "destination": "/audit#book",
+      "destination": "/pilot#book",
       "statusCode": 302
+    },
+    {
+      "source": "/audit",
+      "destination": "/pilot",
+      "statusCode": 301
     }
   ]
 }
