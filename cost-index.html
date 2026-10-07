@@ -59,7 +59,7 @@
 <main id="top">
   <section class="ix-wrap">
     <header class="ix-head">
-      <span class="kicker">The Throttle Index · 11 changes · updated </span>
+      <span class="kicker">The Throttle Index · 11 changes · updated 2026-10-07</span>
       <h1>What tokens <em>really</em> cost.</h1>
       <p class="post-lede">Real serving changes on real hardware, measured in dollars per million output tokens. A change only counts as <b class="v-cheap">CHEAPER</b> or <b class="v-exp">MORE EXPENSIVE</b> when it beats run-to-run noise measured from repeat checks. When the answers change shape, it's flagged <b class="v-flag">OUTPUT CHANGED</b>: a cheaper token isn't a saving if the answers broke.</p>
       <p class="ix-guides">How these numbers work, and how to get your own: <a href="/guides/llm-cost-per-million-tokens">cost per million tokens</a> · <a href="/guides/vllm-cost-per-token">vLLM cost per token</a> · <a href="/guides/fp8-quantization-cost-vs-quality">FP8 cost vs quality</a> · <a href="/guides/tensor-parallel-cost">tensor parallel cost</a></p>
@@ -438,7 +438,7 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
   <td class="ix-btn"><button class="ix-more" type="button" aria-expanded="false" aria-controls="ix-d6">Details</button></td>
 </tr>
 <tr class="ix-detail" id="ix-d6"><td colspan="8"><div class="ix-detail-in">
-  <p class="ix-caveat">Throttle 0.5.1 prints CHEAPER here because its verdict rescales to the baseline&#x27;s GPU rate; this row judges real dollars with the same rule (2 GPUs: 1.56x the speed, 2x the price).</p>
+  <p class="ix-caveat">Throttle 0.5.1 printed CHEAPER here because its verdict rescaled to the baseline&#x27;s GPU rate; this row judges real dollars with the same rule (2 GPUs: 1.56x the speed, 2x the price). Since 0.6.0, <code>throttle check --gpus 2</code> counts the extra GPU and prints MORE EXPENSIVE.</p>
   <dl class="ix-facts">
     <div><dt>Answers</dt><dd>Output per block identical (6,320–6,333 tokens); 6-prompt sample identical on 5 of 6, sixth differs in wording only.</dd></div>
     <div><dt>GPU price</dt><dd>$5.98/hr <b class="tag">ASSUMED</b> Hot Aisle on-demand list price $2.99 per MI300X GPU x GPUs used. Tokens and time are <b class="tag tag-b">MEASURED</b>.</dd></div>
