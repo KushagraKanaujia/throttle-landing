@@ -36,7 +36,7 @@
   "redirects": [
     {
       "source": "/upgrade",
-      "destination": "/#early-access",
+      "destination": "/pilot",
       "statusCode": 302
     },
     {

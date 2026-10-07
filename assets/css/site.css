@@ -352,15 +352,12 @@ h3 { font: 600 21px/1.2 var(--sans); letter-spacing: -.02em; margin: 0 0 12px; }
 /* pricing */
 .plans { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 .plan { position: relative; background: var(--panel); border: 1px solid var(--line-2); border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 20px; }
-.plan-pro { border-color: rgba(198,255,52,.45); background: radial-gradient(100% 60% at 100% 0%, rgba(198,255,52,.12), transparent 60%), var(--panel);
-  box-shadow: 0 40px 100px -50px rgba(198,255,52,.35); }
 .plan-ribbon { position: absolute; top: 20px; right: 20px; font: 600 11px/1 var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--accent-ink); background: var(--accent); padding: 6px 9px; border-radius: 6px; }
 .plan-top { display: flex; align-items: baseline; gap: 12px; }
 .plan-top h3 { margin: 0; font-size: 24px; }
 .plan-sub { font: 500 12.5px/1 var(--mono); color: var(--muted); }
 .price { display: flex; align-items: baseline; gap: 10px; }
 .p-num { font: 700 72px/1 var(--mono); letter-spacing: -.06em; }
-.plan-pro .p-num { color: var(--accent); }
 .p-per { font: 500 14px/1 var(--mono); color: var(--muted); }
 .plan-honest { margin: -6px 0 0; font-size: 14px; color: #d4d9c6; padding: 12px 14px; border-radius: 10px; background: rgba(198,255,52,.06); border: 1px dashed rgba(198,255,52,.3); }
 .plan ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; flex: 1; }
@@ -578,23 +575,6 @@ h3 { font: 600 21px/1.2 var(--sans); letter-spacing: -.02em; margin: 0 0 12px; }
 .film-frame figcaption a { color: var(--muted); text-decoration: underline; text-decoration-color: rgba(198,255,52,.45); text-underline-offset: 3px; }
 .film-frame figcaption code { white-space: nowrap; }
 
-/* cost audit plan */
-.plan-audit { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 28px 44px; align-items: start;
-  border-color: var(--line-2); background: radial-gradient(80% 90% at 0% 0%, rgba(198,255,52,.07), transparent 60%), var(--panel); }
-.audit-main { display: flex; flex-direction: column; gap: 18px; }
-.plan-audit .p-num { color: var(--text); }
-.audit-note { margin: -4px 0 0; font-size: 14px; color: #d4d9c6; padding: 12px 14px; border-radius: 10px; background: rgba(255,255,255,.02); border: 1px dashed var(--line-2); }
-.plan-audit ul { align-self: center; gap: 16px; }
-.plan-audit li { font-size: 15.5px; }
-.plan-audit li b { color: var(--text); }
-.plan-audit .mail { font-family: var(--mono); color: var(--muted); user-select: all; }
-.audit-more { color: var(--muted); text-decoration: underline; text-decoration-color: rgba(198,255,52,.45); text-underline-offset: 3px; }
-.audit-more:hover { color: var(--accent); }
-
-@media (max-width: 900px) {
-  .plan-audit { grid-template-columns: minmax(0, 1fr); }
-  .plan-audit ul { align-self: stretch; }
-}
 @media (max-width: 600px) {
   .film { padding: 32px 0 40px; }
   .film-frame, .film-frame::before { border-radius: 14px; }
