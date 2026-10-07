@@ -15,8 +15,8 @@
 <meta property="og:description" content="Does tensor_parallel_size 2 make tokens cheaper? A measured 1:1 on AMD MI300X: Qwen2.5-72B cost $1.67 per million tokens on one GPU and $2.14 on two, 1.56× faster but 28% more per token.">
 <meta property="og:url" content="https://www.throttle-pro.com/guides/tensor-parallel-cost">
 <meta property="og:image" content="https://www.throttle-pro.com/assets/media/index-og.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
+<meta property="og:image:width" content="1600">
+<meta property="og:image:height" content="900">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="vLLM tensor parallel size: cost on 1 vs 2 GPUs · Throttle">
 <meta name="twitter:description" content="Does tensor_parallel_size 2 make tokens cheaper? A measured 1:1 on AMD MI300X: Qwen2.5-72B cost $1.67 per million tokens on one GPU and $2.14 on two, 1.56× faster but 28% more per token.">
@@ -98,8 +98,8 @@ vllm serve Qwen/Qwen2.5-72B-Instruct --tensor-parallel-size 2</code></pre>
 <p>Pass the total hourly price of every GPU the server uses:</p>
 <pre class="lang-sh"><code>throttle check --url http://localhost:8000 \
   --model Qwen/Qwen2.5-72B-Instruct \
-  --gpu-hourly-rate 5.98 --label tp2 --config gpus=2</code></pre>
-<p>Compare the printed $ per million tokens between the two setups. In Throttle 0.5.1 the verdict line judges throughput at the baseline's hourly rate, so for a GPU-count change read the dollar figures; the next release counts the extra GPUs as a real cost in the verdict too.</p>
+  --gpu-hourly-rate 5.98 --label tp2 --gpus 2</code></pre>
+<p>Compare the printed $ per million tokens between the two setups. Since Throttle 0.6.0, <code>--gpus</code> (or a <code>gpus</code> <code>--config</code> value) makes the verdict count the extra GPUs as a real cost, so a faster 2-GPU setup that costs more per token is judged MORE EXPENSIVE. Throttle 0.5.1 judged throughput at the baseline's hourly rate, so with it, read the dollar figures.</p>
 <h2 id="faq">FAQ</h2>
 <div class="faq">
 <details><summary>Does tensor parallel size 2 reduce cost per token?</summary><p>Usually not. In a 1:1 on AMD MI300X, Qwen2.5-72B cost $1.67 per million output tokens on one GPU and $2.14 on two: 1.56× faster, 28% more per token.</p></details>

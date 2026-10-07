@@ -1,6 +1,6 @@
 {
  "title": "The Throttle Index: what tokens really cost",
- "generated_at": "",
+ "generated_at": "2026-10-07",
  "method": "$/M output tokens = measured wall-clock time x the GPU's hourly price / measured output tokens. Tokens and time are MEASURED; the $/hr is ASSUMED (a list price or a stated assumption, never a bill). CHEAPER / MORE EXPENSIVE only when the change beats a run-to-run noise bound measured from repeat checks and the 95% confidence intervals do not overlap. OUTPUT CHANGED when the same prompts at temperature 0 come back >10% longer/shorter or many more hit max tokens: the $/M difference is then not a verified saving.",
  "rows": [
   {
@@ -793,7 +793,7 @@
    },
    "tool": "throttle check (throttle-pro 0.5.1), re-judged with the OUTPUT CHANGED rule",
    "quality": "Output per block identical (6,320\u20136,333 tokens); 6-prompt sample identical on 5 of 6, sixth differs in wording only.",
-   "caveat": "Throttle 0.5.1 prints CHEAPER here because its verdict rescales to the baseline's GPU rate; this row judges real dollars with the same rule (2 GPUs: 1.56x the speed, 2x the price).",
+   "caveat": "Throttle 0.5.1 printed CHEAPER here because its verdict rescaled to the baseline's GPU rate; this row judges real dollars with the same rule (2 GPUs: 1.56x the speed, 2x the price). Since 0.6.0, throttle check --gpus 2 counts the extra GPU and prints MORE EXPENSIVE.",
    "episode": "",
    "share_markdown": "## Throttle check: Qwen/Qwen2.5-72B-Instruct\n\n| | |\n|---|---|\n| Throttle version | 0.5.1 |\n| Engine | vllm (from --config) |\n| GPU | MI300X |\n| Model | Qwen/Qwen2.5-72B-Instruct |\n| GPU hourly rate | $5.98/hr (ASSUMED, user-supplied) |\n| Workload | 5 blocks x 32 requests, concurrency 32, max 256 output tokens, temperature 0, 8 built-in prompts (sha256 787fc93d62e1) |\n| Prompt cache | cold (unique prompt per request) |\n| Label | tp2 |\n| Check | 20261001T192700Z-d565005e (2026-10-01) |\n\n**Result:** $2.13 per million output tokens (95% CI $2.13 to $2.14, 5 blocks) [MEASURED]\n\n**Compared with** check 20261001T192145Z-38a09569:\n\n- before: $1.66/M output tokens (95% CI $1.66 to $1.67)\n- after: $2.13/M output tokens (95% CI $2.13 to $2.14)\n- change: +28.1% at the GPU rates as typed\n- measured change at the baseline's GPU rate: +28.1%\n- noise floor: calibrated: bound 0.8% (t x sqrt(2) x 0.2% run-to-run SD, 4 df)\n- **Verdict: MORE EXPENSIVE**, in real dollars (GPU count and price changed) the +28.1% change is larger than the run-to-run noise bound (0.8%) and the 95% confidence intervals do not overlap\n\n**What changed in config:**\n\n- `config.gpus`: 1 -> 2\n- `config.tensor_parallel`: 1 -> 2\n- `gpu_hourly_rate_usd (ASSUMED)`: 2.9900 -> 5.9800\n- `label`: tp1 -> tp2\n- `vllm.cache_config.num_gpu_blocks`: 7776 -> 43167\n\n_Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are included; config values that look like secrets are masked._"
   },
