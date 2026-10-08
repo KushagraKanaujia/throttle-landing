@@ -112,3 +112,6 @@
 .cta-steps li::before { content: "0" counter(cs); position: absolute; left: 0; top: 2px; font: 500 13px/1.4 var(--mono); color: var(--accent); }
 .cta-steps b { color: var(--text); font-weight: 600; }
 .cta-steps code { font-size: .86em; }
+
+/* book a demo: nav button gives way on very narrow phones (hero and #demo still show it) */
+@media (max-width: 420px) { .nav-demo { display: none; } }
