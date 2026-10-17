@@ -4,216 +4,260 @@
 <meta charset="utf-8">
 <script>document.documentElement.classList.add("js")</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Throttle: find and prove inference savings for agent workloads on your own GPUs</title>
-<meta name="description" content="Throttle finds and proves inference savings for agent workloads on self-hosted GPUs: dollars per million tokens with 95% confidence intervals on vLLM, SGLang or Ollama, and only changes that beat your measured noise with unchanged outputs count. Open-source CLI, MIT.">
-<meta name="theme-color" content="#07080a">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Throttle: find and prove inference savings for agent workloads on your own GPUs">
-<meta property="og:description" content="Find and prove inference savings for agent workloads on your own GPUs. Dollars per million tokens with 95% intervals, and only changes that beat the noise count. Open-source CLI.">
-<!-- SITE_URL: https://www.throttle-pro.com/ (apex redirects to www on Vercel) -->
+<title>Throttle: what your self-hosted LLM really costs per token</title>
+<meta name="description" content="Throttle measures what each vLLM, SGLang or Ollama config really costs in dollars per million tokens, with a 95% confidence interval and a noise bound, and tells you if a change is cheaper. Open-source CLI, plus a free 2-month pilot.">
+<meta name="theme-color" content="#000000">
 <link rel="canonical" href="https://www.throttle-pro.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Throttle">
+<meta property="og:title" content="Throttle: what your self-hosted LLM really costs per token">
+<meta property="og:description" content="Dollars per million tokens for every serving config, with a 95% confidence interval, a noise bound and a verdict. Open-source CLI.">
 <meta property="og:url" content="https://www.throttle-pro.com/">
 <meta property="og:image" content="https://www.throttle-pro.com/assets/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Throttle: find and prove inference savings for agent workloads on your own GPUs">
-<meta name="twitter:description" content="Dollars per million tokens, measured, with 95% confidence intervals. Overlap is reported as inconclusive.">
+<meta name="twitter:title" content="Throttle: what your self-hosted LLM really costs per token">
+<meta name="twitter:description" content="Dollars per million tokens for every serving config, with a 95% confidence interval, a noise bound and a verdict.">
 <meta name="twitter:image" content="https://www.throttle-pro.com/assets/og.png">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Throttle", "applicationCategory": "DeveloperApplication", "operatingSystem": "macOS, Linux, Windows", "description": "Open-source CLI that measures self-hosted LLM inference cost in dollars per million tokens, with 95% confidence intervals and noise-calibrated verdicts for config changes on vLLM, SGLang, Ollama and other OpenAI-compatible servers.", "url": "https://www.throttle-pro.com/", "downloadUrl": "https://pypi.org/project/throttle-pro/", "softwareHelp": "https://www.throttle-pro.com/guides", "license": "https://opensource.org/licenses/MIT", "codeRepository": "https://github.com/KushagraKanaujia/throttle", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "author": {"@type": "Person", "name": "Kushagra Kanaujia", "url": "https://github.com/KushagraKanaujia"}}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Throttle", "url": "https://www.throttle-pro.com/", "logo": "https://www.throttle-pro.com/assets/favicon.svg", "sameAs": ["https://github.com/KushagraKanaujia/throttle", "https://pypi.org/project/throttle-pro/"]}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "Throttle", "url": "https://www.throttle-pro.com/"}</script>
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/site.css?v=a54ae2d5">
-<link rel="stylesheet" href="assets/css/home.css?v=2">
-<link rel="preload" as="image" href="assets/media/hero/hero-1080-poster.jpg">
-<script src="assets/js/site.js?v=dd1c358f" defer></script>
-<script src="assets/js/home.js?v=1" defer></script>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/v2.css?v=1">
+<script src="/assets/js/v2.js?v=1" defer></script>
 </head>
-<body class="home">
-<div class="grain" aria-hidden="true"></div>
+<body>
 
 <header class="nav">
-  <a class="brand" href="#top" aria-label="Throttle home">
-    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg>
-    <span>throttle</span>
-  </a>
-  <nav class="nav-links" aria-label="Pages">
-    <a href="/cost-index">Cost Index</a>
-    <a href="/guides">Guides</a>
-    <a href="/pilot">Pilot</a>
-    <a href="/blog">Blog</a>
-  </nav>
-  <div class="nav-cta">
-    <a class="nav-gh" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener" aria-label="Throttle on GitHub">
-      <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-      <span>GitHub</span>
+  <div class="shell nav-in">
+    <a class="brand" href="/" aria-label="Throttle home">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="square"/><rect x="13.6" y="19.6" width="4.8" height="4.8" fill="var(--accent)"/></svg>
+      <span>throttle</span>
     </a>
-    <a class="btn btn-ghost btn-sm nav-demo" href="mailto:hello@throttle-pro.com?subject=Throttle%20demo">Book a demo</a>
-    <a class="btn btn-accent btn-sm" href="#install">Install</a>
+    <nav class="nav-links" aria-label="Pages">
+      <a href="#trap">Proof</a>
+      <a href="/pilot">Pilot</a>
+      <a href="/cost-index">Cost Index</a>
+      <a href="/blog">Blog</a>
+      <a href="/guides">Guides</a>
+    </nav>
+    <div class="nav-r">
+      <a class="lnk" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener" aria-label="Throttle on GitHub">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+        <span>GitHub</span>
+      </a>
+      <a class="btn btn-primary btn-sm" href="mailto:kush@throttle-pro.com?subject=Throttle%20demo">Book a demo</a>
+    </div>
   </div>
 </header>
 
-<main id="top">
+<main>
 
-<section class="hh" aria-label="Throttle">
-  <div class="hh-media" aria-hidden="true">
-    <video muted loop playsinline preload="none" disablepictureinpicture tabindex="-1"></video>
-  </div>
-  <div class="hh-in">
-    <a class="hh-pill" href="/cost-index"><i></i> New: the <b>Throttle Cost Index</b> →</a>
-    <h1>Find and prove inference savings<span class="hh-l2">for agent workloads on your own GPUs.</span></h1>
-    <p class="hh-sub">Throttle measures your agent workload's $ per million tokens with a 95% interval, keeps only the config changes that beat the noise, and proves the savings. Qwen2.5-72B on one MI300X: <b>$1.67</b> per million tokens. On two: <b>$2.14</b>. Measured, not guessed.</p>
-    <div class="hh-actions" id="install">
-      <button class="pill-btn pill-copy" type="button" data-copy="pipx install throttle-pro" aria-label="Copy install command: pipx install throttle-pro">
-        <span>$ pipx install throttle-pro</span><span class="copy-state" aria-live="polite">copy</span>
-      </button>
-      <a class="pill-btn pill-ghost" href="/pilot">Start a Throttle Pilot <span class="arrow">→</span></a>
-      <a class="pill-btn pill-ghost" href="mailto:hello@throttle-pro.com?subject=Throttle%20demo">Book a demo <span class="arrow">→</span></a>
+<section class="hero" aria-label="Throttle">
+  <canvas data-stream aria-hidden="true"></canvas>
+  <div class="shell hero-in">
+    <p class="cred"><span class="dot-live" aria-hidden="true"></span><b>Open source</b><i aria-hidden="true"></i>MIT<i aria-hidden="true"></i>vLLM · SGLang · Ollama</p>
+    <h1>The faster config can cost you more per token.</h1>
+    <p class="lede">Throttle measures what each LLM serving config really costs in <b>dollars per million tokens</b>, with a 95% confidence interval and a noise bound, then tells you if a change is actually cheaper.</p>
+    <div class="cta-grid">
+      <a class="btn btn-primary" href="mailto:kush@throttle-pro.com?subject=Throttle%20demo">Book a demo <svg viewBox="0 0 256 256" aria-hidden="true"><path fill="currentColor" d="M224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01z"/></svg></a>
+      <a class="btn btn-ghost" href="/pilot">Free 2-month pilot</a>
     </div>
-    <a class="hh-film" href="#film" data-film-open><span aria-hidden="true">▶</span> Watch the 75-second film</a>
-  </div>
-  <a class="hh-down" href="#how" aria-label="Scroll to how it works"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-</section>
-
-<section class="hs" id="how">
-  <span id="drift" class="anchor" aria-hidden="true"></span>
-  <div class="wrap">
-    <h2 class="hs-h reveal">Every config change is a new bill. <em>Throttle checks it.</em></h2>
-    <ol class="steps3">
-      <li class="reveal"><h3>Measure</h3><p><code>throttle check</code> prints your $ per million tokens, with a 95% interval.</p></li>
-      <li class="reveal"><h3>Change one thing</h3><p>A flag, the model, the engine, the quantization.</p></li>
-      <li class="reveal"><h3>Get a verdict</h3><p>Only when the change beats your measured run-to-run noise.</p>
-        <div class="verdicts"><span class="v-c">CHEAPER</span><span class="v-e">MORE EXPENSIVE</span><span class="v-n">NO WINNER</span></div></li>
-    </ol>
-  </div>
-</section>
-
-<section class="hs hs-alt" id="runs">
-  <span id="receipts" class="anchor" aria-hidden="true"></span>
-  <div class="wrap">
-    <h2 class="hs-h reveal">Real runs. <em>Real dollars.</em></h2>
-    <div class="results">
-      <article class="res reveal">
-        <span class="res-k">GPU count · AMD MI300X</span>
-        <h3>One GPU beat two.</h3>
-        <div class="res-nums"><span class="good">$1.67</span><span class="to">vs</span><span class="bad">$2.14</span></div>
-        <div class="res-per">per M output tokens · 1 GPU vs 2</div>
-        <p class="res-what">Two GPUs ran 1.56× faster but cost 28% more per token.</p>
-        <p class="res-src">Qwen2.5-72B BF16, vLLM 0.23 ROCm, 32 concurrent requests. 4 + 3 checks, Oct 1 2026.</p>
-      </article>
-      <article class="res reveal">
-        <span class="res-k">one vLLM flag · AMD MI300X</span>
-        <h3>One flag tripled the bill.</h3>
-        <div class="res-nums"><span>$0.227</span><span class="to">→</span><span class="bad">$0.700</span></div>
-        <div class="res-per">per M output tokens · +208%</div>
-        <p class="res-what"><code>--max-num-seqs 8</code> at 32 concurrent requests.</p>
-        <p class="res-src">Qwen2.5-7B, vLLM 0.23 ROCm. MORE EXPENSIVE in 4 of 4 checks.</p>
-      </article>
-      <article class="res reveal">
-        <span class="res-k">one vLLM flag · NVIDIA A100</span>
-        <h3>One flag cut it by two-thirds.</h3>
-        <div class="res-nums"><span>$0.746</span><span class="to">→</span><span class="good">$0.234</span></div>
-        <div class="res-per">per M output tokens · −68.6%</div>
-        <p class="res-what"><code>max_num_seqs</code> 1 → 8.</p>
-        <p class="res-src">Qwen2.5-0.5B, vLLM 0.16, A100 80GB. Counterbalanced golden run.</p>
-      </article>
+    <div class="well" id="install">
+      <code><span class="p" aria-hidden="true">$</span>pipx install throttle-pro</code>
+      <button type="button" data-copy="pipx install throttle-pro" aria-label="Copy install command">copy</button>
     </div>
-    <p class="res-foot reveal"><span>GPU $/hr are list prices (assumed). Tokens and time are measured.</span><a href="/cost-index">Every measured result → Cost Index</a></p>
-    <div class="film" id="film" aria-label="Throttle launch film">
-  <div class="wrap">
-    <figure class="film-frame reveal">
-      <div class="film-bar" aria-hidden="true"><i></i><i></i><i></i><span>throttle · 75 s · narrated, tap Sound to listen</span></div>
-      <div class="film-stage">
-        <video id="film-video" muted playsinline loop preload="none" poster="assets/media/throttle-film-poster.jpg?v=6701dcc9" width="1920" height="1080"
-          data-src-hd="assets/media/throttle-film-1080.mp4?v=29abcae3" data-src-sd="assets/media/throttle-film-720.mp4?v=2557b67a"
-          aria-label="Throttle launch film: a measured cost check, a calibrated verdict, and a real A100 result"></video>
-        <noscript><video src="assets/media/throttle-film-720.mp4?v=2557b67a" poster="assets/media/throttle-film-poster.jpg?v=6701dcc9" controls muted playsinline preload="none"></video></noscript>
-        <button class="film-play" type="button" aria-label="Play the film" hidden>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg>
-        </button>
-        <div class="film-ctrl">
-          <button class="film-btn" type="button" data-film="toggle" aria-label="Pause">
-            <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/></svg>
-            <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg>
-          </button>
-          <button class="film-btn" type="button" data-film="sound" aria-label="Turn sound on" aria-pressed="false">
-            <svg class="i-muted" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9.5l5 5M20.5 9.5l-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-            <svg class="i-sound" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a7.8 7.8 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-            <span class="film-btn-label">Sound</span>
-          </button>
-        </div>
+    <p class="under">Then <code>throttle check</code> against your endpoint. <a href="https://github.com/KushagraKanaujia/throttle#readme" target="_blank" rel="noopener">Quickstart</a></p>
+  </div>
+
+  <div class="shell term-wrap">
+    <figure class="term" data-term data-reveal style="margin:0 auto">
+      <div class="term-bar">
+        <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="t">replay · qwen2.5-72b · 2x AMD MI300X · vLLM ROCm</span>
+        <button type="button" data-replay>replay</button>
       </div>
-      <figcaption>Real terminal runs of <code>throttle-pro 0.4.2</code> on a MacBook (GPU rate assumed at $1.50/hr), and the A100 result from the saved <a href="https://github.com/KushagraKanaujia/throttle/tree/main/validation/golden-live-20260817" target="_blank" rel="noopener">golden run</a>.</figcaption>
+<pre aria-label="Replay of a real throttle check run: two GPUs cost 28 percent more per token than one, verdict MORE EXPENSIVE"><span class="ln"><span class="c-p">~/serving $</span> <span data-type="throttle check --url http://localhost:8000 --model Qwen/Qwen2.5-72B-Instruct \">throttle check --url http://localhost:8000 --model Qwen/Qwen2.5-72B-Instruct \</span></span><span class="ln" data-wait="40">    <span data-type="--gpu-hourly-rate 5.98 --label tp2 --config gpus=2 --config tensor_parallel=2">--gpu-hourly-rate 5.98 --label tp2 --config gpus=2 --config tensor_parallel=2</span></span><span class="ln" data-wait="380"><span class="c-b">throttle</span> <span class="c-d">0.5.1 · check · localhost:8000 ·</span> <span class="c-b">Qwen/Qwen2.5-72B-Instruct</span></span><span class="ln"><span class="c-d">  what does Qwen/Qwen2.5-72B-Instruct cost per million output tokens?</span></span><span class="ln">  GPU rate   $5.98/hr   <span class="c-y">[ASSUMED]</span> <span class="c-d">Throttle cannot see your bill</span></span><span class="ln" data-wait="260"><span class="c-d">  block 1/5  block 2/5  block 3/5  block 4/5  block 5/5</span>  <span class="c-g">done</span></span><span class="ln" data-wait="260"> </span><span class="ln"><span class="c-b">Result</span></span><span class="ln">  <span class="c-b">$2.14</span> per million output tokens   <span class="c-g">[MEASURED]</span></span><span class="ln">  95% CI $2.13 to $2.15, across 5 blocks (Student t)</span><span class="ln" data-wait="200"> </span><span class="ln"><span class="c-b">Compared with tp1</span> <span class="c-d">(same model, 1 GPU)</span></span><span class="ln">  before  $1.67/M output tokens</span><span class="ln">  now     $2.14/M output tokens</span><span class="ln">  note    GPUs: 1 -&gt; 2. The extra GPU-hours are a real cost of this config.</span><span class="ln" data-wait="420"> </span><span class="ln"><span class="c-d">┌ Verdict ──────────────────────────────────────────────────────────┐</span></span><span class="ln"><span class="c-d">│</span> <span class="c-b">$2.14/M output tokens</span>  <span class="c-d">95% CI $2.13 to $2.15 [MEASURED]</span>           <span class="c-d">│</span></span><span class="ln" data-wait="300"><span class="c-d">│</span> <span class="c-r c-b">MORE EXPENSIVE</span>  +28% per token, larger than the run-to-run        <span class="c-d">│</span></span><span class="ln"><span class="c-d">│</span> noise bound, and the 95% intervals do not overlap.                <span class="c-d">│</span></span><span class="ln"><span class="c-d">│</span> <span class="c-d">vs base</span>   +$0.47/M (+28%), baseline $1.67/M                       <span class="c-d">│</span></span><span class="ln"><span class="c-d">└───────────────────────────────────────────────────────────────────┘</span></span><span class="ln" data-wait="200"><span class="c-p">~/serving $</span> <span class="caret" aria-hidden="true"></span></span></pre>
     </figure>
-  </div>
-</div>
+    <p class="term-cap"><span>Replay of a real check, abridged. Two GPUs served 1.56x the throughput and still cost 28% more per token. GPU price assumed at list.</span><a href="https://github.com/KushagraKanaujia/throttle/tree/main/validation/hotaisle-mi300x-20261001" target="_blank" rel="noopener">Raw checks on GitHub →</a></p>
   </div>
 </section>
 
-<section class="hs" id="pilot">
-  <span id="pricing" class="anchor" aria-hidden="true"></span>
-  <div class="wrap">
-    <h2 class="hs-h reveal">Throttle Pilot. <em>We find savings on your agent workload and prove them.</em></h2>
-    <div class="cta2">
-      <article class="cta-card reveal">
-        <span class="k">throttle pilot · a small group of teams</span>
-        <h3>Free for 3 months</h3>
-        <p>We&rsquo;re working with a small group of teams running agents on their own GPUs. For 3 months, free, we set Throttle up on your stack, find the config changes that lower your cost per token, and prove each one. We&rsquo;d love to help you with your results.</p>
-        <p>After the pilot, pricing is based on the savings we verify together, at the conservative end of the 95% interval.</p>
-        <a class="btn btn-accent btn-block" href="mailto:kush@throttle-pro.com?subject=Throttle%20pilot">Apply for the pilot <span class="arrow">→</span></a>
-        <p class="fine">For agent workloads on GPUs you own or rent. <a href="/pilot">How the pilot works</a></p>
+<section class="sec" id="trap">
+  <span id="runs" aria-hidden="true"></span><span id="receipts" aria-hidden="true"></span>
+  <div class="shell">
+    <p class="eyebrow" data-reveal>The trap</p>
+    <h2 data-reveal>Throughput goes up. <em>So can the bill.</em></h2>
+    <p class="sec-lede" data-reveal>You pay for GPU hours but budget in tokens. Every flag, GPU count or quantization change moves the conversion, and the usual benchmark only shows the speed. We ran three common changes on Qwen2.5 and rented AMD MI300X GPUs.</p>
+    <div class="grid g3">
+      <article class="cell" data-reveal>
+        <span class="k">72B · 1 GPU vs 2 GPUs</span>
+        <div class="vis">
+          <div class="bars">
+            <div class="bar"><span>1 GPU</span><span class="track"><span class="fill" style="--w:78%"></span></span><b>$1.67</b></div>
+            <div class="bar hot"><span>2 GPUs</span><span class="track"><span class="fill" style="--w:100%"></span></span><b>$2.14</b></div>
+          </div>
+          <p class="muted" style="margin:14px 0 0;font:12px var(--mono)">$ per million output tokens</p>
+        </div>
+        <h3>Two GPUs, 28% more per token.</h3>
+        <p>1.56x the throughput, but you pay for twice the GPU hours. The single GPU was cheaper per token.</p>
+        <span class="chip v-costlier">MORE EXPENSIVE</span>
       </article>
-      <article class="cta-card reveal">
-        <span class="k">how it works</span>
-        <h3>Baseline, test, prove</h3>
-        <ol class="cta-steps">
-          <li><b>Baseline.</b> We measure your agent workload&rsquo;s $ per million tokens with a 95% interval, on your own GPUs.</li>
-          <li><b>Test.</b> We try config changes and keep only the winners that beat the noise with unchanged outputs.</li>
-          <li><b>Prove.</b> Each change comes with a verified-savings statement (<code>throttle savings</code>), counted at the conservative end of the interval.</li>
-        </ol>
+      <article class="cell" data-reveal>
+        <span class="k">72B · on-the-fly FP8</span>
+        <div class="vis">
+          <div class="big"><span class="strike">47%</span><small>cheaper, on paper</small></div>
+        </div>
+        <h3>Looked 47% cheaper. The output changed.</h3>
+        <p>Nearly every answer ran to the token cap. A cheaper number that changes what your agents get back is not a saving.</p>
+        <span class="chip v-changed">OUTPUT CHANGED</span>
+      </article>
+      <article class="cell" data-reveal>
+        <span class="k">32B · on-the-fly FP8</span>
+        <div class="vis">
+          <div class="answer"><span class="q">&gt; summarize the causes of World War I in about 80 words</span><span class="a">!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</span></div>
+        </div>
+        <h3>The 32B answered &ldquo;!!!!&rdquo;.</h3>
+        <p>Every request hit the token cap. Throttle flags shifts in answer length and cap hits. It does not grade answer content, so keep reading your samples.</p>
+        <span class="chip v-changed">OUTPUT CHANGED</span>
+      </article>
+    </div>
+    <div class="trap-foot" data-reveal><span>Qwen2.5-Instruct, vLLM on ROCm, rented AMD MI300X, Oct 2026. One workload, one session. Tokens and time measured; GPU price assumed.</span><a href="/cost-index">Every measured result in the Cost Index →</a></div>
+  </div>
+</section>
+
+<section class="sec" id="product">
+  <span id="how" aria-hidden="true"></span>
+  <div class="shell">
+    <p class="eyebrow" data-reveal>What Throttle tells you</p>
+    <h2 data-reveal>A number you can defend. <em>A verdict you can act on.</em></h2>
+    <p class="sec-lede" data-reveal>One command against your own OpenAI-compatible endpoint. It sends requests, times them, and turns GPU hours into dollars per million tokens. It never changes your server.</p>
+    <div class="grid g2">
+      <article class="cell" data-reveal>
+        <div class="vis">
+          <div class="ci" aria-hidden="true"><span class="axis"></span><span class="span"></span><span class="mean"></span></div>
+          <div class="ci-l"><span>low</span><span>mean</span><span>high</span></div>
+        </div>
+        <h3>Dollars per million tokens, with a 95% interval</h3>
+        <p>Not tokens per second. The cost you actually budget in, split into blocks so you get a confidence interval instead of one lucky run.</p>
+      </article>
+      <article class="cell" data-reveal>
+        <div class="vis">
+          <div class="runs" aria-hidden="true"><div class="run">run 1<b>check</b></div><div class="run">run 2<b>check</b></div><div class="run">run 3<b>check</b></div></div>
+          <p class="noise">→ run-to-run noise bound <b>calibrated</b></p>
+        </div>
+        <h3>A noise bound before any verdict</h3>
+        <p>The first check runs itself up to 3 times back to back to measure how much your setup swings. A change only counts if it beats that.</p>
+      </article>
+      <article class="cell" data-reveal>
+        <div class="vis">
+          <div class="vlist">
+            <div><span class="chip v-cheaper">CHEAPER</span><span>beats the noise, lower $/M</span></div>
+            <div><span class="chip v-costlier">MORE EXPENSIVE</span><span>beats the noise, higher $/M</span></div>
+            <div><span class="chip v-none">NO WINNER</span><span>inside the noise</span></div>
+            <div><span class="chip v-cal">NOT CALIBRATED</span><span>noise not measured yet</span></div>
+            <div><span class="chip v-changed">OUTPUT CHANGED</span><span>answer length or cap hits moved</span></div>
+          </div>
+        </div>
+        <h3>Five verdicts, no guessing</h3>
+        <p>If the difference is inside the noise, Throttle says NO WINNER instead of handing you a fake win.</p>
+      </article>
+      <article class="cell" data-reveal>
+        <div class="vis">
+          <div class="engines"><span>vLLM</span><span>SGLang</span><span>Ollama</span><span>LMDeploy</span><span class="d">any OpenAI-compatible endpoint</span></div>
+        </div>
+        <h3>Runs on your side</h3>
+        <p>It only talks to your endpoint. Prompts, responses and keys stay with you. Open source under MIT, so you can read every line.</p>
       </article>
     </div>
   </div>
 </section>
 
-<section class="hs hs-alt" id="demo">
-  <div class="wrap">
-    <h2 class="hs-h reveal">See it on your stack. <em>Book a demo.</em></h2>
-    <article class="cta-card reveal">
-      <span class="k">demo · agent workloads on your own GPUs</span>
-      <h3>Walk through Throttle with the founder</h3>
-      <p>Email us your model, your GPUs and what your agents do. We&rsquo;ll reply with a time and show you how Throttle measures your cost per token and which changes are worth testing.</p>
-      <a class="btn btn-accent" href="mailto:hello@throttle-pro.com?subject=Throttle%20demo">Book a demo <span class="arrow">→</span></a>
-      <p class="fine">Or write to <a href="mailto:hello@throttle-pro.com?subject=Throttle%20demo">hello@throttle-pro.com</a></p>
-    </article>
+<section class="sec" id="pilot">
+  <span id="pricing" aria-hidden="true"></span>
+  <div class="shell">
+    <p class="eyebrow" data-reveal>The pilot</p>
+    <h2 data-reveal>Free for 2 months. <em>We find the waste and prove the savings.</em></h2>
+    <p class="sec-lede" data-reveal>For teams running open models on GPUs they own or rent. We do the work with you, on your stack.</p>
+    <ol class="steps">
+      <li data-reveal><span class="step-n">01</span><h3>Measure</h3><p>We set Throttle up on your stack and measure your real cost per million tokens, with your traffic shape and your GPU prices.</p></li>
+      <li data-reveal><span class="step-n">02</span><h3>Fix</h3><p>We help you fix what wastes GPU time: engine flags, batching, GPU count, quantization. Every change gets a verdict against your own noise.</p></li>
+      <li data-reveal><span class="step-n">03</span><h3>Share the savings</h3><p>If we can&rsquo;t save you money, you pay nothing. If we can, you pay a share of the savings we verify together.</p></li>
+    </ol>
+    <div class="offer" data-reveal>
+      <p>Grab 20 minutes with us and we&rsquo;ll set everything up for you. <span>Small group of teams per round.</span></p>
+      <div class="acts">
+        <a class="btn btn-primary" href="mailto:kush@throttle-pro.com?subject=Throttle%20demo">Book a demo</a>
+        <a class="btn btn-ghost" href="/pilot">How the pilot works</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="faq">
+  <div class="shell faq-wrap">
+    <div><p class="eyebrow">FAQ</p><h2>Questions</h2></div>
+    <div class="faq">
+      <details><summary>Is Throttle free?</summary><p>The CLI is open source under MIT: <code class="i">pipx install throttle-pro</code>. The pilot is free for 2 months. After that, you only pay if we verify savings together.</p></details>
+      <details><summary>Does Throttle check whether answers are correct?</summary><p>No. OUTPUT CHANGED looks at answer length and how often responses hit the token cap. That catches broken output like the FP8 runs above, but it does not read or grade answer content.</p></details>
+      <details><summary>Why not just benchmark throughput?</summary><p>Because throughput is not cost. Two GPUs can be faster and still cost more per token. Throttle puts the GPU price into the number and measures your run-to-run noise, so a single noisy run can&rsquo;t pass as a saving.</p></details>
+      <details><summary>Do you need production access for the pilot?</summary><p>No. A staging endpoint or a box with the same model, engine and GPU type is enough to measure and test. To put savings in dollars we need your monthly token volume.</p></details>
+      <details><summary>Where does my data go?</summary><p>Throttle runs on your side and only sends requests to your own endpoint. Prompts, responses and keys stay in your environment. We&rsquo;re happy to work under your NDA.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="close" id="demo">
+  <div class="shell">
+    <h2 data-reveal>Find out what your tokens really cost.</h2>
+    <p class="lede" data-reveal>Run it yourself in five minutes, or let us run the pilot with you.</p>
+    <div class="cta-grid" data-reveal>
+      <a class="btn btn-primary" href="mailto:kush@throttle-pro.com?subject=Throttle%20demo">Book a demo <svg viewBox="0 0 256 256" aria-hidden="true"><path fill="currentColor" d="M224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01z"/></svg></a>
+      <a class="btn btn-ghost" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a>
+    </div>
+    <div class="well" data-reveal>
+      <code><span class="p" aria-hidden="true">$</span>pipx install throttle-pro</code>
+      <button type="button" data-copy="pipx install throttle-pro" aria-label="Copy install command">copy</button>
+    </div>
   </div>
 </section>
 
 </main>
 
 <footer class="foot">
-  <div class="wrap">
-    <div class="foot-in">
-      <a class="brand" href="#top"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg><span>throttle</span></a>
-      <p>Open-source CLI, MIT. Measures and reports; never changes your server.</p>
-      <nav aria-label="Footer">
-        <a href="/cost-index">Cost Index</a>
-        <a href="/guides">Guides</a>
-        <a href="/pilot">Pilot</a>
-        <a href="/blog">Blog</a>
-        <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a>
-        <a href="https://pypi.org/project/throttle-pro/" target="_blank" rel="noopener">PyPI</a>
-      </nav>
+  <div class="shell">
+    <div class="foot-g">
+      <div>
+        <a class="brand" href="/"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="square"/><rect x="13.6" y="19.6" width="4.8" height="4.8" fill="var(--accent)"/></svg><span>throttle</span></a>
+        <p>What your self-hosted LLM really costs per token. Measures and reports; never changes your server.</p>
+      </div>
+      <div><h4>Product</h4><ul>
+        <li><a href="/pilot">Pilot</a></li>
+        <li><a href="/cost-index">Cost Index</a></li>
+        <li><a href="https://pypi.org/project/throttle-pro/" target="_blank" rel="noopener">PyPI</a></li>
+      </ul></div>
+      <div><h4>Learn</h4><ul>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/guides">Guides</a></li>
+        <li><a href="https://github.com/KushagraKanaujia/throttle/blob/main/docs/METHODOLOGY.md" target="_blank" rel="noopener">Methodology</a></li>
+      </ul></div>
+      <div><h4>Company</h4><ul>
+        <li><a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="mailto:kush@throttle-pro.com?subject=Throttle%20demo">Book a demo</a></li>
+        <li><a href="mailto:kush@throttle-pro.com">kush@throttle-pro.com</a></li>
+      </ul></div>
     </div>
-    <div class="foot-launch"><span>launched on</span><div class="launch-row">
-      <a class="launch-badge" href="https://www.producthunt.com/products/throttle-3?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-throttle-4" target="_blank" rel="noopener noreferrer"><img alt="Throttle on Product Hunt" width="250" height="54" loading="lazy" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1260050&amp;theme=dark&amp;t=1790246355863"></a>
-      <a class="launch-badge" href="https://fazier.com/launches/www.throttle-pro.com" target="_blank" rel="noopener noreferrer"><img alt="Throttle on Fazier" width="126" height="54" loading="lazy" src="https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=launched&amp;theme=dark"></a>
-      <a class="launch-badge" href="https://dang.ai" target="_blank" rel="dofollow noopener"><img alt="Verified on DANG!" width="150" height="54" loading="lazy" src="https://assets.dang.ai/badges/dang-verified-dark.png"></a>
-    </div></div>
+    <div class="foot-b">
+      <span>© 2026 Throttle · Open source, MIT</span>
+      <div class="badges">
+        <a href="https://www.producthunt.com/products/throttle-3?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-throttle-4" target="_blank" rel="noopener noreferrer"><img alt="Throttle on Product Hunt" width="157" height="34" loading="lazy" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1260050&amp;theme=dark&amp;t=1790246355863"></a>
+        <a href="https://fazier.com/launches/www.throttle-pro.com" target="_blank" rel="noopener noreferrer"><img alt="Throttle on Fazier" width="79" height="34" loading="lazy" src="https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=launched&amp;theme=dark"></a>
+        <a href="https://dang.ai" target="_blank" rel="dofollow noopener"><img alt="Verified on DANG!" width="94" height="34" loading="lazy" src="https://assets.dang.ai/badges/dang-verified-dark.png"></a>
+      </div>
+    </div>
   </div>
 </footer>
 </body>
