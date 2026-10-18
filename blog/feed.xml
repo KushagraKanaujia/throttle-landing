@@ -6,6 +6,13 @@
   <description>Measuring what self-hosted LLM inference really costs.</description>
   <language>en</language>
   <item>
+    <title>How to price a token on your own GPUs (the formula)</title>
+    <link>https://www.throttle-pro.com/blog/how-to-price-a-token-on-your-own-gpus</link>
+    <guid>https://www.throttle-pro.com/blog/how-to-price-a-token-on-your-own-gpus</guid>
+    <pubDate>Fri, 30 Oct 2026 16:00:00 +0000</pubDate>
+    <description>The formula for dollars per million tokens on GPUs you own or rent, worked through with a real MI300X measurement, and the four inputs that make it wrong: GPU count, the hourly rate for owned GPUs, idle time, and which tokens you divide by.</description>
+  </item>
+  <item>
     <title>We built Autotune: find the cheapest serving config that still gives the same answers</title>
     <link>https://www.throttle-pro.com/blog/autotune-cheapest-config-same-answers</link>
     <guid>https://www.throttle-pro.com/blog/autotune-cheapest-config-same-answers</guid>
