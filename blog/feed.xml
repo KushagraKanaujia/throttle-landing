@@ -6,6 +6,13 @@
   <description>Measuring what self-hosted LLM inference really costs.</description>
   <language>en</language>
   <item>
+    <title>We built Autotune: find the cheapest serving config that still gives the same answers</title>
+    <link>https://www.throttle-pro.com/blog/autotune-cheapest-config-same-answers</link>
+    <guid>https://www.throttle-pro.com/blog/autotune-cheapest-config-same-answers</guid>
+    <pubDate>Tue, 27 Oct 2026 16:00:00 +0000</pubDate>
+    <description>Autotune searches serving configs on your own GPUs and keeps the cheapest one that beats the noise, prices every GPU it uses, and rejects configs whose outputs changed. How it works, what it costs, and what &quot;same answers&quot; does and doesn&#x27;t mean.</description>
+  </item>
+  <item>
     <title>FP8 looked 47% cheaper. It wasn&#x27;t.</title>
     <link>https://www.throttle-pro.com/blog/fp8-looked-47-percent-cheaper</link>
     <guid>https://www.throttle-pro.com/blog/fp8-looked-47-percent-cheaper</guid>
