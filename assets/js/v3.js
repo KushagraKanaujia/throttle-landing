@@ -138,13 +138,10 @@
     }
   };
 
-  var scenes = $$('svg.scene[data-cycle]').map(function (s) { return new Scene(s); });
-  var finalP = HOLD_END - 0.001;
-  if (reduce || !hasIO) {
-    scenes.forEach(function (sc) { sc.render(finalP); });
-  } else {
-    scenes.forEach(function (sc) { sc.render(0); });
-    var raf = 0, live = 0;
+  /* Scenes are built lazily as they approach the viewport and only tick while visible.
+     Under reduced motion (or without IntersectionObserver) nothing runs: the markup already is the final frame. */
+  if (!reduce && hasIO) {
+    var scenes = [], raf = 0, live = 0;
     var tick = function (now) {
       for (var i = 0; i < scenes.length; i++) {
         var sc = scenes[i]; if (!sc.on) continue;
@@ -160,7 +157,14 @@
       });
       if (live && !raf) raf = requestAnimationFrame(tick);
     }, { threshold: 0.2 });
-    scenes.forEach(function (sc) { sc.svg.__scene = sc; sio.observe(sc.svg); });
+    var nio = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting || e.target.__scene) return;
+        var sc = new Scene(e.target); sc.render(0);
+        e.target.__scene = sc; scenes.push(sc); nio.unobserve(e.target); sio.observe(e.target);
+      });
+    }, { rootMargin: '400px 0px' });
+    $$('svg.scene[data-cycle]').forEach(function (s) { nio.observe(s); });
     d.addEventListener('visibilitychange', function () {
       if (d.hidden) { cancelAnimationFrame(raf); raf = 0; scenes.forEach(function (sc) { if (sc.on) sc.elapsed = (performance.now() - sc.t0) % sc.cycle; }); }
       else { scenes.forEach(function (sc) { if (sc.on) sc.t0 = performance.now() - sc.elapsed; }); if (live && !raf) raf = requestAnimationFrame(tick); }
@@ -210,13 +214,14 @@
 
   /* ---------- hero canvas: quiet lanes of tokens ---------- */
   var cv = d.querySelector('[data-stream]');
+  var startCanvas = function () {
   if (cv && cv.getContext) {
-    var ctx = cv.getContext('2d'), W = 0, H = 0, dpr = Math.min(devicePixelRatio || 1, 2);
+    var ctx = cv.getContext('2d'), W = 0, H = 0, dpr = Math.min(devicePixelRatio || 1, 1.5);
     var toks = [], running = true, craf = 0;
     var size = function () {
       var r = cv.getBoundingClientRect(); W = r.width; H = r.height;
       cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      var lanes = Math.floor(H / 24), n = Math.min(220, Math.floor(W * lanes / 110));
+      var lanes = Math.floor(H / 24), n = Math.min(W < 700 ? 70 : 180, Math.floor(W * lanes / 120));
       toks = [];
       for (var i = 0; i < n; i++) {
         toks.push({ x: Math.random() * W, y: Math.floor(Math.random() * lanes) * 24 + 12, w: 3 + Math.random() * 14,
@@ -243,6 +248,12 @@
       }).observe(cv);
     }
   }
+  };
+  if (cv) {
+    var idle = window.requestIdleCallback || function (f) { return setTimeout(f, 200); };
+    if (d.readyState === 'complete') idle(startCanvas, { timeout: 1500 });
+    else addEventListener('load', function () { idle(startCanvas, { timeout: 1500 }); });
+  }
 
   /* ---------- film: lazy, muted autoplay in view. Sound toggle only if the file has audio (data-audio). ---------- */
   var film = d.querySelector('[data-film]');
@@ -258,6 +269,7 @@
       $$('source[data-src]', film).forEach(function (s) { s.src = s.getAttribute('data-src'); });
       film.load();
     };
+    var setPoster = function () { var p = film.getAttribute('data-poster'); if (p && !film.poster) film.poster = p; };
     var tryPlay = function () { var p = film.play(); if (p && p.catch) p.catch(function () {}); };
     var sync = function () {
       if (!btn) return;
@@ -280,11 +292,14 @@
       if (film.requestFullscreen) film.requestFullscreen(); else if (film.webkitEnterFullscreen) film.webkitEnterFullscreen();
     });
     if (hasIO) {
+      var pio = new IntersectionObserver(function (es) { if (es[0].isIntersecting) { setPoster(); pio.disconnect(); } }, { rootMargin: '300px 0px' });
+      pio.observe(film);
       new IntersectionObserver(function (es) {
         if (es[0].isIntersecting) { load(); if (!reduce) tryPlay(); }
         else if (!film.paused) film.pause();
       }, { threshold: 0.35 }).observe(film);
     }
+    else setPoster();
     sync();
   }
 
