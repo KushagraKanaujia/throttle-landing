@@ -26,17 +26,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/v2.css?v=1">
-<script src="/assets/js/v2.js?v=1" defer></script>
+<link rel="stylesheet" href="/assets/css/v3.css?v=1">
+<script src="/assets/js/v3.js?v=1" defer></script>
 </head>
 <body>
 
 <header class="nav">
   <div class="shell nav-in">
-    <a class="brand" href="/" aria-label="Throttle home">
-      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="square"/><rect x="13.6" y="19.6" width="4.8" height="4.8" fill="var(--accent)"/></svg>
-      <span>throttle</span>
-    </a>
+    <a class="brand" href="/" aria-label="Throttle home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><path class="arc" pathLength="1" d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path class="ndl" d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><rect class="hub" x="13.6" y="19.6" width="4.8" height="4.8" rx="1.2" fill="var(--accent)"/></svg><span>throttle</span></a>
     <nav class="nav-links" aria-label="Pages">
       <a href="#trap">Proof</a>
       <a href="/pilot">Pilot</a>
@@ -59,119 +56,406 @@
 <section class="hero" aria-label="Throttle">
   <canvas data-stream aria-hidden="true"></canvas>
   <div class="shell hero-in">
-    <p class="cred"><span class="dot-live" aria-hidden="true"></span><b>Open source</b><i aria-hidden="true"></i>MIT<i aria-hidden="true"></i>vLLM · SGLang · Ollama</p>
-    <h1>The faster config can cost you more per token.</h1>
-    <p class="lede">Throttle measures what each LLM serving config really costs in <b>dollars per million tokens</b>, with a 95% confidence interval and a noise bound, then tells you if a change is actually cheaper.</p>
-    <div class="cta-grid">
+    <p class="cred" data-reveal><span class="dot-live" aria-hidden="true"></span><b>Open source</b><i aria-hidden="true"></i>MIT<i aria-hidden="true"></i>vLLM · SGLang · Ollama</p>
+    <h1 data-reveal>The faster config can cost you more per token.</h1>
+    <p class="lede" data-reveal>Throttle measures what each serving config really costs in <b>dollars per million tokens</b>, with a confidence interval and a noise bound. Then it tells you if a change is actually cheaper.</p>
+    <div class="cta-row" data-reveal>
       <a class="btn btn-primary" href="mailto:kush@throttle-pro.com?subject=Throttle%20demo">Book a demo <svg viewBox="0 0 256 256" aria-hidden="true"><path fill="currentColor" d="M224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01z"/></svg></a>
-      <a class="btn btn-ghost" href="/pilot">Free 2-month pilot</a>
+      <a class="tlink" href="/pilot">Free 2-month pilot</a>
     </div>
-    <div class="well" id="install">
+    <div class="well" id="install" data-reveal>
       <code><span class="p" aria-hidden="true">$</span>pipx install throttle-pro</code>
-      <button type="button" data-copy="pipx install throttle-pro" aria-label="Copy install command">copy</button>
+      <button type="button" data-copy="pipx install throttle-pro" aria-label="Copy pipx install throttle-pro"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>Copy</span></button>
     </div>
-    <p class="under">Then <code>throttle check</code> against your endpoint. <a href="https://github.com/KushagraKanaujia/throttle#readme" target="_blank" rel="noopener">Quickstart</a></p>
   </div>
 
-  <div class="shell term-wrap">
-    <figure class="term" data-term data-reveal style="margin:0 auto">
-      <div class="term-bar">
-        <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
-        <span class="t">replay · qwen2.5-72b · 2x AMD MI300X · vLLM ROCm</span>
-        <button type="button" data-replay>replay</button>
+  <div class="shell">
+    <div class="stage" data-reveal>
+      <div class="panel">
+        <svg class="scene" viewBox="0 0 600 400" data-cycle="12" role="img" aria-label="Animation: requests flow from an agent to your vLLM or SGLang endpoint and its GPUs, and Throttle settles on $2.14 per million output tokens with a 95% confidence interval of $2.13 to $2.15.">
+          <g class="sc-l">
+            <!-- agent -->
+            <g data-a="fade" data-at=".01" data-d=".05" data-y="6"><rect class="box" x="16" y="60" width="118" height="72" rx="12"/><text class="t-b" x="34" y="92" font-size="17">agent</text><text class="t-s keep" x="34" y="114" font-size="12.5">your traffic</text></g>
+            <!-- lanes -->
+            <path class="ln" d="M134 84H200" pathLength="1" data-a="draw" data-at=".05" data-d=".05"/>
+            <path class="ln" d="M134 96H200" pathLength="1" data-a="draw" data-at=".06" data-d=".05"/>
+            <path class="ln" d="M134 108H200" pathLength="1" data-a="draw" data-at=".07" data-d=".05"/>
+            <path class="hd" d="M134 84H200" pathLength="1" data-a="head" data-at=".09" data-d=".035" data-rep="13" data-gap=".05" data-e="lin"/>
+            <path class="hd" d="M134 96H200" pathLength="1" data-a="head" data-at=".105" data-d=".035" data-rep="13" data-gap=".05" data-e="lin"/>
+            <path class="hd" d="M134 108H200" pathLength="1" data-a="head" data-at=".12" data-d=".035" data-rep="12" data-gap=".05" data-e="lin"/>
+            <!-- endpoint -->
+            <g data-a="fade" data-at=".09" data-d=".05" data-y="6"><rect class="box-a" x="200" y="52" width="168" height="88" rx="12"/><text class="t-b" x="218" y="88" font-size="17">your endpoint</text><text class="t" x="218" y="114" font-size="13">vLLM · SGLang</text></g>
+            <path class="ln" d="M368 96H410" pathLength="1" data-a="draw" data-at=".14" data-d=".04"/>
+            <path class="hd" d="M368 96H410" pathLength="1" data-a="head" data-at=".16" data-d=".03" data-rep="12" data-gap=".05" data-e="lin"/>
+            <!-- GPUs -->
+            <g data-a="fade" data-at=".15" data-d=".05" data-y="6">
+              <text class="t-s" x="410" y="40" font-size="12.5">GPUs · $/hr</text>
+              <rect class="box" x="410" y="52" width="40" height="40" rx="7"/><rect class="box" x="458" y="52" width="40" height="40" rx="7"/>
+              <rect class="box" x="410" y="100" width="40" height="40" rx="7"/><rect class="box" x="458" y="100" width="40" height="40" rx="7"/>
+            </g>
+            <rect class="f-a" x="410" y="52" width="40" height="40" rx="7" opacity="0" fill-opacity=".45" data-a="pulse" data-at=".19" data-d=".06" data-rep="11" data-gap=".062"/>
+            <rect class="f-a" x="458" y="52" width="40" height="40" rx="7" opacity="0" fill-opacity=".45" data-a="pulse" data-at=".205" data-d=".06" data-rep="11" data-gap=".062"/>
+            <rect class="f-a" x="410" y="100" width="40" height="40" rx="7" opacity="0" fill-opacity=".45" data-a="pulse" data-at=".22" data-d=".06" data-rep="11" data-gap=".062"/>
+            <rect class="f-a" x="458" y="100" width="40" height="40" rx="7" opacity="0" fill-opacity=".45" data-a="pulse" data-at=".235" data-d=".06" data-rep="11" data-gap=".062"/>
+            <!-- into the readout -->
+            <path class="ln" d="M498 96H560V196" pathLength="1" data-a="draw" data-at=".28" data-d=".07"/>
+            <path class="hd" d="M498 96H560V196" pathLength="1" data-a="head" data-at=".29" data-d=".06" data-rep="9" data-gap=".07" data-e="lin"/>
+            <g data-a="fade" data-at=".33" data-d=".06" data-y="10">
+              <rect class="box" x="16" y="196" width="568" height="188" rx="16"/>
+              <text class="t-s" x="40" y="232" font-size="12.5">$ PER MILLION OUTPUT TOKENS</text>
+              <text class="t-s" x="560" y="232" font-size="12.5" text-anchor="end">Qwen2.5-72B · 2 GPUs</text>
+            </g>
+            <text class="t-xl" x="38" y="310" font-size="66" data-a="count" data-at=".38" data-d=".22" data-from="1.20" data-to="2.14" data-dec="2" data-pre="$">$2.14</text>
+            <g data-a="fade" data-at=".66" data-d=".05">
+              <rect x="40" y="332" width="128" height="28" rx="14" fill="none" stroke="var(--accent)" stroke-opacity=".7"/>
+              <circle cx="56" cy="346" r="3.5" class="f-a"/>
+              <text class="t-a" x="66" y="350.5" font-size="11.5" font-weight="700" letter-spacing=".06em">MEASURED</text>
+            </g>
+            <!-- CI -->
+            <path class="ln" d="M300 300H552" pathLength="1" data-a="draw" data-at=".40" data-d=".06"/>
+            <rect class="f-soft gc" x="362.5" y="284" width="125" height="32" rx="4" data-a="grow" data-at=".58" data-d=".07"/>
+            <circle class="f-bone gc" cx="404" cy="300" r="5" data-a="pop" data-at=".43" data-d=".03" data-e="back"/>
+            <circle class="f-bone gc" cx="446" cy="300" r="5" data-a="pop" data-at=".46" data-d=".03" data-e="back"/>
+            <circle class="f-bone gc" cx="418" cy="300" r="5" data-a="pop" data-at=".49" data-d=".03" data-e="back"/>
+            <circle class="f-bone gc" cx="437" cy="300" r="5" data-a="pop" data-at=".52" data-d=".03" data-e="back"/>
+            <circle class="f-bone gc" cx="425" cy="300" r="5" data-a="pop" data-at=".55" data-d=".03" data-e="back"/>
+            <g data-a="fade" data-at=".62" data-d=".05">
+              <path class="ln-b" d="M362.5 280v40M487.5 280v40"/>
+              <path d="M425 270v60" stroke="var(--accent)" stroke-width="2.5"/>
+              <text class="t-s" x="425" y="262" font-size="12" text-anchor="middle">95% CI</text>
+              <text class="t" x="362.5" y="346" font-size="12.5" text-anchor="middle">$2.13</text>
+              <text class="t" x="487.5" y="346" font-size="12.5" text-anchor="middle">$2.15</text>
+            </g>
+          </g>
+        </svg>
       </div>
-<pre aria-label="Replay of a real throttle check run: two GPUs cost 28 percent more per token than one, verdict MORE EXPENSIVE"><span class="ln"><span class="c-p">~/serving $</span> <span data-type="throttle check --url http://localhost:8000 --model Qwen/Qwen2.5-72B-Instruct \">throttle check --url http://localhost:8000 --model Qwen/Qwen2.5-72B-Instruct \</span></span><span class="ln" data-wait="40">    <span data-type="--gpu-hourly-rate 5.98 --label tp2 --config gpus=2 --config tensor_parallel=2">--gpu-hourly-rate 5.98 --label tp2 --config gpus=2 --config tensor_parallel=2</span></span><span class="ln" data-wait="380"><span class="c-b">throttle</span> <span class="c-d">0.5.1 · check · localhost:8000 ·</span> <span class="c-b">Qwen/Qwen2.5-72B-Instruct</span></span><span class="ln"><span class="c-d">  what does Qwen/Qwen2.5-72B-Instruct cost per million output tokens?</span></span><span class="ln">  GPU rate   $5.98/hr   <span class="c-y">[ASSUMED]</span> <span class="c-d">Throttle cannot see your bill</span></span><span class="ln" data-wait="260"><span class="c-d">  block 1/5  block 2/5  block 3/5  block 4/5  block 5/5</span>  <span class="c-g">done</span></span><span class="ln" data-wait="260"> </span><span class="ln"><span class="c-b">Result</span></span><span class="ln">  <span class="c-b">$2.14</span> per million output tokens   <span class="c-g">[MEASURED]</span></span><span class="ln">  95% CI $2.13 to $2.15, across 5 blocks (Student t)</span><span class="ln" data-wait="200"> </span><span class="ln"><span class="c-b">Compared with tp1</span> <span class="c-d">(same model, 1 GPU)</span></span><span class="ln">  before  $1.67/M output tokens</span><span class="ln">  now     $2.14/M output tokens</span><span class="ln">  note    GPUs: 1 -&gt; 2. The extra GPU-hours are a real cost of this config.</span><span class="ln" data-wait="420"> </span><span class="ln"><span class="c-d">┌ Verdict ──────────────────────────────────────────────────────────┐</span></span><span class="ln"><span class="c-d">│</span> <span class="c-b">$2.14/M output tokens</span>  <span class="c-d">95% CI $2.13 to $2.15 [MEASURED]</span>           <span class="c-d">│</span></span><span class="ln" data-wait="300"><span class="c-d">│</span> <span class="c-r c-b">MORE EXPENSIVE</span>  +28% per token, larger than the run-to-run        <span class="c-d">│</span></span><span class="ln"><span class="c-d">│</span> noise bound, and the 95% intervals do not overlap.                <span class="c-d">│</span></span><span class="ln"><span class="c-d">│</span> <span class="c-d">vs base</span>   +$0.47/M (+28%), baseline $1.67/M                       <span class="c-d">│</span></span><span class="ln"><span class="c-d">└───────────────────────────────────────────────────────────────────┘</span></span><span class="ln" data-wait="200"><span class="c-p">~/serving $</span> <span class="caret" aria-hidden="true"></span></span></pre>
-    </figure>
-    <p class="term-cap"><span>Replay of a real check, abridged. Two GPUs served 1.56x the throughput and still cost 28% more per token. GPU price assumed at list.</span><a href="https://github.com/KushagraKanaujia/throttle/tree/main/validation/hotaisle-mi300x-20261001" target="_blank" rel="noopener">Raw checks on GitHub →</a></p>
+      <p class="stage-cap">From a real check: Qwen2.5-72B on two rented AMD MI300X GPUs, vLLM on ROCm. GPU price assumed at list.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="film">
+  <div class="shell">
+    <div class="sec-head c">
+      <p class="eyebrow" data-reveal>The film</p>
+      <h2 data-reveal>See it in 60 seconds.</h2>
+      <p class="sec-lede" data-reveal>One command, one real GPU, one verdict.</p>
+    </div>
+    <div class="film-frame" data-reveal>
+      <video data-film muted loop playsinline preload="none" poster="/assets/media/demo/throttle-demo-poster.jpg" aria-label="Throttle demo film">
+        <source data-src="/assets/media/demo/throttle-demo-720.mp4" type="video/mp4" media="(max-width: 700px)">
+        <source data-src="/assets/media/demo/throttle-demo.webm" type="video/webm">
+        <source data-src="/assets/media/demo/throttle-demo-1080.mp4" type="video/mp4">
+      </video>
+      <div class="film-ctl">
+        <button type="button" data-unmute><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4z"/></svg><span>Pause</span></button>
+        <button type="button" class="ic" data-fs aria-label="Watch full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+      </div>
+    </div>
   </div>
 </section>
 
 <section class="sec" id="trap">
   <span id="runs" aria-hidden="true"></span><span id="receipts" aria-hidden="true"></span>
   <div class="shell">
-    <p class="eyebrow" data-reveal>The trap</p>
-    <h2 data-reveal>Throughput goes up. <em>So can the bill.</em></h2>
-    <p class="sec-lede" data-reveal>You pay for GPU hours but budget in tokens. Every flag, GPU count or quantization change moves the conversion, and the usual benchmark only shows the speed. We ran three common changes on Qwen2.5 and rented AMD MI300X GPUs.</p>
-    <div class="grid g3">
-      <article class="cell" data-reveal>
-        <span class="k">72B · 1 GPU vs 2 GPUs</span>
-        <div class="vis">
-          <div class="bars">
-            <div class="bar"><span>1 GPU</span><span class="track"><span class="fill" style="--w:78%"></span></span><b>$1.67</b></div>
-            <div class="bar hot"><span>2 GPUs</span><span class="track"><span class="fill" style="--w:100%"></span></span><b>$2.14</b></div>
-          </div>
-          <p class="muted" style="margin:14px 0 0;font:12px var(--mono)">$ per million output tokens</p>
+    <div class="sec-head">
+      <p class="eyebrow" data-reveal>The trap</p>
+      <h2 data-reveal>Throughput goes up. <em>So can the bill.</em></h2>
+      <p class="sec-lede" data-reveal>You pay for GPU hours but budget in tokens. We ran three common changes on Qwen2.5 and rented AMD MI300X GPUs.</p>
+    </div>
+    <div class="cards c3">
+      <article class="card panel" data-reveal>
+        <svg class="scene" viewBox="0 0 400 300" data-cycle="11" role="img" aria-label="Animation: two GPUs win on throughput at 1.56x, but cost $2.14 per million tokens against $1.67 for one GPU. Verdict: more expensive, 28 percent more per token.">
+          <g class="sc-l">
+            <text class="t-s" x="20" y="32" font-size="11">THROUGHPUT</text>
+            <text class="t" x="20" y="63" font-size="12.5">1 GPU</text>
+            <rect class="f-trk" x="92" y="49" width="240" height="20" rx="4"/>
+            <rect class="f-bone gx" x="92" y="49" width="154" height="20" rx="4" data-a="grow" data-at=".04" data-d=".2" data-e="io"/>
+            <text class="t" x="20" y="95" font-size="12.5">2 GPUs</text>
+            <rect class="f-trk" x="92" y="81" width="240" height="20" rx="4"/>
+            <rect class="f-bone gx" x="92" y="81" width="240" height="20" rx="4" data-a="grow" data-at=".04" data-d=".2" data-e="io"/>
+            <text class="t-b" x="342" y="96" font-size="13" data-a="fade" data-at=".24" data-d=".04">1.56x</text>
+            <text class="t-a" x="20" y="126" font-size="11.5" data-a="fade" data-at=".27" data-d=".05">✓ 2 GPUs win on speed</text>
+            <path d="M18 122H190" stroke="var(--v-costlier)" stroke-width="1.6" pathLength="1" data-a="draw" data-at=".74" data-d=".05"/>
+            <path class="ln" d="M20 144H380"/>
+            <text class="t-s" x="20" y="172" font-size="11">$ PER MILLION OUTPUT TOKENS</text>
+            <text class="t" x="20" y="203" font-size="12.5">1 GPU</text>
+            <rect class="f-trk" x="92" y="189" width="240" height="20" rx="4"/>
+            <rect class="f-bone gx" x="92" y="189" width="187" height="20" rx="4" data-a="grow" data-at=".38" data-d=".16" data-e="io"/>
+            <text class="t-b" x="342" y="204" font-size="13" data-a="fade" data-at=".52" data-d=".04">$1.67</text>
+            <text class="t" x="20" y="235" font-size="12.5">2 GPUs</text>
+            <rect class="f-trk" x="92" y="221" width="240" height="20" rx="4"/>
+            <rect class="f-r gx" x="92" y="221" width="240" height="20" rx="4" data-a="grow" data-at=".42" data-d=".2" data-e="io"/>
+            <text class="t-r" x="342" y="236" font-size="13" data-a="fade" data-at=".62" data-d=".04">$2.14</text>
+            <g class="gc" data-a="pop" data-at=".68" data-d=".05" data-e="back">
+              <rect x="20" y="258" width="146" height="26" rx="13" fill="rgba(255,138,101,.08)" stroke="var(--v-costlier)"/>
+              <circle cx="34" cy="271" r="3" class="f-r"/>
+              <text class="t-r" x="43" y="275" font-size="10.5" font-weight="700" letter-spacing=".05em">MORE EXPENSIVE</text>
+            </g>
+            <text class="t-b" x="180" y="276" font-size="13" data-a="fade" data-at=".72" data-d=".05">+28% per token</text>
+          </g>
+        </svg>
+        <div class="txt">
+          <span class="k">72B · 1 GPU vs 2 GPUs</span>
+          <h3>Two GPUs, 28% more per token.</h3>
+          <p>1.56x the throughput, but twice the GPU hours. One GPU was cheaper per token.</p>
         </div>
-        <h3>Two GPUs, 28% more per token.</h3>
-        <p>1.56x the throughput, but you pay for twice the GPU hours. The single GPU was cheaper per token.</p>
-        <span class="chip v-costlier">MORE EXPENSIVE</span>
       </article>
-      <article class="cell" data-reveal>
-        <span class="k">72B · on-the-fly FP8</span>
-        <div class="vis">
-          <div class="big"><span class="strike">47%</span><small>cheaper, on paper</small></div>
+
+      <article class="card panel" data-reveal>
+        <svg class="scene" viewBox="0 0 400 300" data-cycle="10" role="img" aria-label="Animation: on-the-fly FP8 on the 72B looks 47 percent cheaper, then the tile flips to output changed: answers ran to the token cap.">
+          <g class="sc-l">
+            <g class="gc fr" data-a="flipout" data-at=".48" data-d=".05" data-e="io">
+              <g data-a="fade" data-at=".02" data-d=".05">
+                <rect class="box" x="40" y="30" width="320" height="240" rx="16"/>
+                <text class="t-s" x="64" y="66" font-size="11">72B · ON-THE-FLY FP8</text>
+                <text class="t" x="64" y="186" font-size="12.5">$ per million tokens, on paper</text>
+              </g>
+              <text class="t-xl" x="62" y="156" font-size="68" data-a="count" data-at=".08" data-d=".2" data-from="0" data-to="47" data-pre="−" data-suf="%">−47%</text>
+              <g class="gc" data-a="pop" data-at=".3" data-d=".05" data-e="back">
+                <rect x="64" y="210" width="128" height="26" rx="13" fill="rgba(155,229,100,.08)" stroke="var(--v-cheaper)"/>
+                <circle cx="78" cy="223" r="3" fill="var(--v-cheaper)"/>
+                <text class="t-g" x="87" y="227" font-size="10.5" font-weight="700" letter-spacing=".05em">LOOKS CHEAPER</text>
+              </g>
+            </g>
+            <g class="gc" data-a="flipin" data-at=".53" data-d=".05" data-e="io">
+              <rect x="40" y="30" width="320" height="240" rx="16" fill="rgba(201,160,255,.05)" stroke="rgba(201,160,255,.5)" stroke-width="1.2"/>
+              <text class="t-s" x="64" y="66" font-size="11">72B · ON-THE-FLY FP8</text>
+              <text class="t-v" x="64" y="112" font-size="23" font-weight="700" letter-spacing=".02em">OUTPUT CHANGED</text>
+              <text class="t" x="64" y="140" font-size="12.5">answers ran to the token cap</text>
+              <path d="M64 176H336" stroke="var(--v-changed)" stroke-opacity=".7" stroke-dasharray="4 4"/>
+              <text class="t-s" x="336" y="170" font-size="10.5" text-anchor="end">TOKEN CAP</text>
+              <rect class="f-v gy" x="64" y="176" width="14" height="70" rx="2" opacity=".85" data-a="grow" data-at=".60" data-d=".06"/>
+              <rect class="f-v gy" x="87" y="176" width="14" height="70" rx="2" opacity=".85" data-a="grow" data-at=".61" data-d=".06"/>
+              <rect class="f-v gy" x="110" y="176" width="14" height="70" rx="2" opacity=".85" data-a="grow" data-at=".62" data-d=".06"/>
+              <rect class="f-v gy" x="133" y="176" width="14" height="70" rx="2" opacity=".85" data-a="grow" data-at=".63" data-d=".06"/>
+              <rect class="f-v gy" x="156" y="176" width="14" height="70" rx="2" opacity=".85" data-a="grow" data-at=".64" data-d=".06"/>
+              <rect class="f-v gy" x="179" y="176" width="14" height="70" rx="2" opacity=".85" data-a="grow" data-at=".65" data-d=".06"/>
+              <rect class="f-v gy" x="202" y="176" width="14" height="70" rx="2" opacity=".85" data-a="grow" data-at=".66" data-d=".06"/>
+              <rect class="f-v gy" x="225" y="176" width="14" height="70" rx="2" opacity=".85" data-a="grow" data-at=".67" data-d=".06"/>
+              <rect class="f-v gy" x="248" y="176" width="14" height="70" rx="2" opacity=".85" data-a="grow" data-at=".68" data-d=".06"/>
+              <rect class="f-v gy" x="271" y="176" width="14" height="70" rx="2" opacity=".85" data-a="grow" data-at=".69" data-d=".06"/>
+              <rect class="f-v gy" x="294" y="196" width="14" height="50" rx="2" opacity=".85" data-a="grow" data-at=".70" data-d=".06"/>
+              <rect class="f-v gy" x="317" y="176" width="14" height="70" rx="2" opacity=".85" data-a="grow" data-at=".71" data-d=".06"/>
+            </g>
+          </g>
+        </svg>
+        <div class="txt">
+          <span class="k">72B · on-the-fly FP8</span>
+          <h3>Looked 47% cheaper. The output changed.</h3>
+          <p>Nearly every answer ran to the token cap. A cheaper number that changes what your agents get back is not a saving.</p>
         </div>
-        <h3>Looked 47% cheaper. The output changed.</h3>
-        <p>Nearly every answer ran to the token cap. A cheaper number that changes what your agents get back is not a saving.</p>
-        <span class="chip v-changed">OUTPUT CHANGED</span>
       </article>
-      <article class="cell" data-reveal>
-        <span class="k">32B · on-the-fly FP8</span>
-        <div class="vis">
-          <div class="answer"><span class="q">&gt; summarize the causes of World War I in about 80 words</span><span class="a">!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</span></div>
+
+      <article class="card panel" data-reveal>
+        <svg class="scene" viewBox="0 0 400 300" data-cycle="10" role="img" aria-label="Animation: the 32B model with on-the-fly FP8 answers a summary prompt with a wall of exclamation marks and stops at the token cap. Verdict: output changed.">
+          <g class="sc-l">
+            <rect class="box" x="16" y="16" width="368" height="268" rx="12"/>
+            <circle cx="36" cy="37" r="4.5" fill="rgba(255,255,255,.14)"/><circle cx="52" cy="37" r="4.5" fill="rgba(255,255,255,.14)"/><circle cx="68" cy="37" r="4.5" fill="rgba(255,255,255,.14)"/>
+            <text class="t-s" x="216" y="41" font-size="10.5" text-anchor="middle">qwen2.5-32b · fp8</text>
+            <path class="ln" d="M16 58H384"/>
+            <text class="t" x="32" y="90" font-size="12.5" data-a="type" data-at=".04" data-d=".16" data-e="lin">&gt; summarize the causes of World War I</text>
+            <text class="t" x="32" y="110" font-size="12.5" data-a="type" data-at=".20" data-d=".08" data-e="lin">  in about 80 words</text>
+            <text class="t-v" x="32" y="142" font-size="12.5" data-a="type" data-at=".32" data-d=".07" data-e="lin">!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</text>
+            <text class="t-v" x="32" y="162" font-size="12.5" data-a="type" data-at=".39" data-d=".07" data-e="lin">!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</text>
+            <text class="t-v" x="32" y="182" font-size="12.5" data-a="type" data-at=".46" data-d=".07" data-e="lin">!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</text>
+            <text class="t-v" x="32" y="202" font-size="12.5" data-a="type" data-at=".53" data-d=".05" data-e="lin">!!!!!!!!!!!!!!!!!!!!!!!!!!!!</text>
+            <text class="t-s" x="32" y="230" font-size="11" data-a="fade" data-at=".60" data-d=".04">— stopped at the token cap</text>
+            <g class="gc" data-a="pop" data-at=".66" data-d=".05" data-e="back">
+              <rect x="32" y="244" width="146" height="26" rx="13" fill="rgba(201,160,255,.08)" stroke="var(--v-changed)"/>
+              <circle cx="46" cy="257" r="3" class="f-v"/>
+              <text class="t-v" x="55" y="261" font-size="10.5" font-weight="700" letter-spacing=".05em">OUTPUT CHANGED</text>
+            </g>
+            <rect x="196" y="249" width="8" height="16" class="f-bone blink" data-a="fade" data-at=".70" data-d=".02"/>
+          </g>
+        </svg>
+        <div class="txt">
+          <span class="k">32B · on-the-fly FP8</span>
+          <h3>The 32B answered &ldquo;!!!!&rdquo;.</h3>
+          <p>Every request hit the token cap. Throttle flags shifts in answer length and cap hits. It does not grade answer content.</p>
         </div>
-        <h3>The 32B answered &ldquo;!!!!&rdquo;.</h3>
-        <p>Every request hit the token cap. Throttle flags shifts in answer length and cap hits. It does not grade answer content, so keep reading your samples.</p>
-        <span class="chip v-changed">OUTPUT CHANGED</span>
       </article>
     </div>
-    <div class="trap-foot" data-reveal><span>Qwen2.5-Instruct, vLLM on ROCm, rented AMD MI300X, Oct 2026. One workload, one session. Tokens and time measured; GPU price assumed.</span><a href="/cost-index">Every measured result in the Cost Index →</a></div>
+    <div class="foot-note" data-reveal><span>Qwen2.5-Instruct, vLLM on ROCm, rented AMD MI300X, Oct 2026. Tokens and time measured; GPU price assumed.</span><a href="/cost-index">Every result in the Cost Index →</a></div>
   </div>
 </section>
 
 <section class="sec" id="product">
   <span id="how" aria-hidden="true"></span>
   <div class="shell">
-    <p class="eyebrow" data-reveal>What Throttle tells you</p>
-    <h2 data-reveal>A number you can defend. <em>A verdict you can act on.</em></h2>
-    <p class="sec-lede" data-reveal>One command against your own OpenAI-compatible endpoint. It sends requests, times them, and turns GPU hours into dollars per million tokens. It never changes your server.</p>
-    <div class="grid g2">
-      <article class="cell" data-reveal>
-        <div class="vis">
-          <div class="ci" aria-hidden="true"><span class="axis"></span><span class="span"></span><span class="mean"></span></div>
-          <div class="ci-l"><span>low</span><span>mean</span><span>high</span></div>
+    <div class="sec-head">
+      <p class="eyebrow" data-reveal>What you get</p>
+      <h2 data-reveal>A number you can defend. <em>A verdict you can act on.</em></h2>
+      <p class="sec-lede" data-reveal>One command against your own OpenAI-compatible endpoint. It sends requests, times them, and turns GPU hours into dollars per million tokens. It never changes your server.</p>
+    </div>
+    <div class="cards c2">
+      <article class="card panel" data-reveal>
+        <svg class="scene" viewBox="0 0 480 300" data-cycle="10" role="img" aria-label="Animation: five measurement blocks fill, each adds a point, and a 95% confidence interval forms around $2.14 per million tokens.">
+          <g class="sc-l">
+            <g>
+              <text class="t-s" x="24" y="38" font-size="11">BLOCK 1/5</text><text class="t-s" x="112" y="38" font-size="11">BLOCK 2/5</text><text class="t-s" x="200" y="38" font-size="11">BLOCK 3/5</text><text class="t-s" x="288" y="38" font-size="11">BLOCK 4/5</text><text class="t-s" x="376" y="38" font-size="11">BLOCK 5/5</text>
+              <rect class="f-trk" x="24" y="48" width="80" height="5" rx="2.5"/><rect class="f-trk" x="112" y="48" width="80" height="5" rx="2.5"/><rect class="f-trk" x="200" y="48" width="80" height="5" rx="2.5"/><rect class="f-trk" x="288" y="48" width="80" height="5" rx="2.5"/><rect class="f-trk" x="376" y="48" width="80" height="5" rx="2.5"/>
+            </g>
+            <rect class="f-a gx" x="24" y="48" width="80" height="5" rx="2.5" data-a="grow" data-at=".03" data-d=".07" data-e="lin"/>
+            <rect class="f-a gx" x="112" y="48" width="80" height="5" rx="2.5" data-a="grow" data-at=".10" data-d=".07" data-e="lin"/>
+            <rect class="f-a gx" x="200" y="48" width="80" height="5" rx="2.5" data-a="grow" data-at=".17" data-d=".07" data-e="lin"/>
+            <rect class="f-a gx" x="288" y="48" width="80" height="5" rx="2.5" data-a="grow" data-at=".24" data-d=".07" data-e="lin"/>
+            <rect class="f-a gx" x="376" y="48" width="80" height="5" rx="2.5" data-a="grow" data-at=".31" data-d=".07" data-e="lin"/>
+            <path class="ln" d="M40 176H440M80 172v8M160 172v8M240 172v8M320 172v8M400 172v8"/>
+            <rect class="f-soft gc" x="160" y="160" width="160" height="32" rx="4" data-a="grow" data-at=".44" data-d=".08"/>
+            <circle class="f-bone gc" cx="214" cy="176" r="5" data-a="pop" data-at=".10" data-d=".03" data-e="back"/>
+            <circle class="f-bone gc" cx="262" cy="176" r="5" data-a="pop" data-at=".17" data-d=".03" data-e="back"/>
+            <circle class="f-bone gc" cx="228" cy="176" r="5" data-a="pop" data-at=".24" data-d=".03" data-e="back"/>
+            <circle class="f-bone gc" cx="251" cy="176" r="5" data-a="pop" data-at=".31" data-d=".03" data-e="back"/>
+            <circle class="f-bone gc" cx="236" cy="176" r="5" data-a="pop" data-at=".38" data-d=".03" data-e="back"/>
+            <g data-a="fade" data-at=".5" data-d=".05">
+              <path class="ln-b" d="M160 154v44M320 154v44"/>
+              <path d="M240 146v60" stroke="var(--accent)" stroke-width="2.5"/>
+              <text class="t" x="160" y="220" font-size="12" text-anchor="middle">$2.13</text>
+              <text class="t" x="320" y="220" font-size="12" text-anchor="middle">$2.15</text>
+            </g>
+            <text class="t-xl" x="240" y="128" font-size="36" text-anchor="middle" data-a="fade" data-at=".53" data-d=".06" data-y="8">$2.14</text>
+            <text class="t" x="24" y="268" font-size="12.5" data-a="type" data-at=".6" data-d=".14" data-e="lin">95% CI $2.13 to $2.15 · 5 blocks · Student t</text>
+          </g>
+        </svg>
+        <div class="txt">
+          <h3>Dollars per million tokens, with a 95% interval</h3>
+          <p>Not tokens per second. The cost you actually budget in, split into blocks so you get an interval instead of one lucky run.</p>
         </div>
-        <h3>Dollars per million tokens, with a 95% interval</h3>
-        <p>Not tokens per second. The cost you actually budget in, split into blocks so you get a confidence interval instead of one lucky run.</p>
       </article>
-      <article class="cell" data-reveal>
-        <div class="vis">
-          <div class="runs" aria-hidden="true"><div class="run">run 1<b>check</b></div><div class="run">run 2<b>check</b></div><div class="run">run 3<b>check</b></div></div>
-          <p class="noise">→ run-to-run noise bound <b>calibrated</b></p>
+
+      <article class="card panel" data-reveal>
+        <svg class="scene" viewBox="0 0 480 300" data-cycle="10" role="img" aria-label="Animation: three back-to-back runs draw in, a band forms around them, and the noise bound is calibrated.">
+          <g class="sc-l">
+            <text class="t-s" x="24" y="38" font-size="11">FIRST CHECK · REPEATS ITSELF TO MEASURE NOISE</text>
+            <rect class="f-soft gc" x="40" y="88" width="340" height="60" rx="6" data-a="grow" data-ax="y" data-at=".56" data-d=".07"/>
+            <path d="M40 88H380" stroke="var(--accent)" stroke-opacity=".6" stroke-dasharray="4 4" data-a="fade" data-at=".6" data-d=".05"/>
+            <path d="M40 148H380" stroke="var(--accent)" stroke-opacity=".6" stroke-dasharray="4 4" data-a="fade" data-at=".6" data-d=".05"/>
+            <path class="ln-b" d="M40 112L80 104L120 118L160 108L200 122L240 106L280 116L320 102L360 112L380 98" pathLength="1" data-a="draw" data-at=".05" data-d=".14" data-e="lin"/>
+            <path class="hd" d="M40 112L80 104L120 118L160 108L200 122L240 106L280 116L320 102L360 112L380 98" pathLength="1" data-a="head" data-at=".05" data-d=".14" data-e="lin"/>
+            <text class="t" x="392" y="102" font-size="12" data-a="fade" data-at=".19" data-d=".03">run 1</text>
+            <path class="ln-b" d="M40 128L80 120L120 132L160 124L200 116L240 130L280 122L320 134L360 126L380 140" pathLength="1" data-a="draw" data-at=".22" data-d=".14" data-e="lin"/>
+            <path class="hd" d="M40 128L80 120L120 132L160 124L200 116L240 130L280 122L320 134L360 126L380 140" pathLength="1" data-a="head" data-at=".22" data-d=".14" data-e="lin"/>
+            <text class="t" x="392" y="144" font-size="12" data-a="fade" data-at=".36" data-d=".03">run 2</text>
+            <path class="ln-b" d="M40 118L80 132L120 110L160 126L200 112L240 120L280 108L320 124L360 128L380 119" pathLength="1" data-a="draw" data-at=".39" data-d=".14" data-e="lin"/>
+            <path class="hd" d="M40 118L80 132L120 110L160 126L200 112L240 120L280 108L320 124L360 128L380 119" pathLength="1" data-a="head" data-at=".39" data-d=".14" data-e="lin"/>
+            <text class="t" x="392" y="123" font-size="12" data-a="fade" data-at=".53" data-d=".03">run 3</text>
+            <text class="t-a" x="24" y="222" font-size="14" data-a="type" data-at=".68" data-d=".08" data-e="lin">✓ noise bound calibrated</text>
+            <rect x="232" y="209" width="8" height="16" class="f-a blink" data-a="fade" data-at=".76" data-d=".02"/>
+            <text class="t" x="24" y="254" font-size="12.5" data-a="fade" data-at=".8" data-d=".05">a change has to beat this band to count</text>
+          </g>
+        </svg>
+        <div class="txt">
+          <h3>A noise bound before any verdict</h3>
+          <p>The first check runs itself up to 3 times back to back to measure how much your setup swings. A change only counts if it beats that.</p>
         </div>
-        <h3>A noise bound before any verdict</h3>
-        <p>The first check runs itself up to 3 times back to back to measure how much your setup swings. A change only counts if it beats that.</p>
       </article>
-      <article class="cell" data-reveal>
-        <div class="vis">
-          <div class="vlist">
-            <div><span class="chip v-cheaper">CHEAPER</span><span>beats the noise, lower $/M</span></div>
-            <div><span class="chip v-costlier">MORE EXPENSIVE</span><span>beats the noise, higher $/M</span></div>
-            <div><span class="chip v-none">NO WINNER</span><span>inside the noise</span></div>
-            <div><span class="chip v-cal">NOT CALIBRATED</span><span>noise not measured yet</span></div>
-            <div><span class="chip v-changed">OUTPUT CHANGED</span><span>answer length or cap hits moved</span></div>
-          </div>
+
+      <article class="card panel" data-reveal>
+        <svg class="scene" viewBox="0 0 480 300" data-cycle="12" role="img" aria-label="Animation: the five verdicts light up one by one: cheaper, more expensive, no winner, not calibrated, output changed.">
+          <g class="sc-l">
+            <rect x="12" y="22" width="456" height="44" rx="10" fill="rgba(255,255,255,.05)" opacity="0" data-a="win" data-at=".30" data-d=".12"/>
+            <rect x="12" y="76" width="456" height="44" rx="10" fill="rgba(255,255,255,.05)" opacity="0" data-a="win" data-at=".42" data-d=".12"/>
+            <rect x="12" y="130" width="456" height="44" rx="10" fill="rgba(255,255,255,.05)" opacity="0" data-a="win" data-at=".54" data-d=".12"/>
+            <rect x="12" y="184" width="456" height="44" rx="10" fill="rgba(255,255,255,.05)" opacity="0" data-a="win" data-at=".66" data-d=".12"/>
+            <rect x="12" y="238" width="456" height="44" rx="10" fill="rgba(255,255,255,.05)" opacity="0" data-a="win" data-at=".78" data-d=".12"/>
+            <g data-a="fade" data-at=".03" data-d=".05" data-y="6"><rect x="24" y="32" width="150" height="24" rx="12" fill="none" stroke="var(--v-cheaper)"/><circle cx="37" cy="44" r="3" fill="var(--v-cheaper)"/><text class="t-g" x="47" y="48" font-size="10.5" font-weight="700" letter-spacing=".05em">CHEAPER</text></g>
+            <g data-a="fade" data-at=".07" data-d=".05" data-y="6"><rect x="24" y="86" width="150" height="24" rx="12" fill="none" stroke="var(--v-costlier)"/><circle cx="37" cy="98" r="3" fill="var(--v-costlier)"/><text class="t-r" x="47" y="102" font-size="10.5" font-weight="700" letter-spacing=".05em">MORE EXPENSIVE</text></g>
+            <g data-a="fade" data-at=".11" data-d=".05" data-y="6"><rect x="24" y="140" width="150" height="24" rx="12" fill="none" stroke="var(--v-none)"/><circle cx="37" cy="152" r="3" fill="var(--v-none)"/><text class="t" x="47" y="156" font-size="10.5" font-weight="700" letter-spacing=".05em">NO WINNER</text></g>
+            <g data-a="fade" data-at=".15" data-d=".05" data-y="6"><rect x="24" y="194" width="150" height="24" rx="12" fill="none" stroke="var(--v-cal)"/><circle cx="37" cy="206" r="3" fill="var(--v-cal)"/><text class="t-y" x="47" y="210" font-size="10.5" font-weight="700" letter-spacing=".05em">NOT CALIBRATED</text></g>
+            <g data-a="fade" data-at=".19" data-d=".05" data-y="6"><rect x="24" y="248" width="150" height="24" rx="12" fill="none" stroke="var(--v-changed)"/><circle cx="37" cy="260" r="3" fill="var(--v-changed)"/><text class="t-v" x="47" y="264" font-size="10.5" font-weight="700" letter-spacing=".05em">OUTPUT CHANGED</text></g>
+            <text class="t" x="192" y="48" font-size="12.5" data-a="type" data-at=".31" data-d=".06" data-e="lin">beats the noise, lower $/M</text>
+            <text class="t" x="192" y="102" font-size="12.5" data-a="type" data-at=".43" data-d=".06" data-e="lin">beats the noise, higher $/M</text>
+            <text class="t" x="192" y="156" font-size="12.5" data-a="type" data-at=".55" data-d=".05" data-e="lin">inside the noise</text>
+            <text class="t" x="192" y="210" font-size="12.5" data-a="type" data-at=".67" data-d=".05" data-e="lin">noise not measured yet</text>
+            <text class="t" x="192" y="264" font-size="12.5" data-a="type" data-at=".79" data-d=".06" data-e="lin">answer length or cap hits moved</text>
+          </g>
+        </svg>
+        <div class="txt">
+          <h3>Five verdicts, no guessing</h3>
+          <p>If the difference is inside the noise, Throttle says NO WINNER instead of handing you a fake win.</p>
         </div>
-        <h3>Five verdicts, no guessing</h3>
-        <p>If the difference is inside the noise, Throttle says NO WINNER instead of handing you a fake win.</p>
       </article>
-      <article class="cell" data-reveal>
-        <div class="vis">
-          <div class="engines"><span>vLLM</span><span>SGLang</span><span>Ollama</span><span>LMDeploy</span><span class="d">any OpenAI-compatible endpoint</span></div>
+
+      <article class="card panel" data-reveal>
+        <svg class="scene" viewBox="0 0 480 300" data-cycle="10" role="img" aria-label="Animation: Throttle sends requests to your endpoint inside your environment. Prompts, responses and keys stay there; nothing leaves.">
+          <g class="sc-l">
+            <rect x="16" y="28" width="330" height="244" rx="18" fill="rgba(255,255,255,.015)" stroke="var(--rule-strong)" stroke-dasharray="5 5"/>
+            <text class="t-s" x="36" y="56" font-size="11">YOUR ENVIRONMENT</text>
+            <rect class="box-a" x="36" y="96" width="112" height="64" rx="12"/>
+            <text class="t-b" x="56" y="133" font-size="14">throttle</text>
+            <rect class="box" x="206" y="96" width="120" height="64" rx="12"/>
+            <text class="t-b" x="222" y="124" font-size="14">endpoint</text>
+            <text class="t-a nh" x="222" y="146" font-size="12" opacity="0" data-a="win" data-at=".02" data-d=".22">vLLM</text>
+            <text class="t-a nh" x="222" y="146" font-size="12" opacity="0" data-a="win" data-at=".24" data-d=".22">SGLang</text>
+            <text class="t-a nh" x="222" y="146" font-size="12" opacity="0" data-a="win" data-at=".46" data-d=".22">Ollama</text>
+            <text class="t-a" x="222" y="146" font-size="12" data-a="win" data-at=".68" data-d=".32">LMDeploy</text>
+            <path class="ln" d="M148 118H206"/>
+            <path class="ln" d="M206 140H148"/>
+            <path class="hd" d="M148 118H206" pathLength="1" data-a="head" data-at=".04" data-d=".05" data-rep="11" data-gap=".08" data-e="lin"/>
+            <path class="hd" d="M206 140H148" pathLength="1" data-a="head" data-at=".08" data-d=".05" data-rep="10" data-gap=".08" data-e="lin"/>
+            <text class="t-b" x="36" y="212" font-size="13">prompts · responses · keys</text>
+            <text class="t-s" x="36" y="236" font-size="11">STAY ON YOUR SIDE</text>
+            <path class="ln" d="M326 128H340"/>
+            <path class="hd" d="M314 128H340" pathLength="1" data-a="head" data-at=".1" data-d=".04" data-rep="9" data-gap=".09" data-e="lin"/>
+            <circle cx="346" cy="132" r="16" class="f-a" opacity="0" data-a="pulse" data-at=".12" data-d=".06" data-rep="9" data-gap=".09" style="opacity:0;fill-opacity:.25"/>
+            <rect x="338" y="128" width="16" height="13" rx="2.5" fill="#0c0c0b" stroke="var(--accent)" stroke-width="1.5"/>
+            <path d="M341.5 128v-3.5a4.5 4.5 0 0 1 9 0v3.5" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+            <path class="ln-d" d="M362 134H460"/>
+            <text class="t-s" x="410" y="164" font-size="11" text-anchor="middle">NOTHING LEAVES</text>
+          </g>
+        </svg>
+        <div class="txt">
+          <h3>Runs on your side</h3>
+          <p>It only talks to your endpoint. Prompts, responses and keys stay with you. Open source under MIT, so you can read every line.</p>
         </div>
-        <h3>Runs on your side</h3>
-        <p>It only talks to your endpoint. Prompts, responses and keys stay with you. Open source under MIT, so you can read every line.</p>
       </article>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="check">
+  <div class="shell">
+    <div class="sec-head c">
+      <p class="eyebrow" data-reveal>A real check</p>
+      <h2 data-reveal>Faster. <em>And more expensive.</em></h2>
+      <p class="sec-lede" data-reveal>A replay of the run behind the numbers above, abridged.</p>
+    </div>
+    <figure class="term" data-term data-reveal style="margin:0">
+      <div class="term-bar">
+        <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="t">qwen2.5-72b · 2x AMD MI300X · vLLM ROCm</span>
+        <button type="button" data-replay>Replay</button>
+      </div>
+<pre aria-label="Replay of a real throttle check run: two GPUs cost 28 percent more per token than one, verdict MORE EXPENSIVE"><span class="ln"><span class="c-p">~/serving $</span> <span data-type="throttle check --url http://localhost:8000 --model Qwen/Qwen2.5-72B-Instruct \">throttle check --url http://localhost:8000 --model Qwen/Qwen2.5-72B-Instruct \</span></span><span class="ln" data-wait="40">    <span data-type="--gpu-hourly-rate 5.98 --label tp2 --config gpus=2 --config tensor_parallel=2">--gpu-hourly-rate 5.98 --label tp2 --config gpus=2 --config tensor_parallel=2</span></span><span class="ln" data-wait="380"><span class="c-b">throttle</span> <span class="c-d">0.5.1 · check · localhost:8000 ·</span> <span class="c-b">Qwen/Qwen2.5-72B-Instruct</span></span><span class="ln"><span class="c-d">  what does Qwen/Qwen2.5-72B-Instruct cost per million output tokens?</span></span><span class="ln">  GPU rate   $5.98/hr   <span class="c-y">[ASSUMED]</span> <span class="c-d">Throttle cannot see your bill</span></span><span class="ln" data-wait="260"><span class="c-d">  block 1/5  block 2/5  block 3/5  block 4/5  block 5/5</span>  <span class="c-g">done</span></span><span class="ln" data-wait="260"> </span><span class="ln"><span class="c-b">Result</span></span><span class="ln">  <span class="c-b">$2.14</span> per million output tokens   <span class="c-g">[MEASURED]</span></span><span class="ln">  95% CI $2.13 to $2.15, across 5 blocks (Student t)</span><span class="ln" data-wait="200"> </span><span class="ln"><span class="c-b">Compared with tp1</span> <span class="c-d">(same model, 1 GPU)</span></span><span class="ln">  before  $1.67/M output tokens</span><span class="ln">  now     $2.14/M output tokens</span><span class="ln">  note    GPUs: 1 -&gt; 2. The extra GPU-hours are a real cost of this config.</span><span class="ln" data-wait="420"> </span><span class="ln"><span class="c-d">┌ Verdict ──────────────────────────────────────────────────────────┐</span></span><span class="ln"><span class="c-d">│</span> <span class="c-b">$2.14/M output tokens</span>  <span class="c-d">95% CI $2.13 to $2.15 [MEASURED]</span>           <span class="c-d">│</span></span><span class="ln" data-wait="300"><span class="c-d">│</span> <span class="c-r c-b">MORE EXPENSIVE</span>  +28% per token, larger than the run-to-run        <span class="c-d">│</span></span><span class="ln"><span class="c-d">│</span> noise bound, and the 95% intervals do not overlap.                <span class="c-d">│</span></span><span class="ln"><span class="c-d">│</span> <span class="c-d">vs base</span>   +$0.47/M (+28%), baseline $1.67/M                       <span class="c-d">│</span></span><span class="ln"><span class="c-d">└───────────────────────────────────────────────────────────────────┘</span></span><span class="ln" data-wait="200"><span class="c-p">~/serving $</span> <span class="caret" aria-hidden="true"></span></span></pre>
+    </figure>
+    <p class="term-cap"><span>Two GPUs served 1.56x the throughput and still cost 28% more per token. GPU price assumed at list.</span><a href="https://github.com/KushagraKanaujia/throttle/tree/main/validation/hotaisle-mi300x-20261001" target="_blank" rel="noopener">Raw checks on GitHub →</a></p>
+  </div>
+</section>
+
+<section class="sec" id="console">
+  <div class="shell">
+    <div class="sec-head c">
+      <p class="eyebrow" data-reveal>Throttle Console</p>
+      <h2 data-reveal>Every check, in one place. <em>On your machine.</em></h2>
+      <p class="sec-lede" data-reveal>Run <code class="i">throttle ui</code> and your check history opens in the browser. Same verdicts as the CLI, from the same code. Listens on 127.0.0.1 only.</p>
+    </div>
+    <div class="center" data-reveal>
+      <div class="tabs" data-tabs role="tablist" aria-label="Console pages">
+        <button type="button" role="tab" aria-selected="true">Compare<i></i></button>
+        <button type="button" role="tab" aria-selected="false">Checks<i></i></button>
+        <button type="button" role="tab" aria-selected="false">Quickstart<i></i></button>
+      </div>
+    </div>
+    <div class="shots" data-reveal>
+      <figure class="on"><picture><source media="(max-width:700px)" srcset="/assets/media/console/console-compare-m.webp" type="image/webp"><source srcset="/assets/media/console/console-compare.webp" type="image/webp"><img src="/assets/media/console/console-compare.jpg" width="1440" height="900" loading="lazy" decoding="async" alt="Throttle Console Compare page: a baseline and a later check side by side with confidence intervals, the noise bound and a CHEAPER verdict."></picture></figure>
+      <figure><picture><source media="(max-width:700px)" srcset="/assets/media/console/console-checks-m.webp" type="image/webp"><source srcset="/assets/media/console/console-checks.webp" type="image/webp"><img src="/assets/media/console/console-checks.jpg" width="1440" height="900" loading="lazy" decoding="async" alt="Throttle Console Checks page: every check with dollars per million tokens, a 95% interval and its verdict."></picture></figure>
+      <figure><picture><source media="(max-width:700px)" srcset="/assets/media/console/console-quickstart-m.webp" type="image/webp"><source srcset="/assets/media/console/console-quickstart.webp" type="image/webp"><img src="/assets/media/console/console-quickstart.jpg" width="1440" height="900" loading="lazy" decoding="async" alt="Throttle Console Quickstart page."></picture></figure>
+    </div>
+    <div class="shots-cap">
+      <p class="on"><b>Compare</b>Pick a baseline and a later check. The verdict uses the same noise rules as the CLI.</p>
+      <p><b>Checks</b>Every check you have run, newest first, each judged against its baseline.</p>
+      <p><b>Quickstart</b>From install to your first number, step by step.</p>
     </div>
   </div>
 </section>
@@ -179,19 +463,21 @@
 <section class="sec" id="pilot">
   <span id="pricing" aria-hidden="true"></span>
   <div class="shell">
-    <p class="eyebrow" data-reveal>The pilot</p>
-    <h2 data-reveal>Free for 2 months. <em>We find the waste and prove the savings.</em></h2>
-    <p class="sec-lede" data-reveal>For teams running open models on GPUs they own or rent. We do the work with you, on your stack.</p>
+    <div class="sec-head">
+      <p class="eyebrow" data-reveal>The pilot</p>
+      <h2 data-reveal>Free for 2 months. <em>We find the waste and prove the savings.</em></h2>
+      <p class="sec-lede" data-reveal>For teams running open models on GPUs they own or rent. We do the work with you, on your stack.</p>
+    </div>
     <ol class="steps">
-      <li data-reveal><span class="step-n">01</span><h3>Measure</h3><p>We set Throttle up on your stack and measure your real cost per million tokens, with your traffic shape and your GPU prices.</p></li>
-      <li data-reveal><span class="step-n">02</span><h3>Fix</h3><p>We help you fix what wastes GPU time: engine flags, batching, GPU count, quantization. Every change gets a verdict against your own noise.</p></li>
-      <li data-reveal><span class="step-n">03</span><h3>Share the savings</h3><p>If we can&rsquo;t save you money, you pay nothing. If we can, you pay a share of the savings we verify together.</p></li>
+      <li data-reveal><span class="step-n">01</span><h3>Measure</h3><p>We set Throttle up on your stack and measure your real cost per million tokens, with your traffic and your GPU prices.</p></li>
+      <li data-reveal><span class="step-n">02</span><h3>Fix</h3><p>Engine flags, batching, GPU count, quantization. Every change gets a verdict against your own noise.</p></li>
+      <li data-reveal><span class="step-n">03</span><h3>Share the savings</h3><p>If we can&rsquo;t save you money, you pay nothing. If we can, you pay a small share of what we save.</p></li>
     </ol>
     <div class="offer" data-reveal>
-      <p>Grab 20 minutes with us and we&rsquo;ll set everything up for you. <span>Small group of teams per round.</span></p>
+      <p>Grab 20 minutes and we&rsquo;ll set everything up for you. <span>A small group of teams per round.</span></p>
       <div class="acts">
-        <a class="btn btn-primary" href="mailto:kush@throttle-pro.com?subject=Throttle%20demo">Book a demo</a>
-        <a class="btn btn-ghost" href="/pilot">How the pilot works</a>
+        <a class="btn btn-primary" href="mailto:kush@throttle-pro.com?subject=Throttle%20demo">Book a demo <svg viewBox="0 0 256 256" aria-hidden="true"><path fill="currentColor" d="M224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01z"/></svg></a>
+        <a class="tlink" href="/pilot">How the pilot works</a>
       </div>
     </div>
   </div>
@@ -199,9 +485,9 @@
 
 <section class="sec" id="faq">
   <div class="shell faq-wrap">
-    <div><p class="eyebrow">FAQ</p><h2>Questions</h2></div>
+    <div><p class="eyebrow">FAQ</p><h2>Questions.</h2></div>
     <div class="faq">
-      <details><summary>Is Throttle free?</summary><p>The CLI is open source under MIT: <code class="i">pipx install throttle-pro</code>. The pilot is free for 2 months. After that, you only pay if we verify savings together.</p></details>
+      <details><summary>Is Throttle free?</summary><p>The CLI is open source under MIT: <code class="i">pipx install throttle-pro</code>. The pilot is free for 2 months. After that, you pay a small share of what we save, and nothing if we save nothing.</p></details>
       <details><summary>Does Throttle check whether answers are correct?</summary><p>No. OUTPUT CHANGED looks at answer length and how often responses hit the token cap. That catches broken output like the FP8 runs above, but it does not read or grade answer content.</p></details>
       <details><summary>Why not just benchmark throughput?</summary><p>Because throughput is not cost. Two GPUs can be faster and still cost more per token. Throttle puts the GPU price into the number and measures your run-to-run noise, so a single noisy run can&rsquo;t pass as a saving.</p></details>
       <details><summary>Do you need production access for the pilot?</summary><p>No. A staging endpoint or a box with the same model, engine and GPU type is enough to measure and test. To put savings in dollars we need your monthly token volume.</p></details>
@@ -214,13 +500,13 @@
   <div class="shell">
     <h2 data-reveal>Find out what your tokens really cost.</h2>
     <p class="lede" data-reveal>Run it yourself in five minutes, or let us run the pilot with you.</p>
-    <div class="cta-grid" data-reveal>
+    <div class="cta-row" data-reveal>
       <a class="btn btn-primary" href="mailto:kush@throttle-pro.com?subject=Throttle%20demo">Book a demo <svg viewBox="0 0 256 256" aria-hidden="true"><path fill="currentColor" d="M224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01z"/></svg></a>
-      <a class="btn btn-ghost" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a>
+      <a class="tlink" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">Star on GitHub</a>
     </div>
     <div class="well" data-reveal>
       <code><span class="p" aria-hidden="true">$</span>pipx install throttle-pro</code>
-      <button type="button" data-copy="pipx install throttle-pro" aria-label="Copy install command">copy</button>
+      <button type="button" data-copy="pipx install throttle-pro" aria-label="Copy pipx install throttle-pro"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>Copy</span></button>
     </div>
   </div>
 </section>
@@ -231,7 +517,7 @@
   <div class="shell">
     <div class="foot-g">
       <div>
-        <a class="brand" href="/"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="square"/><rect x="13.6" y="19.6" width="4.8" height="4.8" fill="var(--accent)"/></svg><span>throttle</span></a>
+        <a class="brand" href="/"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><path class="arc" pathLength="1" d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path class="ndl" d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><rect class="hub" x="13.6" y="19.6" width="4.8" height="4.8" rx="1.2" fill="var(--accent)"/></svg><span>throttle</span></a>
         <p>What your self-hosted LLM really costs per token. Measures and reports; never changes your server.</p>
       </div>
       <div><h4>Product</h4><ul>

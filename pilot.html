@@ -26,17 +26,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/v2.css?v=1">
-<script src="/assets/js/v2.js?v=1" defer></script>
+<link rel="stylesheet" href="/assets/css/v3.css?v=1">
+<script src="/assets/js/v3.js?v=1" defer></script>
 </head>
 <body>
 
 <header class="nav">
   <div class="shell nav-in">
-    <a class="brand" href="/" aria-label="Throttle home">
-      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="square"/><rect x="13.6" y="19.6" width="4.8" height="4.8" fill="var(--accent)"/></svg>
-      <span>throttle</span>
-    </a>
+    <a class="brand" href="/" aria-label="Throttle home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><path class="arc" pathLength="1" d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path class="ndl" d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><rect class="hub" x="13.6" y="19.6" width="4.8" height="4.8" rx="1.2" fill="var(--accent)"/></svg><span>throttle</span></a>
     <nav class="nav-links" aria-label="Pages">
       <a href="/#trap">Proof</a>
       <a href="/pilot" aria-current="page">Pilot</a>
@@ -58,19 +55,55 @@
 
 <section class="page-hero">
   <div class="shell">
-    <a class="crumb" href="/"><span aria-hidden="true">←</span> throttle</a>
-    <p class="eyebrow">Throttle Pilot · a small group of teams</p>
-    <h1>Free for 2 months. <em>We find the GPU waste and prove the savings.</em></h1>
-    <p class="lede">We measure your real cost per million tokens on the GPUs you own or rent, help you fix what wastes GPU time, and prove every change. If we can&rsquo;t save you money, you pay nothing. If we can, you pay a share of what we save.</p>
-    <div class="facts">
+    <p class="eyebrow" data-reveal>Throttle Pilot · a small group of teams</p>
+    <h1 data-reveal>Free for 2 months. <em>We prove the savings.</em></h1>
+    <p class="lede" data-reveal>We measure your real cost per million tokens on the GPUs you own or rent, help you fix what wastes GPU time, and prove every change. If we can&rsquo;t save you money, you pay nothing. If we can, you pay a small share of what we save.</p>
+    <div class="cta-row" data-reveal>
+      <a class="btn btn-primary" href="mailto:kush@throttle-pro.com?subject=Throttle%20demo">Book a demo <svg viewBox="0 0 256 256" aria-hidden="true"><path fill="currentColor" d="M224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01z"/></svg></a>
+      <a class="tlink" href="mailto:kush@throttle-pro.com?subject=Throttle%20pilot">Apply for the pilot</a>
+    </div>
+    <div class="facts" data-reveal>
       <div><span>Pilot</span><b>2 months, free</b></div>
-      <div><span>After the pilot</span><b>A share of verified savings</b></div>
+      <div><span>After the pilot</span><b>A small share of what we save</b></div>
       <div><span>No savings</span><b>You pay nothing</b></div>
     </div>
-    <div class="acts-row">
-      <a class="btn btn-primary" href="mailto:kush@throttle-pro.com?subject=Throttle%20demo">Book a demo <svg viewBox="0 0 256 256" aria-hidden="true"><path fill="currentColor" d="M224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01z"/></svg></a>
-      <a class="btn btn-ghost" href="mailto:kush@throttle-pro.com?subject=Throttle%20pilot">Apply for the pilot</a>
-      <span class="note">or email kush@throttle-pro.com</span>
+  </div>
+  <div class="shell">
+    <div class="stage" data-reveal style="padding-bottom:0">
+      <div class="panel">
+        <svg class="scene" viewBox="0 0 600 360" data-cycle="12" role="img" aria-label="Animation: the pilot moves through measure, fix and prove, ending in a savings line: 2 GPUs at $2.14 per million tokens down to 1 GPU at $1.67, cheaper, beyond your noise bound.">
+          <g class="sc-l">
+            <path class="ln" d="M128 70H272M328 70H472"/>
+            <path class="ln-b" d="M128 70H272" pathLength="1" data-a="draw" data-at=".08" data-d=".1" data-e="io"/>
+            <path class="hd" d="M128 70H272" pathLength="1" data-a="head" data-at=".08" data-d=".1" data-e="io"/>
+            <path class="ln-b" d="M328 70H472" pathLength="1" data-a="draw" data-at=".22" data-d=".1" data-e="io"/>
+            <path class="hd" d="M328 70H472" pathLength="1" data-a="head" data-at=".22" data-d=".1" data-e="io"/>
+            <circle cx="100" cy="70" r="28" class="box"/><circle cx="300" cy="70" r="28" class="box"/><circle cx="500" cy="70" r="28" class="box"/>
+            <circle cx="100" cy="70" r="28" class="box-a gc" data-a="pop" data-at=".03" data-d=".05" data-e="back"/>
+            <circle cx="300" cy="70" r="28" class="box-a gc" data-a="pop" data-at=".18" data-d=".05" data-e="back"/>
+            <circle cx="500" cy="70" r="28" class="box-a gc" data-a="pop" data-at=".32" data-d=".05" data-e="back"/>
+            <text class="t-a" x="100" y="75" font-size="14" text-anchor="middle">01</text>
+            <text class="t-a" x="300" y="75" font-size="14" text-anchor="middle">02</text>
+            <text class="t-a" x="500" y="75" font-size="14" text-anchor="middle">03</text>
+            <text class="t-b" x="100" y="128" font-size="16" text-anchor="middle">Measure</text>
+            <text class="t-b" x="300" y="128" font-size="16" text-anchor="middle">Fix</text>
+            <text class="t-b" x="500" y="128" font-size="16" text-anchor="middle">Prove</text>
+            <rect class="box" x="16" y="160" width="568" height="184" rx="14"/>
+            <text class="t-a" x="40" y="200" font-size="15">$</text>
+            <text class="t-b" x="58" y="200" font-size="15" data-a="type" data-at=".38" data-d=".08" data-e="lin">throttle savings</text>
+            <text class="t" x="40" y="240" font-size="15" data-a="type" data-at=".48" data-d=".08" data-e="lin">before   2 GPUs   $2.14/M</text>
+            <text class="t-b" x="40" y="274" font-size="15" data-a="type" data-at=".58" data-d=".08" data-e="lin">after    1 GPU    $1.67/M</text>
+            <g class="gc" data-a="pop" data-at=".67" data-d=".05" data-e="back">
+              <rect x="360" y="256" width="104" height="26" rx="13" fill="rgba(155,229,100,.08)" stroke="var(--v-cheaper)"/>
+              <circle cx="374" cy="269" r="3" fill="var(--v-cheaper)"/>
+              <text class="t-g" x="383" y="273" font-size="10.5" font-weight="700" letter-spacing=".05em">CHEAPER</text>
+            </g>
+            <text class="t-a" x="40" y="318" font-size="14" data-a="type" data-at=".72" data-d=".09" data-e="lin">✓ beats your noise bound</text>
+            <rect x="262" y="305" width="8" height="16" class="f-a blink" data-a="fade" data-at=".81" data-d=".02"/>
+          </g>
+        </svg>
+      </div>
+      <p class="stage-cap">Illustration using a measured result: Qwen2.5-72B, 2 GPUs vs 1 GPU on rented AMD MI300X.</p>
     </div>
   </div>
 </section>
@@ -78,12 +111,14 @@
 <section class="sec" id="how-it-works">
   <span id="pricing" aria-hidden="true"></span>
   <div class="shell">
-    <p class="eyebrow" data-reveal>How it works</p>
-    <h2 data-reveal>Three steps, on your stack.</h2>
-    <ol class="steps" style="margin-top:44px">
-      <li data-reveal><span class="step-n">01</span><h3>Measure</h3><p>We set Throttle up and measure your workload&rsquo;s dollars per million tokens with a 95% confidence interval, using your traffic shape and what your GPUs cost per hour. Repeat checks of the current config measure how much it swings run to run. That noise bound is what every later change is judged against.</p></li>
-      <li data-reveal><span class="step-n">02</span><h3>Fix</h3><p>We try changes that waste less GPU time: engine flags, batching, GPU count, quantization, engine version. A change only counts if it beats your noise, and Throttle flags it as OUTPUT CHANGED when answer lengths or token-cap hits move.</p></li>
-      <li data-reveal><span class="step-n">03</span><h3>Prove</h3><p>Each kept change comes with a savings statement from <code class="i">throttle savings</code>, line by line. After the 2 months, you pay a share of the savings we verify together. No savings, no bill.</p></li>
+    <div class="sec-head">
+      <p class="eyebrow" data-reveal>How it works</p>
+      <h2 data-reveal>Three steps, on your stack.</h2>
+    </div>
+    <ol class="steps">
+      <li data-reveal><span class="step-n">01</span><h3>Measure</h3><p>We set Throttle up and measure your dollars per million tokens with a 95% confidence interval, using your traffic shape and what your GPUs cost per hour. Repeat checks measure how much your setup swings run to run. Every later change is judged against that noise bound.</p></li>
+      <li data-reveal><span class="step-n">02</span><h3>Fix</h3><p>We try changes that waste less GPU time: engine flags, batching, GPU count, quantization, engine version. A change only counts if it beats your noise, and Throttle flags OUTPUT CHANGED when answer lengths or token-cap hits move.</p></li>
+      <li data-reveal><span class="step-n">03</span><h3>Prove</h3><p>Each kept change comes with a savings statement from <code class="i">throttle savings</code>, line by line. After the 2 months, you pay a small share of what we save. No savings, no bill.</p></li>
     </ol>
   </div>
 </section>
@@ -101,13 +136,13 @@
 
 <section class="sec" id="what-we-need">
   <div class="shell two">
-    <div><p class="eyebrow" data-reveal>From you</p><h2 data-reveal>What we need</h2></div>
+    <div><p class="eyebrow" data-reveal>From you</p><h2 data-reveal>What we need.</h2></div>
     <div class="prose" data-reveal>
       <ul>
-        <li><strong>An endpoint.</strong> Your workload served from an OpenAI-compatible endpoint (vLLM, SGLang, Ollama or similar) on GPUs you own or rent, or a box with the same model, engine and GPU type.</li>
+        <li><strong>An endpoint.</strong> Your workload on an OpenAI-compatible endpoint (vLLM, SGLang, Ollama or similar) on GPUs you own or rent, or a box with the same model, engine and GPU type.</li>
         <li><strong>Your GPU price.</strong> What your GPUs cost per hour, so tokens and time become dollars.</li>
         <li><strong>Your traffic shape.</strong> A representative prompt sample or a description of what your agents send.</li>
-        <li><strong>Your volume.</strong> Monthly production tokens, so verified savings can be put in dollars.</li>
+        <li><strong>Your volume.</strong> Monthly production tokens, so savings can be put in dollars.</li>
       </ul>
       <p>Throttle runs on your side and only sends requests to your own endpoint. Prompts, responses and keys stay in your environment, and we&rsquo;re happy to work under your NDA.</p>
     </div>
@@ -116,10 +151,10 @@
 
 <section class="sec" id="faq">
   <div class="shell faq-wrap">
-    <div><p class="eyebrow">FAQ</p><h2>Questions</h2></div>
+    <div><p class="eyebrow">FAQ</p><h2>Questions.</h2></div>
     <div class="faq">
       <details><summary>Why free for 2 months?</summary><p>We want real results on real workloads. Two months is enough to measure your baseline, find the changes that matter and prove each one against your own noise. Each pilot is hands-on, so we keep the group small.</p></details>
-      <details><summary>What happens after?</summary><p>You keep every config change and every statement. If we saved you money, you pay a share of the savings we verified together. If we didn&rsquo;t, you pay nothing, and the open-source CLI stays free.</p></details>
+      <details><summary>What happens after?</summary><p>You keep every config change and every statement. If we saved you money, you pay a small share of what we save. If we didn&rsquo;t, you pay nothing, and the open-source CLI stays free.</p></details>
       <details><summary>We already benchmark our serving stack.</summary><p>Most benchmarks report throughput from one run. The pilot reports dollars per million tokens with confidence intervals, measures your run-to-run noise first, and only counts a change that clears it. Sometimes it shows a &ldquo;win&rdquo; was noise.</p></details>
       <details><summary>Does Throttle check answer quality?</summary><p>No. OUTPUT CHANGED looks at answer length and token-cap hits, not content. For quality we review answer samples with you before any change is kept.</p></details>
       <details><summary>Do you need production access?</summary><p>Not for testing. A staging endpoint or a dedicated box with the same model, engine and GPU type is enough. The savings statement needs your production token volume.</p></details>
@@ -129,15 +164,15 @@
 
 <section class="close" id="book">
   <div class="shell">
-    <h2 data-reveal>Grab 20 minutes and we&rsquo;ll set everything up for you.</h2>
+    <h2 data-reveal>Grab 20 minutes. We&rsquo;ll set everything up.</h2>
     <p class="lede" data-reveal>Tell us your model, your GPUs and roughly how many tokens a month. If the pilot isn&rsquo;t a fit, we&rsquo;ll say so, and you can run Throttle yourself for free.</p>
-    <div class="cta-grid" data-reveal>
+    <div class="cta-row" data-reveal>
       <a class="btn btn-primary" href="mailto:kush@throttle-pro.com?subject=Throttle%20demo">Book a demo <svg viewBox="0 0 256 256" aria-hidden="true"><path fill="currentColor" d="M224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01z"/></svg></a>
-      <a class="btn btn-ghost" href="mailto:kush@throttle-pro.com?subject=Throttle%20pilot">Apply for the pilot</a>
+      <a class="tlink" href="mailto:kush@throttle-pro.com?subject=Throttle%20pilot">Apply for the pilot</a>
     </div>
     <div class="well" data-reveal>
       <code><span class="p" aria-hidden="true">@</span>kush@throttle-pro.com</code>
-      <button type="button" data-copy="kush@throttle-pro.com" aria-label="Copy email address">copy</button>
+      <button type="button" data-copy="kush@throttle-pro.com" aria-label="Copy kush@throttle-pro.com"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>Copy</span></button>
     </div>
   </div>
 </section>
@@ -148,7 +183,7 @@
   <div class="shell">
     <div class="foot-g">
       <div>
-        <a class="brand" href="/"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="square"/><rect x="13.6" y="19.6" width="4.8" height="4.8" fill="var(--accent)"/></svg><span>throttle</span></a>
+        <a class="brand" href="/"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><path class="arc" pathLength="1" d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path class="ndl" d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><rect class="hub" x="13.6" y="19.6" width="4.8" height="4.8" rx="1.2" fill="var(--accent)"/></svg><span>throttle</span></a>
         <p>What your self-hosted LLM really costs per token. Measures and reports; never changes your server.</p>
       </div>
       <div><h4>Product</h4><ul>
