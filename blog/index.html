@@ -22,7 +22,7 @@
 <meta name="twitter:title" content="Blog · Throttle: cutting LLM inference cost">
 <meta name="twitter:description" content="Field notes on cutting what self-hosted LLM inference costs: dollars per million tokens, run-to-run noise, and config changes on vLLM, SGLang and Ollama. Real runs only.">
 <meta name="twitter:image" content="https://www.throttle-pro.com/assets/og.png">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Blog", "name": "Throttle blog", "url": "https://www.throttle-pro.com/blog", "blogPost": [{"@type": "BlogPosting", "headline": "Your second GPU might be costing you 28% more per token", "url": "https://www.throttle-pro.com/blog/second-gpu-28-percent-more-per-token", "datePublished": "2026-10-19"}, {"@type": "BlogPosting", "headline": "I changed nothing and my LLM server got 27% more expensive", "url": "https://www.throttle-pro.com/blog/i-changed-nothing-27-percent-more-expensive", "datePublished": "2026-09-25"}, {"@type": "BlogPosting", "headline": "How to measure cost per million tokens on a self-hosted LLM (vLLM, SGLang, Ollama)", "url": "https://www.throttle-pro.com/blog/cost-per-million-tokens-self-hosted-llm", "datePublished": "2026-09-25"}, {"@type": "BlogPosting", "headline": "One vLLM flag, −68.6% cost per token: what a counterbalanced benchmark looks like", "url": "https://www.throttle-pro.com/blog/one-vllm-flag-counterbalanced-benchmark", "datePublished": "2026-09-25"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Blog", "name": "Throttle blog", "url": "https://www.throttle-pro.com/blog", "blogPost": [{"@type": "BlogPosting", "headline": "FP8 looked 47% cheaper. It wasn't.", "url": "https://www.throttle-pro.com/blog/fp8-looked-47-percent-cheaper", "datePublished": "2026-10-23"}, {"@type": "BlogPosting", "headline": "Your second GPU might be costing you 28% more per token", "url": "https://www.throttle-pro.com/blog/second-gpu-28-percent-more-per-token", "datePublished": "2026-10-19"}, {"@type": "BlogPosting", "headline": "I changed nothing and my LLM server got 27% more expensive", "url": "https://www.throttle-pro.com/blog/i-changed-nothing-27-percent-more-expensive", "datePublished": "2026-09-25"}, {"@type": "BlogPosting", "headline": "How to measure cost per million tokens on a self-hosted LLM (vLLM, SGLang, Ollama)", "url": "https://www.throttle-pro.com/blog/cost-per-million-tokens-self-hosted-llm", "datePublished": "2026-09-25"}, {"@type": "BlogPosting", "headline": "One vLLM flag, −68.6% cost per token: what a counterbalanced benchmark looks like", "url": "https://www.throttle-pro.com/blog/one-vllm-flag-counterbalanced-benchmark", "datePublished": "2026-09-25"}]}</script>
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -63,6 +63,12 @@
       <p>What self-hosted LLM inference actually costs, why the number moves when nothing changed, and how to tell a real saving from noise. Every figure comes from a recorded run.</p>
     </header>
     <div class="cards">
+    <a class="post-card" href="/blog/fp8-looked-47-percent-cheaper">
+      <span class="kicker">Case study</span>
+      <h2>FP8 looked 47% cheaper. It wasn't.</h2>
+      <p>vLLM's on-the-fly FP8 made a 72B model look 47% cheaper per token and a 32B look 41% cheaper. Both times the answers had changed shape; the 32B answered "!!!!". The FP8 checkpoint that really did cut 32%, and the check I run before trusting any FP8 saving.</p>
+      <span class="meta"><time datetime="2026-10-23">Oct 23, 2026</time><span>5 min read</span><span class="arrow">→</span></span>
+    </a>
     <a class="post-card" href="/blog/second-gpu-28-percent-more-per-token">
       <span class="kicker">Case study</span>
       <h2>Your second GPU might be costing you 28% more per token</h2>

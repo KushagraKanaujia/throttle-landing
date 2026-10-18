@@ -6,6 +6,13 @@
   <description>Measuring what self-hosted LLM inference really costs.</description>
   <language>en</language>
   <item>
+    <title>FP8 looked 47% cheaper. It wasn&#x27;t.</title>
+    <link>https://www.throttle-pro.com/blog/fp8-looked-47-percent-cheaper</link>
+    <guid>https://www.throttle-pro.com/blog/fp8-looked-47-percent-cheaper</guid>
+    <pubDate>Fri, 23 Oct 2026 16:00:00 +0000</pubDate>
+    <description>vLLM&#x27;s on-the-fly FP8 made a 72B model look 47% cheaper per token and a 32B look 41% cheaper. Both times the answers had changed shape; the 32B answered &quot;!!!!&quot;. The FP8 checkpoint that really did cut 32%, and the check I run before trusting any FP8 saving.</description>
+  </item>
+  <item>
     <title>Your second GPU might be costing you 28% more per token</title>
     <link>https://www.throttle-pro.com/blog/second-gpu-28-percent-more-per-token</link>
     <guid>https://www.throttle-pro.com/blog/second-gpu-28-percent-more-per-token</guid>
