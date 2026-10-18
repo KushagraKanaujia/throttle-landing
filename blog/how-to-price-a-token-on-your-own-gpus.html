@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>document.documentElement.classList.add("js")</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to price a token on your own GPUs (the formula) · Throttle</title>
+<meta name="description" content="The formula for dollars per million tokens on GPUs you own or rent, worked through with a real MI300X measurement, and the four inputs that make it wrong: GPU count, the hourly rate for owned GPUs, idle time, and which tokens you divide by.">
+<meta name="author" content="Kushagra Kanaujia">
+<meta name="theme-color" content="#07080a">
+<link rel="canonical" href="https://www.throttle-pro.com/blog/how-to-price-a-token-on-your-own-gpus">
+<link rel="alternate" type="application/rss+xml" title="Throttle blog" href="https://www.throttle-pro.com/blog/feed.xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Throttle">
+<meta property="og:title" content="How to price a token on your own GPUs (the formula) · Throttle">
+<meta property="og:description" content="The formula for dollars per million tokens on GPUs you own or rent, worked through with a real MI300X measurement, and the four inputs that make it wrong: GPU count, the hourly rate for owned GPUs, idle time, and which tokens you divide by.">
+<meta property="og:url" content="https://www.throttle-pro.com/blog/how-to-price-a-token-on-your-own-gpus">
+<meta property="og:image" content="https://www.throttle-pro.com/assets/media/blog/how-to-price-a-token-on-your-own-gpus.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="How to price a token on your own GPUs (the formula) · Throttle">
+<meta name="twitter:description" content="The formula for dollars per million tokens on GPUs you own or rent, worked through with a real MI300X measurement, and the four inputs that make it wrong: GPU count, the hourly rate for owned GPUs, idle time, and which tokens you divide by.">
+<meta name="twitter:image" content="https://www.throttle-pro.com/assets/media/blog/how-to-price-a-token-on-your-own-gpus.png">
+<meta property="article:published_time" content="2026-10-30">
+<meta property="article:author" content="Kushagra Kanaujia">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "How to price a token on your own GPUs (the formula)", "description": "The formula for dollars per million tokens on GPUs you own or rent, worked through with a real MI300X measurement, and the four inputs that make it wrong: GPU count, the hourly rate for owned GPUs, idle time, and which tokens you divide by.", "datePublished": "2026-10-30", "dateModified": "2026-10-30", "mainEntityOfPage": "https://www.throttle-pro.com/blog/how-to-price-a-token-on-your-own-gpus", "image": "https://www.throttle-pro.com/assets/media/blog/how-to-price-a-token-on-your-own-gpus.png", "wordCount": 1147, "keywords": "llm inference cost, cost per token, gpu, self-hosted llm, vllm", "author": {"@type": "Person", "name": "Kushagra Kanaujia", "url": "https://github.com/KushagraKanaujia"}, "publisher": {"@type": "Organization", "name": "Throttle", "url": "https://www.throttle-pro.com/", "logo": {"@type": "ImageObject", "url": "https://www.throttle-pro.com/assets/favicon.svg"}}}</script>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/site.css?v=a54ae2d5">
+<link rel="stylesheet" href="/assets/css/blog.css?v=8c7afacb">
+<script src="/assets/js/site.js?v=dd1c358f" defer></script>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="glow" aria-hidden="true"></div>
+
+<header class="nav">
+  <a class="brand" href="/" aria-label="Throttle home">
+    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg>
+    <span>throttle</span>
+  </a>
+  <nav class="nav-links" aria-label="Pages">
+    <a href="/cost-index">Cost Index</a>
+    <a href="/guides">Guides</a>
+    <a href="/pilot">Pilot</a>
+    <a href="/blog" aria-current="page">Blog</a>
+  </nav>
+  <div class="nav-cta">
+    <a class="nav-gh" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener" aria-label="Throttle on GitHub">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      <span>GitHub</span>
+    </a>
+    <a class="btn btn-accent btn-sm magnetic" href="/pilot">Pilot</a>
+  </div>
+</header>
+
+<main id="top">
+  <article class="post-wrap">
+    <header class="post-head">
+      <a class="crumb" href="/blog"><span aria-hidden="true">←</span> All posts</a>
+      <span class="kicker">Guide</span>
+      <h1>How to price a token on your own GPUs (the formula)</h1>
+      <p class="post-lede">The formula for dollars per million tokens on GPUs you own or rent, worked through with a real MI300X measurement, and the four inputs that make it wrong: GPU count, the hourly rate for owned GPUs, idle time, and which tokens you divide by.</p>
+      <div class="byline"><b>Kushagra Kanaujia</b><span class="sep"></span><span>Founder, Throttle</span><span class="sep"></span><time datetime="2026-10-30">Oct 30, 2026</time><span class="sep"></span><span>6 min read</span></div>
+    </header>
+    <div class="prose">
+<p>If you run models on your own GPUs, nobody sends you a per-token price. You get a GPU bill, or a hardware budget, and a pile of tokens per second numbers. To decide anything about cost, you have to turn one into the other yourself.</p>
+<p>Here's the formula I use, worked through with a real measurement from rented AMD MI300X GPUs, plus the four inputs people most often get wrong: GPU count, the hourly rate for GPUs you own, idle time, and which tokens you divide by.</p>
+<h2 id="the-formula">The formula</h2>
+<pre class="lang-formula"><code>$/M output tokens = (GPU $/hr × GPUs × wall-clock hours) ÷ output tokens × 1,000,000
+</code></pre>
+<p>Everything on the top line is what you paid for the time. Everything on the bottom is what you got for it. Two of the inputs are measured (wall-clock time and tokens) and two are decided by you (the hourly rate and the GPU count). Be clear in your own notes about which is which.</p>
+<h2 id="a-real-example-one-gpu">A real example: one GPU</h2>
+<p>This is one measured block from my Qwen2.5-72B-Instruct run on vLLM, one MI300X, 32 concurrent requests, max 256 output tokens, priced at Hot Aisle's $2.99/GPU-hour list price:</p>
+<ul>
+<li>Output tokens in the block: <strong>6,321</strong></li>
+<li>Wall-clock time for the block: <strong>12.777 s</strong> = 0.0035493 hours</li>
+</ul>
+<pre class="lang-formula"><code>GPU dollars  = $2.99 × 1 × 0.0035493 h        = $0.010612
+$/M output   = $0.010612 ÷ 6,321 × 1,000,000  = $1.679
+</code></pre>
+<p>That block cost $1.68 per million output tokens. Across all four repeat checks of this config, the average was $1.67.</p>
+<p>The same thing written as throughput, which is often easier to sanity-check: the block ran at 494.7 output tokens per second, or about 1.78 million tokens per GPU-hour. $2.99 for 1.78 million tokens is $1.68 per million. If your two calculations disagree, one of your inputs is wrong.</p>
+<h2 id="input-one-gpu-count">Input 1: GPU count</h2>
+<p>Here's a block from the same model on two GPUs with <code>--tensor-parallel-size 2</code>:</p>
+<ul>
+<li>Output tokens: <strong>6,311</strong></li>
+<li>Wall-clock time: <strong>8.192 s</strong></li>
+</ul>
+<pre class="lang-formula"><code>GPU dollars  = $2.99 × 2 × (8.192 ÷ 3600) h   = $0.013608
+$/M output   = $0.013608 ÷ 6,311 × 1,000,000  = $2.156
+</code></pre>
+<p>Faster block, more expensive tokens. Now see what happens if you forget the second GPU and price it at $2.99:</p>
+<pre class="lang-formula"><code>$2.99 × 1 × (8.192 ÷ 3600) h ÷ 6,311 × 1,000,000 = $1.078
+</code></pre>
+<p>That wrong number says two GPUs are 36% cheaper than one. The right one says they're about 28% more expensive (averaged over all the checks: <a href="/blog/second-gpu-28-percent-more-per-token">$1.67 vs $2.14</a>). This is not a hypothetical mistake: an early version of my own tool made it. Multiply by every GPU that serves the endpoint, including the ones that sit in a tensor-parallel group.</p>
+<h2 id="input-two-the-hourly-rate">Input 2: the hourly rate for GPUs you own</h2>
+<p>Rented GPUs are easy: use the hourly price you actually pay, per GPU. The MI300X example uses the list price, and I label it ASSUMED because it's not an invoice.</p>
+<p>For GPUs you own, there's no meter, so build an hourly rate and write down how:</p>
+<pre class="lang-formula"><code>owned GPU $/hr = hardware cost ÷ useful-life hours
+               + power and cooling per hour
+               + hosting, network and ops per hour
+</code></pre>
+<p>Pick a useful life you actually believe, and be consistent. The point isn't a perfect number. It's using the same number for every config you compare, so the comparison is fair. A cheaper config on an assumed rate is still cheaper on the real one, as long as the GPU count is counted.</p>
+<h2 id="input-three-idle-time">Input 3: idle time</h2>
+<p>A measured block assumes the GPU is busy the whole time. Your bill doesn't. If you pay for GPUs around the clock and traffic only keeps them busy part of the day, the idle hours are paid for too, and they land on the tokens you did serve:</p>
+<pre class="lang-formula"><code>real $/M = measured $/M ÷ share of paid hours the GPU is busy
+</code></pre>
+<p>A GPU that's busy half the hours you pay for makes every token cost twice the measured figure. That's why two kinds of savings exist: a config that's cheaper per busy hour (what you measure with a benchmark), and serving the same traffic on fewer GPU-hours (what shows up on the bill). The second needs the first, but it isn't the same thing.</p>
+<h2 id="input-four-which-tokens">Input 4: which tokens you divide by</h2>
+<p>The same GPU dollars can be divided by output tokens, input tokens, or both. In that one-GPU block:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Divide the $0.010612 by</th>
+<th style="text-align: right;">Tokens</th>
+<th style="text-align: right;">$/M</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Output tokens</td>
+<td style="text-align: right;">6,321</td>
+<td style="text-align: right;">$1.68</td>
+</tr>
+<tr>
+<td>Input tokens</td>
+<td style="text-align: right;">1,436</td>
+<td style="text-align: right;">$7.39</td>
+</tr>
+<tr>
+<td>Input + output</td>
+<td style="text-align: right;">7,757</td>
+<td style="text-align: right;">$1.37</td>
+</tr>
+</tbody>
+</table></div>
+<p>None of these is "the" price. Each one puts all of the GPU time on one kind of token. Output tokens are the usual choice for short prompts with long answers, because generation is where the time goes. If your workload is long prompts and short answers (RAG, classification, agents re-reading context), output-only will look scary and total may be the fairer figure. Pick one, say which one, and never compare across them.</p>
+<h2 id="the-workload-is-part-of-the-price">The workload is part of the price</h2>
+<p>The same server has a different price at a different load. Concurrency, prompt length, answer length and whether the prompt cache is warm all change how many tokens you get per GPU-second. My example is 32 concurrent requests, short prompts, answers capped at 256 tokens, cold cache. Measure at the concurrency and prompt shape you actually serve, or your number prices a workload you don't have.</p>
+<h2 id="measure-it-more-than-once">Measure it more than once</h2>
+<p>The formula gives you one number from one run. Run it again without changing anything and you'll get a different one. On the MI300X the four repeats landed within half a percent of each other. On a laptop I once got <a href="/blog/i-changed-nothing-27-percent-more-expensive">a 27% swing with nothing changed</a>. Before you believe that a config change saved money, run the unchanged config at least three times and make sure the change is bigger than that spread.</p>
+<h2 id="where-this-fits">Where this fits</h2>
+<p>If you want the step-by-step for measuring the number on vLLM, SGLang or Ollama, start with <a href="/blog/cost-per-million-tokens-self-hosted-llm">How to measure cost per million tokens on a self-hosted LLM</a>. If you just want the number from a GPU price and a throughput, there's a <a href="/guides/llm-cost-per-million-tokens">cost per million tokens calculator</a>. This post is the part in between: what to put into the formula so the number matches your bill.</p>
+<p>Throttle does this arithmetic for you on every check, with GPU count, a 95% interval and a noise bound, and the business is cutting that number: if your team runs open models on GPUs you own or rent, the <a href="/pilot">2-month pilot</a> is free, and afterwards you pay a share of the savings we verify together. No savings, no bill.</p>
+<h2 id="try-it">Try it</h2>
+<pre class="lang-sh"><code>pipx install throttle-pro
+throttle demo      # no GPU needed; every number is SIMULATED
+</code></pre>
+<p>Then run <code>throttle check --gpu-hourly-rate &lt;your rate&gt; --gpus &lt;count&gt;</code> against your own endpoint and compare its number with your own back-of-the-envelope. If they disagree, one of the four inputs above is usually why.</p>
+    </div>
+    <aside class="post-cta" aria-label="Try Throttle">
+      <h2>Measure your own server</h2>
+      <p>Throttle is an open-source CLI (MIT) for any OpenAI-compatible endpoint: vLLM, SGLang, Ollama, LMDeploy. It runs on your machine, and the only traffic it sends goes to your own endpoint.</p>
+      <div class="cta-row">
+        <button class="copy magnetic" type="button" data-copy="pipx install throttle-pro" aria-label="Copy install command">
+          <span class="prompt">$</span><code>pipx install throttle-pro</code><span class="copy-state" aria-live="polite">copy</span>
+        </button>
+        <a class="btn btn-ghost magnetic" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">Star on GitHub</a>
+      </div>
+    </aside>
+    <section class="more" aria-label="More posts">
+      <h2>Keep reading</h2>
+      <div class="cards">
+    <a class="post-card" href="/blog/second-gpu-28-percent-more-per-token">
+      <span class="kicker">Case study</span>
+      <h3>Your second GPU might be costing you 28% more per token</h3>
+      <p>Qwen2.5-72B on rented AMD MI300X: one GPU cost $1.67 per million output tokens, two GPUs with tensor parallelism cost $2.14. 1.56x the throughput, 28% more per token. The run, the arithmetic, and when a second GPU is still worth it.</p>
+      <span class="meta"><time datetime="2026-10-19">Oct 19, 2026</time><span>5 min read</span><span class="arrow">→</span></span>
+    </a>
+    <a class="post-card" href="/blog/cost-per-million-tokens-self-hosted-llm">
+      <span class="kicker">Guide</span>
+      <h3>How to measure cost per million tokens on a self-hosted LLM (vLLM, SGLang, Ollama)</h3>
+      <p>A practical guide to turning GPU dollars per hour into dollars per million tokens for vLLM, SGLang and Ollama, the four pitfalls that make the number wrong, and how to re-check it after every config change and in CI.</p>
+      <span class="meta"><time datetime="2026-09-25">Sep 25, 2026</time><span>6 min read</span><span class="arrow">→</span></span>
+    </a>
+      </div>
+    </section>
+  </article>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <a class="brand" href="/"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg><span>throttle</span></a>
+    <p>Cut your GPU bill. Keep the proof.</p>
+    <nav aria-label="Footer">
+      <a href="/cost-index">Cost Index</a>
+      <a href="/guides">Guides</a>
+      <a href="/pilot">Pilot</a>
+      <a href="/blog">Blog</a>
+      <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://pypi.org/project/throttle-pro/" target="_blank" rel="noopener">PyPI</a>
+      <a href="https://github.com/KushagraKanaujia/throttle/blob/main/RESULTS.md" target="_blank" rel="noopener">Results</a>
+      <a href="https://github.com/KushagraKanaujia/throttle/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>

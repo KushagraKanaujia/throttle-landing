@@ -6,6 +6,34 @@
   <description>Measuring what self-hosted LLM inference really costs.</description>
   <language>en</language>
   <item>
+    <title>How to price a token on your own GPUs (the formula)</title>
+    <link>https://www.throttle-pro.com/blog/how-to-price-a-token-on-your-own-gpus</link>
+    <guid>https://www.throttle-pro.com/blog/how-to-price-a-token-on-your-own-gpus</guid>
+    <pubDate>Fri, 30 Oct 2026 16:00:00 +0000</pubDate>
+    <description>The formula for dollars per million tokens on GPUs you own or rent, worked through with a real MI300X measurement, and the four inputs that make it wrong: GPU count, the hourly rate for owned GPUs, idle time, and which tokens you divide by.</description>
+  </item>
+  <item>
+    <title>We built Autotune: find the cheapest serving config that still gives the same answers</title>
+    <link>https://www.throttle-pro.com/blog/autotune-cheapest-config-same-answers</link>
+    <guid>https://www.throttle-pro.com/blog/autotune-cheapest-config-same-answers</guid>
+    <pubDate>Tue, 27 Oct 2026 16:00:00 +0000</pubDate>
+    <description>Autotune searches serving configs on your own GPUs and keeps the cheapest one that beats the noise, prices every GPU it uses, and rejects configs whose outputs changed. How it works, what it costs, and what &quot;same answers&quot; does and doesn&#x27;t mean.</description>
+  </item>
+  <item>
+    <title>FP8 looked 47% cheaper. It wasn&#x27;t.</title>
+    <link>https://www.throttle-pro.com/blog/fp8-looked-47-percent-cheaper</link>
+    <guid>https://www.throttle-pro.com/blog/fp8-looked-47-percent-cheaper</guid>
+    <pubDate>Fri, 23 Oct 2026 16:00:00 +0000</pubDate>
+    <description>vLLM&#x27;s on-the-fly FP8 made a 72B model look 47% cheaper per token and a 32B look 41% cheaper. Both times the answers had changed shape; the 32B answered &quot;!!!!&quot;. The FP8 checkpoint that really did cut 32%, and the check I run before trusting any FP8 saving.</description>
+  </item>
+  <item>
+    <title>Your second GPU might be costing you 28% more per token</title>
+    <link>https://www.throttle-pro.com/blog/second-gpu-28-percent-more-per-token</link>
+    <guid>https://www.throttle-pro.com/blog/second-gpu-28-percent-more-per-token</guid>
+    <pubDate>Mon, 19 Oct 2026 16:00:00 +0000</pubDate>
+    <description>Qwen2.5-72B on rented AMD MI300X: one GPU cost $1.67 per million output tokens, two GPUs with tensor parallelism cost $2.14. 1.56x the throughput, 28% more per token. The run, the arithmetic, and when a second GPU is still worth it.</description>
+  </item>
+  <item>
     <title>I changed nothing and my LLM server got 27% more expensive</title>
     <link>https://www.throttle-pro.com/blog/i-changed-nothing-27-percent-more-expensive</link>
     <guid>https://www.throttle-pro.com/blog/i-changed-nothing-27-percent-more-expensive</guid>
