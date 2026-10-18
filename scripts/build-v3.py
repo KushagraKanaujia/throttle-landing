@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """Build the v3 front end: minify assets/css/v3.css and assets/js/v3.js with esbuild,
 inline the minified CSS into each v3 page (between <style id="v3css"> and </style>),
-and write assets/js/v3.min.js. Run after editing either source file:
+and write assets/js/v3.min.js and assets/js/calculator.min.js. Run after editing either source file:
 
     python3 scripts/build-v3.py
 """
 import pathlib, re, subprocess
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-PAGES = ["index.html", "pilot.html", "pricing.html"]
+PAGES = ["index.html", "pilot.html", "pricing.html", "calculator.html"]
 
 def esbuild(src, out=None):
     cmd = ["npx", "--yes", "esbuild@0.24.0", str(src), "--minify", "--log-level=warning"]
@@ -21,6 +21,7 @@ def esbuild(src, out=None):
 
 css = esbuild(ROOT / "assets/css/v3.css").strip()
 esbuild(ROOT / "assets/js/v3.js", ROOT / "assets/js/v3.min.js")
+esbuild(ROOT / "assets/js/calculator.js", ROOT / "assets/js/calculator.min.js")
 for name in PAGES:
     p = ROOT / name
     html = p.read_text()
