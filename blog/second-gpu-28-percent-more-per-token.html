@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>document.documentElement.classList.add("js")</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your second GPU might be costing you 28% more per token · Throttle</title>
+<meta name="description" content="Qwen2.5-72B on rented AMD MI300X: one GPU cost $1.67 per million output tokens, two GPUs with tensor parallelism cost $2.14. 1.56x the throughput, 28% more per token. The run, the arithmetic, and when a second GPU is still worth it.">
+<meta name="author" content="Kushagra Kanaujia">
+<meta name="theme-color" content="#07080a">
+<link rel="canonical" href="https://www.throttle-pro.com/blog/second-gpu-28-percent-more-per-token">
+<link rel="alternate" type="application/rss+xml" title="Throttle blog" href="https://www.throttle-pro.com/blog/feed.xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Throttle">
+<meta property="og:title" content="Your second GPU might be costing you 28% more per token · Throttle">
+<meta property="og:description" content="Qwen2.5-72B on rented AMD MI300X: one GPU cost $1.67 per million output tokens, two GPUs with tensor parallelism cost $2.14. 1.56x the throughput, 28% more per token. The run, the arithmetic, and when a second GPU is still worth it.">
+<meta property="og:url" content="https://www.throttle-pro.com/blog/second-gpu-28-percent-more-per-token">
+<meta property="og:image" content="https://www.throttle-pro.com/assets/media/blog/second-gpu-28-percent-more-per-token.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Your second GPU might be costing you 28% more per token · Throttle">
+<meta name="twitter:description" content="Qwen2.5-72B on rented AMD MI300X: one GPU cost $1.67 per million output tokens, two GPUs with tensor parallelism cost $2.14. 1.56x the throughput, 28% more per token. The run, the arithmetic, and when a second GPU is still worth it.">
+<meta name="twitter:image" content="https://www.throttle-pro.com/assets/media/blog/second-gpu-28-percent-more-per-token.png">
+<meta property="article:published_time" content="2026-10-19">
+<meta property="article:author" content="Kushagra Kanaujia">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "Your second GPU might be costing you 28% more per token", "description": "Qwen2.5-72B on rented AMD MI300X: one GPU cost $1.67 per million output tokens, two GPUs with tensor parallelism cost $2.14. 1.56x the throughput, 28% more per token. The run, the arithmetic, and when a second GPU is still worth it.", "datePublished": "2026-10-19", "dateModified": "2026-10-19", "mainEntityOfPage": "https://www.throttle-pro.com/blog/second-gpu-28-percent-more-per-token", "image": "https://www.throttle-pro.com/assets/media/blog/second-gpu-28-percent-more-per-token.png", "wordCount": 1002, "keywords": "vllm, tensor parallel, mi300x, gpu, llm inference cost", "author": {"@type": "Person", "name": "Kushagra Kanaujia", "url": "https://github.com/KushagraKanaujia"}, "publisher": {"@type": "Organization", "name": "Throttle", "url": "https://www.throttle-pro.com/", "logo": {"@type": "ImageObject", "url": "https://www.throttle-pro.com/assets/favicon.svg"}}}</script>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/site.css?v=a54ae2d5">
+<link rel="stylesheet" href="/assets/css/blog.css?v=8c7afacb">
+<script src="/assets/js/site.js?v=dd1c358f" defer></script>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="glow" aria-hidden="true"></div>
+
+<header class="nav">
+  <a class="brand" href="/" aria-label="Throttle home">
+    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg>
+    <span>throttle</span>
+  </a>
+  <nav class="nav-links" aria-label="Pages">
+    <a href="/cost-index">Cost Index</a>
+    <a href="/guides">Guides</a>
+    <a href="/pilot">Pilot</a>
+    <a href="/blog" aria-current="page">Blog</a>
+  </nav>
+  <div class="nav-cta">
+    <a class="nav-gh" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener" aria-label="Throttle on GitHub">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      <span>GitHub</span>
+    </a>
+    <a class="btn btn-accent btn-sm magnetic" href="/pilot">Pilot</a>
+  </div>
+</header>
+
+<main id="top">
+  <article class="post-wrap">
+    <header class="post-head">
+      <a class="crumb" href="/blog"><span aria-hidden="true">←</span> All posts</a>
+      <span class="kicker">Case study</span>
+      <h1>Your second GPU might be costing you 28% more per token</h1>
+      <p class="post-lede">Qwen2.5-72B on rented AMD MI300X: one GPU cost $1.67 per million output tokens, two GPUs with tensor parallelism cost $2.14. 1.56x the throughput, 28% more per token. The run, the arithmetic, and when a second GPU is still worth it.</p>
+      <div class="byline"><b>Kushagra Kanaujia</b><span class="sep"></span><span>Founder, Throttle</span><span class="sep"></span><time datetime="2026-10-19">Oct 19, 2026</time><span class="sep"></span><span>5 min read</span></div>
+    </header>
+    <div class="prose">
+<p>I gave a 72B model a second GPU. It got 1.56x faster. Every benchmark dashboard would call that a win.</p>
+<p>It also made every token 28% more expensive.</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Qwen2.5-72B-Instruct, vLLM</th>
+<th style="text-align: right;">GPU $/hr</th>
+<th style="text-align: right;">Output tokens/s</th>
+<th style="text-align: right;">$/M output tokens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1x MI300X (TP1)</td>
+<td style="text-align: right;">$2.99</td>
+<td style="text-align: right;">498</td>
+<td style="text-align: right;">$1.67</td>
+</tr>
+<tr>
+<td>2x MI300X (<code>--tensor-parallel-size 2</code>)</td>
+<td style="text-align: right;">$5.98</td>
+<td style="text-align: right;">777</td>
+<td style="text-align: right;"><strong>$2.14</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p>Throughput went up 1.56x. The bill went up 2x. You pay the difference on every token you serve. This post is the run behind those numbers, why it happens, and when a second GPU is still the right call.</p>
+<h2 id="the-setup">The setup</h2>
+<p>I rented an AMD MI300X VM from Hot Aisle and served <code>Qwen/Qwen2.5-72B-Instruct</code> in BF16 on vLLM (ROCm build 0.23.1). An MI300X has 192 GB of memory, so the 72B fits on one card. That matters: it means the second GPU is a choice, not a requirement.</p>
+<ul>
+<li><strong>Config A:</strong> one GPU, vLLM defaults.</li>
+<li><strong>Config B:</strong> the same weights on two GPUs with <code>--tensor-parallel-size 2</code>. Nothing else changed.</li>
+<li><strong>Workload:</strong> Throttle's default check: 5 blocks of 32 requests, 32 concurrent, max 256 output tokens, temperature 0, cold prompt cache (every request is tagged so the prefix cache can't make later runs look cheaper).</li>
+<li><strong>Price:</strong> Hot Aisle's on-demand list price, $2.99 per GPU-hour. That's an ASSUMED rate, not an invoice, so two GPUs are $5.98/hr.</li>
+</ul>
+<p>I checked the one-GPU config four times in a row before changing anything, so I knew the run-to-run noise first. Then three checks of the two-GPU config.</p>
+<h2 id="the-raw-numbers">The raw numbers</h2>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Config</th>
+<th>Checks ($/M output tokens)</th>
+<th style="text-align: right;">Avg seconds per block</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 GPU</td>
+<td>$1.671, $1.670, $1.664, $1.664</td>
+<td style="text-align: right;">12.70 s</td>
+</tr>
+<tr>
+<td>2 GPUs</td>
+<td>$2.143, $2.138, $2.132</td>
+<td style="text-align: right;">8.14 s</td>
+</tr>
+</tbody>
+</table></div>
+<p>Every block produced about the same number of output tokens on both configs: 6,311 to 6,345 per 32 requests. So the only things that moved the price were time and the hourly rate. Two GPUs finished a block in 8.14 seconds instead of 12.70. That's the 1.56x. But they cost twice as much per second.</p>
+<pre class="lang-formula"><code>2.00x the price ÷ 1.56x the speed = 1.28x the cost per token
+</code></pre>
+<p>The result held in 3 of 3 checks: +28.1% to +28.8%, against a run-to-run noise bound of 0.8%. This isn't noise. It's arithmetic.</p>
+<p>The answers didn't change either. A fixed 6-prompt sample at temperature 0 came back identical on 5 of 6 prompts; the sixth differed in wording only. Same tokens, same answers, more dollars.</p>
+<h2 id="why-speed-charts-miss-it">Why speed charts miss it</h2>
+<p>Tokens per second and latency are what every serving benchmark reports, and both look better on two GPUs. Neither one knows what a GPU-hour costs. Tensor parallelism splits each layer across cards, and the cards have to talk to each other on every forward pass. You get more speed, but not 2x more, and the gap is what you pay for.</p>
+<p>If you only watch tokens per second, you can scale your way into a bigger bill and call it an upgrade.</p>
+<h2 id="my-own-tool-got-this-wrong-first">My own tool got this wrong first</h2>
+<p>Here's the honest part. Throttle 0.5.1, the version I ran this with, printed CHEAPER for the two-GPU config. Its verdict rescaled the candidate to the baseline's GPU rate, so it compared speed at the same price and quietly dropped the second card from the bill.</p>
+<p>That's exactly the mistake this post is about, and I made it in code. Since 0.6.0, <code>throttle check --gpus 2</code> counts the extra GPU as a real config change and prints MORE EXPENSIVE. The numbers above are judged in real dollars: two GPUs at two GPUs' price.</p>
+<h2 id="when-a-second-gpu-is-still-right">When a second GPU is still the right call</h2>
+<p>This isn't "never use tensor parallelism." It's "know what you're buying."</p>
+<ul>
+<li><strong>The model doesn't fit on one card.</strong> Then TP2 isn't an option, it's the floor. The question becomes which multi-GPU layout is cheapest, and that's worth measuring too.</li>
+<li><strong>You have a latency target one GPU can't meet.</strong> If users need tokens faster than one card can produce them at your traffic, paying more per token can be the right trade. Make it a decision with a dollar figure attached, not a side effect of a benchmark.</li>
+<li><strong>Your traffic is different from mine.</strong> I measured one workload: 32 concurrent requests, short prompts, 256-token answers. Longer contexts, bigger batches or a different GPU can move the ratio. That's why you measure your own instead of borrowing mine.</li>
+</ul>
+<p>What I'd avoid is the default reflex: "it's slow, add a GPU." Before you do, price both configs in dollars per million tokens on your own traffic.</p>
+<h2 id="how-to-check-yours">How to check yours</h2>
+<pre class="lang-sh"><code># baseline: 1 GPU, three times, to measure your noise
+throttle check --url http://localhost:8000 --model Qwen/Qwen2.5-72B-Instruct \
+  --gpu-hourly-rate 2.99 --gpus 1 --label tp1
+
+# restart vLLM with --tensor-parallel-size 2, then:
+throttle check --url http://localhost:8000 --model Qwen/Qwen2.5-72B-Instruct \
+  --gpu-hourly-rate 2.99 --gpus 2 --label tp2
+</code></pre>
+<p><code>--gpu-hourly-rate</code> is the price of one GPU; <code>--gpus</code> multiplies it. Throttle says CHEAPER or MORE EXPENSIVE only when the change beats the noise it measured on your box, and NO WINNER otherwise. More on the cost-per-GPU trade-off in the guide <a href="/guides/tensor-parallel-cost">vLLM tensor parallel size: cost on 1 vs 2 GPUs</a>.</p>
+<h2 id="caveats">Caveats</h2>
+<p>One model, one engine, one workload, one session, on rented MI300X at list price. The $2.99/hr is an input, not a bill. The raw check records and answer samples are public in the repo under <a href="https://github.com/KushagraKanaujia/throttle/tree/main/validation/hotaisle-mi300x-20261001" target="_blank" rel="noopener">validation/hotaisle-mi300x-20261001</a>, and the row is on the <a href="/cost-index">Cost Index</a>. This is a result for this setup, not a savings projection for yours.</p>
+<p>Throttle exists to cut what teams pay for LLM inference on their own GPUs. Configs like this one, where faster quietly means more expensive, are where the money is. If your team runs open models on GPUs you own or rent, the <a href="/pilot">2-month pilot</a> is free, and you only pay a share of the savings we verify together.</p>
+<h2 id="try-it">Try it</h2>
+<pre class="lang-sh"><code>pipx install throttle-pro
+throttle demo      # no GPU needed; every number is SIMULATED
+</code></pre>
+<p>Then point <code>throttle check</code> at your own vLLM, SGLang or Ollama endpoint, run it three times before you change anything, and price your second GPU in dollars before you keep it.</p>
+    </div>
+    <aside class="post-cta" aria-label="Try Throttle">
+      <h2>Measure your own server</h2>
+      <p>Throttle is an open-source CLI (MIT) for any OpenAI-compatible endpoint: vLLM, SGLang, Ollama, LMDeploy. It runs on your machine, and the only traffic it sends goes to your own endpoint.</p>
+      <div class="cta-row">
+        <button class="copy magnetic" type="button" data-copy="pipx install throttle-pro" aria-label="Copy install command">
+          <span class="prompt">$</span><code>pipx install throttle-pro</code><span class="copy-state" aria-live="polite">copy</span>
+        </button>
+        <a class="btn btn-ghost magnetic" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">Star on GitHub</a>
+      </div>
+    </aside>
+    <section class="more" aria-label="More posts">
+      <h2>Keep reading</h2>
+      <div class="cards">
+    <a class="post-card" href="/blog/i-changed-nothing-27-percent-more-expensive">
+      <span class="kicker">Measurement</span>
+      <h3>I changed nothing and my LLM server got 27% more expensive</h3>
+      <p>Four cost checks of the same untouched Ollama server came back at $8.77, $8.86, $11.26 and $10.02 per million output tokens. Why same-server runs swing, and the noise bound I now use before believing any before/after number.</p>
+      <span class="meta"><time datetime="2026-09-25">Sep 25, 2026</time><span>7 min read</span><span class="arrow">→</span></span>
+    </a>
+    <a class="post-card" href="/blog/one-vllm-flag-counterbalanced-benchmark">
+      <span class="kicker">Case study</span>
+      <h3>One vLLM flag, −68.6% cost per token: what a counterbalanced benchmark looks like</h3>
+      <p>A real A100 run where changing vLLM&#x27;s max_num_seqs from 1 to 8 took cost from $0.746 to $0.234 per million output tokens, measured with a six-position B&#8209;C&#8209;B / C&#8209;B&#8209;C protocol. How the protocol works, the raw numbers, and what the result does not mean.</p>
+      <span class="meta"><time datetime="2026-09-25">Sep 25, 2026</time><span>6 min read</span><span class="arrow">→</span></span>
+    </a>
+      </div>
+    </section>
+  </article>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <a class="brand" href="/"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg><span>throttle</span></a>
+    <p>Cut your GPU bill. Keep the proof.</p>
+    <nav aria-label="Footer">
+      <a href="/cost-index">Cost Index</a>
+      <a href="/guides">Guides</a>
+      <a href="/pilot">Pilot</a>
+      <a href="/blog">Blog</a>
+      <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://pypi.org/project/throttle-pro/" target="_blank" rel="noopener">PyPI</a>
+      <a href="https://github.com/KushagraKanaujia/throttle/blob/main/RESULTS.md" target="_blank" rel="noopener">Results</a>
+      <a href="https://github.com/KushagraKanaujia/throttle/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>
