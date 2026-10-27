@@ -1,0 +1,15 @@
+{
+  "placeholder": true,
+  "generated_at": null,
+  "label": "DEMO",
+  "workloads": [
+    {
+      "type": null,
+      "monthly_api_usd": null,
+      "projected_owned_usd": null,
+      "verdict": null,
+      "quality": { "win": null, "tie": null, "loss": null, "net_ci": [null, null] }
+    }
+  ],
+  "totals": { "monthly_api_usd": null, "movable_usd": null, "projected_savings_usd": null }
+}
