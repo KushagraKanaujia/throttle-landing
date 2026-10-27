@@ -1,15 +1,102 @@
 {
-  "placeholder": true,
-  "generated_at": null,
+  "placeholder": false,
+  "generated_at": "2026-10-27T20:41:12.904Z",
   "label": "DEMO",
   "workloads": [
     {
-      "type": null,
-      "monthly_api_usd": null,
-      "projected_owned_usd": null,
-      "verdict": null,
-      "quality": { "win": null, "tie": null, "loss": null, "net_ci": [null, null] }
+      "type": "summarization",
+      "monthly_api_usd": 7235.34,
+      "projected_owned_usd": 453.14,
+      "verdict": "NEEDS FINETUNE",
+      "quality": {
+        "win": 0.0833,
+        "tie": 0.6111,
+        "loss": 0.3056,
+        "net_ci": [
+          -0.3611,
+          -0.0833
+        ]
+      }
+    },
+    {
+      "type": "extraction",
+      "monthly_api_usd": 5652.59,
+      "projected_owned_usd": 485.87,
+      "verdict": "MOVE",
+      "quality": {
+        "win": 0.0167,
+        "tie": 0.975,
+        "loss": 0.0083,
+        "net_ci": [
+          -0.0167,
+          0.0333
+        ]
+      }
+    },
+    {
+      "type": "agent",
+      "monthly_api_usd": 5524.31,
+      "projected_owned_usd": 680.88,
+      "verdict": "KEEP ON API",
+      "quality": {
+        "win": 0.0,
+        "tie": 0.5357,
+        "loss": 0.4643,
+        "net_ci": [
+          -0.5714,
+          -0.3571
+        ]
+      }
+    },
+    {
+      "type": "chat",
+      "monthly_api_usd": 4523.51,
+      "projected_owned_usd": 266.18,
+      "verdict": "MOVE",
+      "quality": {
+        "win": 0.0167,
+        "tie": 0.975,
+        "loss": 0.0083,
+        "net_ci": [
+          -0.0167,
+          0.0417
+        ]
+      }
+    },
+    {
+      "type": "classification",
+      "monthly_api_usd": 2341.91,
+      "projected_owned_usd": 296.19,
+      "verdict": "MOVE",
+      "quality": {
+        "win": 0.0208,
+        "tie": 0.9722,
+        "loss": 0.0069,
+        "net_ci": [
+          -0.0139,
+          0.0417
+        ]
+      }
+    },
+    {
+      "type": "code",
+      "monthly_api_usd": 1937.46,
+      "projected_owned_usd": 159.79,
+      "verdict": "NEEDS FINETUNE",
+      "quality": {
+        "win": 0.1,
+        "tie": 0.4,
+        "loss": 0.5,
+        "net_ci": [
+          -0.5667,
+          -0.2333
+        ]
+      }
     }
   ],
-  "totals": { "monthly_api_usd": null, "movable_usd": null, "projected_savings_usd": null }
+  "totals": {
+    "monthly_api_usd": 27215.12,
+    "movable_usd": 12518.01,
+    "projected_savings_usd": 8882.61
+  }
 }

@@ -340,7 +340,7 @@
     var usd = function (x) { return '$' + Math.round(x).toLocaleString('en-US'); };
     var share = function (x) { return x <= 1 && x >= -1 ? (x * 100).toFixed(0) + '%' : String(x); };
     var signed = function (x) { var s = share(x); return x > 0 ? '+' + s : s; };
-    var VERDICT = { 'MOVE': 'v-cheaper', 'KEEP ON API': 'v-none', 'NEEDS FINETUNE': 'v-cal', 'INSUFFICIENT DATA': 'v-none' };
+    var VERDICT = { 'MOVE': 'v-cheaper', 'KEEP ON API': 'v-none', 'NEEDS FINETUNE': 'v-cal', 'INSUFFICIENT DATA': 'v-none', 'NEEDS MORE DATA': 'v-none' };
     var complete = function (r) {
       if (!r || r.placeholder !== false || !r.totals || !Array.isArray(r.workloads) || !r.workloads.length) return false;
       var t = r.totals;
