@@ -44,18 +44,23 @@
   ],
   "redirects": [
     {
+      "source": "/pilot",
+      "destination": "/#assessment",
+      "statusCode": 301
+    },
+    {
       "source": "/upgrade",
-      "destination": "/pilot",
+      "destination": "/#assessment",
       "statusCode": 302
     },
     {
       "source": "/audit/book",
-      "destination": "/pilot#book",
+      "destination": "/#assessment",
       "statusCode": 302
     },
     {
       "source": "/audit",
-      "destination": "/pilot",
+      "destination": "/#assessment",
       "statusCode": 301
     }
   ]

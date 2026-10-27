@@ -8,7 +8,7 @@ and write assets/js/v3.min.js. Run after editing either source file:
 import pathlib, re, subprocess
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-PAGES = ["index.html", "pilot.html", "pricing.html"]
+PAGES = ["index.html", "pricing.html"]
 
 def esbuild(src, out=None):
     cmd = ["npx", "--yes", "esbuild@0.24.0", str(src), "--minify", "--log-level=warning"]

@@ -1,5 +1,6 @@
 /* Throttle site v3. Small vanilla JS: nav, reveals, copy, terminal replay, hero canvas,
-   looping SVG scenes, lazy film, console tabs. Everything degrades to a static final frame. */
+   looping SVG scenes, lazy film, console tabs,
+   sample savings report, assessment form. Everything degrades to a static final frame. */
 (function () {
   'use strict';
   var d = document;
@@ -326,5 +327,90 @@
     btns.forEach(function (b, i) { b.addEventListener('click', function () { manual = true; tabs.classList.add('paused'); show(i); }); });
     if (reduce) tabs.classList.add('paused');
     if (hasIO) new IntersectionObserver(function (es) { inView = es[0].isIntersecting; if (inView) show(cur); else clearTimeout(timer); }, { threshold: 0.3 }).observe(tabs.parentNode);
+  }
+
+  /* ---------- sample savings report ----------
+     Renders assets/data/demo-report.json. While the file says placeholder:true, or any number
+     the report needs is missing, it shows "coming soon" and no numbers at all. The static markup
+     is that same empty state, so no-JS visitors never see a number either. */
+  var rep = d.querySelector('[data-report]');
+  if (rep && window.fetch) {
+    var isNum = function (x) { return typeof x === 'number' && isFinite(x); };
+    var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+    var usd = function (x) { return '$' + Math.round(x).toLocaleString('en-US'); };
+    var share = function (x) { return x <= 1 && x >= -1 ? (x * 100).toFixed(0) + '%' : String(x); };
+    var signed = function (x) { var s = share(x); return x > 0 ? '+' + s : s; };
+    var VERDICT = { 'MOVE': 'v-cheaper', 'KEEP ON API': 'v-none', 'NEEDS FINETUNE': 'v-cal', 'INSUFFICIENT DATA': 'v-none', 'NEEDS MORE DATA': 'v-none' };
+    var complete = function (r) {
+      if (!r || r.placeholder !== false || !r.totals || !Array.isArray(r.workloads) || !r.workloads.length) return false;
+      var t = r.totals;
+      if (!isNum(t.monthly_api_usd) || !isNum(t.movable_usd) || !isNum(t.projected_savings_usd)) return false;
+      return r.workloads.every(function (w) {
+        var q = w && w.quality;
+        return w && w.type && VERDICT[w.verdict] && isNum(w.monthly_api_usd) && isNum(w.projected_owned_usd) &&
+          q && isNum(q.win) && isNum(q.tie) && isNum(q.loss) && Array.isArray(q.net_ci) && isNum(q.net_ci[0]) && isNum(q.net_ci[1]);
+      });
+    };
+    fetch(rep.getAttribute('data-report'), { cache: 'no-cache' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (r) {
+      if (!complete(r)) return;
+      var t = r.totals, h = '<div class="rep-tot">' +
+        '<div><span>Monthly API spend</span><b>' + usd(t.monthly_api_usd) + '</b></div>' +
+        '<div><span>Spend that can move</span><b>' + usd(t.movable_usd) + '</b></div>' +
+        '<div class="hi"><span>Projected monthly savings</span><b>' + usd(t.projected_savings_usd) + '</b></div></div>' +
+        '<div class="rep-wrap"><table class="rep-table"><thead><tr><th scope="col">Kind of request</th><th scope="col">Verdict</th>' +
+        '<th scope="col" class="n">API cost / mo</th><th scope="col" class="n">On your model / mo</th>' +
+        '<th scope="col" class="n">Win / tie / loss</th><th scope="col" class="n">Net quality range</th></tr></thead><tbody>';
+      r.workloads.forEach(function (w) {
+        var q = w.quality;
+        h += '<tr><td>' + esc(w.type) + '</td><td><span class="chip ' + VERDICT[w.verdict] + '">' + esc(w.verdict) + '</span></td>' +
+          '<td class="n">' + usd(w.monthly_api_usd) + '</td><td class="n">' + usd(w.projected_owned_usd) + '</td>' +
+          '<td class="n">' + share(q.win) + ' / ' + share(q.tie) + ' / ' + share(q.loss) + '</td>' +
+          '<td class="n">' + signed(q.net_ci[0]) + ' to ' + signed(q.net_ci[1]) + '</td></tr>';
+      });
+      h += '</tbody></table></div>';
+      if (r.generated_at) h += '<p class="rep-foot">Generated ' + esc(r.generated_at) + ' by <code class="i">throttle demo</code> on synthetic traffic.</p>';
+      rep.innerHTML = h;
+    }).catch(function () {});
+  }
+
+  /* ---------- assessment form ----------
+     POSTs JSON to /api/assessment. On 200 it says thanks. On anything else (no API key yet,
+     network error, rate limit) it opens a prefilled email to Kush, so no lead is lost. */
+  var form = d.querySelector('[data-assessment]');
+  if (form) {
+    var msg = form.querySelector('.form-msg'), sub = form.querySelector('button[type="submit"]');
+    var TO = 'kush@throttle-pro.com';
+    var say = function (html, ok) { msg.innerHTML = html; msg.classList.toggle('ok', !!ok); };
+    var mailto = function (v) {
+      var spendSel = form.querySelector('[name="spend"]');
+      var spendTxt = spendSel && spendSel.selectedIndex > 0 ? spendSel.options[spendSel.selectedIndex].text : 'not given';
+      var body = 'Hi Kush,\n\nI would like a free savings assessment.\n\nWork email: ' + v.email +
+        '\nCompany: ' + (v.company || 'not given') + '\nMonthly AI API spend: ' + spendTxt + '\n';
+      return 'mailto:' + TO + '?subject=' + encodeURIComponent('Free savings assessment') + '&body=' + encodeURIComponent(body);
+    };
+    // a plain (no-JS) form post comes back here with ?assessment=sent|error
+    var back = /[?&]assessment=(sent|error)/.exec(location.search);
+    if (back) say(back[1] === 'sent' ? 'Thanks. We got it and will email you soon.' : 'That did not go through. Please write to <a href="mailto:' + TO + '">' + TO + '</a>.', back[1] === 'sent');
+    form.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      if (form.checkValidity && !form.checkValidity()) { if (form.reportValidity) form.reportValidity(); return; }
+      var v = {
+        email: form.email.value.trim(), company: form.company.value.trim(),
+        spend: form.spend.value, website: form.website.value
+      };
+      var fallback = function () {
+        var href = mailto(v);
+        say('Opening your email app with your details filled in. If nothing opens, <a href="' + href + '">click here</a> or write to <a href="mailto:' + TO + '">' + TO + '</a>.');
+        sub.disabled = false;
+        window.location.href = href;
+      };
+      sub.disabled = true; say('Sending…');
+      fetch(form.getAttribute('action'), {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(v)
+      }).then(function (r) {
+        if (r.status === 200) { form.reset(); sub.disabled = false; say('Thanks. We got it and will email you soon.', true); }
+        else fallback();
+      }, fallback);
+    });
   }
 })();
