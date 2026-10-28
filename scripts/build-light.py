@@ -5,6 +5,8 @@
   (index, pricing, cost-index, blog/*, guides/*), wherever the <!--name--> markers are.
 - Renders the ledger job rows from assets/data/demo-report.json, so every per-job sample
   number comes from real `throttle demo` output (made-up traffic, labelled as sample).
+- Fills the "Watch it run" player: if assets/media/demo/throttle-demo.mp4 (plus optional .webm,
+  -poster.jpg and .vtt captions) exist, it embeds the real recording; if not, a typographic placeholder.
 - Builds FAQPage JSON-LD from the visible FAQ on each page.
 - Bumps ?v= on every shared CSS/JS file so browsers fetch fresh files.
 
@@ -79,6 +81,25 @@ def faq_ld(page):
     return '<script type="application/ld+json">' + json.dumps(ld, ensure_ascii=False) + "</script>"
 
 
+def demo_video():
+    d = ROOT / "assets/media/demo"
+    mp4, webm, poster, vtt = (d / f"throttle-demo{x}" for x in (".mp4", ".webm", "-poster.jpg", ".vtt"))
+    if not mp4.exists():
+        return """        <div class="pl-wait" role="img" aria-label="Placeholder: the recording of the Throttle command line will play here.">
+          <p class="mono"><span class="t-p">$</span> throttle demo<span class="cur"></span></p>
+          <p class="pl-wait-t">The recording plays here.</p>
+        </div>"""
+    v = lambda f: "?v=" + hashlib.sha1(f.read_bytes()).hexdigest()[:8]
+    src = (f'          <source data-src="/assets/media/demo/throttle-demo.webm{v(webm)}" type="video/webm">\n' if webm.exists() else "")
+    src += f'          <source data-src="/assets/media/demo/throttle-demo.mp4{v(mp4)}" type="video/mp4">\n'
+    if vtt.exists():
+        src += f'          <track kind="captions" src="/assets/media/demo/throttle-demo.vtt{v(vtt)}" srclang="en" label="English">\n'
+    pst = f' poster="/assets/media/demo/throttle-demo-poster.jpg{v(poster)}"' if poster.exists() else ""
+    return (f'        <video class="pl-video" muted playsinline loop preload="none"{pst} '
+            'aria-label="Recording of the Throttle command line testing AI jobs against other models on sample traffic, then showing which jobs move, which stay, and why.">\n'
+            + src + "        </video>")
+
+
 def put(page, name, content):
     pat = re.compile(rf"(<!--{name}-->).*?(<!--/{name}-->)", re.S)
     if not pat.search(page):
@@ -104,6 +125,10 @@ for name in PAGES:
     page = put(page, "foot", foot)
     page = put(page, "read-cta", read_cta)
     page = put(page, "jobs", jobs())
+    page = put(page, "demo-video", demo_video())
+    page = put(page, "demo-cap", "<span>Recorded in a terminal, no sound. Plays when it scrolls into view.</span>"
+               if (ROOT / "assets/media/demo/throttle-demo.mp4").exists() else
+               "<span>The recording of the real command line is being made now. Until then, the sample session below shows the same steps.</span>")
     page = put(page, "faq-ld", faq_ld(page))
     for a, h in assets.items():
         page = re.sub(rf'(/{re.escape(a)})\?v=[\w]+', rf"\1?v={h}", page)
