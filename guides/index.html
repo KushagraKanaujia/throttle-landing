@@ -1,13 +1,12 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<script>document.documentElement.classList.add("js")</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>LLM inference cost guides: vLLM, FP8, GPUs · Throttle</title>
 <meta name="description" content="Practical guides to self-hosted LLM inference cost: calculate cost per million tokens, measure vLLM, and test FP8 quantization and tensor parallelism, with real measured numbers.">
 <meta name="author" content="Kushagra Kanaujia">
-<meta name="theme-color" content="#07080a">
+<meta name="theme-color" content="#070D22">
 <link rel="canonical" href="https://www.throttle-pro.com/guides">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Throttle">
@@ -23,104 +22,151 @@
 <meta name="twitter:image" content="https://www.throttle-pro.com/assets/media/index-og.png">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "CollectionPage", "name": "Throttle guides: LLM inference cost", "url": "https://www.throttle-pro.com/guides", "hasPart": [{"@type": "TechArticle", "headline": "LLM cost per million tokens: the formula, a calculator, and real numbers", "url": "https://www.throttle-pro.com/guides/llm-cost-per-million-tokens"}, {"@type": "TechArticle", "headline": "vLLM cost per token: measure it, then change one flag at a time", "url": "https://www.throttle-pro.com/guides/vllm-cost-per-token"}, {"@type": "TechArticle", "headline": "FP8 quantization in vLLM: 47% cheaper tokens, until you read the answers", "url": "https://www.throttle-pro.com/guides/fp8-quantization-cost-vs-quality"}, {"@type": "TechArticle", "headline": "Tensor parallel size and cost: one GPU vs two for a 72B model", "url": "https://www.throttle-pro.com/guides/tensor-parallel-cost"}, {"@type": "TechArticle", "headline": "Self-hosted LLM cost: how to compare it with an API, honestly", "url": "https://www.throttle-pro.com/guides/self-hosted-llm-cost"}]}</script>
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/assets/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/site.css?v=a54ae2d5">
-<link rel="stylesheet" href="/assets/css/blog.css?v=guides1">
-<script src="/assets/js/site.js?v=dd1c358f" defer></script>
-
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,200..600,0..100;1,9..144,200..600,0..100&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/light.css?v=ca145ff8">
+<link rel="stylesheet" href="/assets/css/read.css?v=0849056a">
+<script>document.documentElement.classList.add("js");if(matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("rm")</script>
 </head>
 <body>
-<div class="grain" aria-hidden="true"></div>
-<div class="glow" aria-hidden="true"></div>
-
-<header class="nav">
-  <a class="brand" href="/" aria-label="Throttle home">
-    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg>
-    <span>throttle</span>
-  </a>
-  <nav class="nav-links" aria-label="Pages">
-    <a href="/cost-index">Cost Index</a>
-    <a href="/guides" aria-current="page">Guides</a>
+<!--nav-->
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav" id="nav" data-nav>
+  <a class="logo" href="/" aria-label="Throttle home"><img class="lg-d" src="/assets/brand/wordmark-dark.svg" alt="Throttle" width="118" height="28"><img class="lg-l" src="/assets/brand/wordmark-light.svg" alt="" width="118" height="28"></a>
+  <nav class="links" aria-label="Main">
+    <a href="/#how">How it works</a>
     <a href="/pricing">Pricing</a>
     <a href="/blog">Blog</a>
+    <a href="/guides">Guides</a>
+    <a href="/cost-index">Cost Index</a>
   </nav>
-  <div class="nav-cta">
-    <a class="nav-gh" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener" aria-label="Throttle on GitHub">
-      <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-      <span>GitHub</span>
-    </a>
-    <a class="btn btn-accent btn-sm" href="/#install">Install</a>
+  <div class="nav-r">
+    <a class="cta cta-sm" href="/#free-look">Get a free look <i aria-hidden="true">&rarr;</i></a>
+    <button class="menu" type="button" aria-expanded="false" aria-controls="sheet" data-menu><span class="sr">Menu</span><i aria-hidden="true"></i></button>
   </div>
 </header>
+<div class="sheet" id="sheet" hidden>
+  <nav aria-label="Menu">
+    <a href="/#how">How it works</a>
+    <a href="/pricing">Pricing</a>
+    <a href="/blog">Blog</a>
+    <a href="/guides">Guides</a>
+    <a href="/cost-index">Cost Index</a>
+  </nav>
+  <a class="cta" href="/#free-look">Get a free look <i aria-hidden="true">&rarr;</i></a>
+</div>
+<!--/nav-->
 
-<main id="top">
-  <article class="post-wrap">
-    <header class="post-head">
-      <span class="kicker">Guides</span>
-      <h1>What LLM inference really costs</h1>
-      <p class="post-lede">How to calculate and measure cost per million tokens on your own GPUs, and what real config changes did to it. Every number comes from a measured run.</p>
-    </header>
-    <div class="cards">
-    <a class="post-card" href="/guides/llm-cost-per-million-tokens">
-      <span class="kicker">Calculator</span>
-      <h3>LLM cost per million tokens: the formula, a calculator, and real numbers</h3>
-      <p>How to calculate LLM inference cost per million tokens from your GPU price and throughput, with a calculator, a worked example from a real AMD MI300X run, and the pitfalls that make the number wrong.</p>
-      <span class="meta"><span>Guide</span><span class="arrow">→</span></span>
-    </a>
-    <a class="post-card" href="/guides/vllm-cost-per-token">
-      <span class="kicker">Guide</span>
-      <h3>vLLM cost per token: measure it, then change one flag at a time</h3>
-      <p>Measure vLLM cost per million tokens on your own GPU, then test max-num-seqs, tensor parallel size and FP8 one at a time. Real results from AMD MI300X and NVIDIA A100 runs.</p>
-      <span class="meta"><span>Guide</span><span class="arrow">→</span></span>
-    </a>
-    <a class="post-card" href="/guides/fp8-quantization-cost-vs-quality">
-      <span class="kicker">Case study</span>
-      <h3>FP8 quantization in vLLM: 47% cheaper tokens, until you read the answers</h3>
-      <p>Real AMD MI300X results for FP8 quantization in vLLM: pre-quantized FP8 cut 72B cost per token by 32% with correct answers, while on-the-fly FP8 looked 41–47% cheaper but produced broken output.</p>
-      <span class="meta"><span>Guide</span><span class="arrow">→</span></span>
-    </a>
-    <a class="post-card" href="/guides/tensor-parallel-cost">
-      <span class="kicker">Case study</span>
-      <h3>Tensor parallel size and cost: one GPU vs two for a 72B model</h3>
-      <p>Does tensor_parallel_size 2 make tokens cheaper? A measured 1:1 on AMD MI300X: Qwen2.5-72B cost $1.67 per million tokens on one GPU and $2.14 on two, 1.56× faster but 28% more per token.</p>
-      <span class="meta"><span>Guide</span><span class="arrow">→</span></span>
-    </a>
-    <a class="post-card" href="/guides/self-hosted-llm-cost">
-      <span class="kicker">Guide</span>
-      <h3>Self-hosted LLM cost: how to compare it with an API, honestly</h3>
-      <p>What does a self-hosted LLM really cost? How to turn GPU rental prices into dollars per million tokens, why utilization decides the answer, and real measurements on AMD MI300X.</p>
-      <span class="meta"><span>Guide</span><span class="arrow">→</span></span>
-    </a>
-    </div>
-    <aside class="post-cta" aria-label="Try Throttle">
-      <h2>Measure your own server</h2>
-      <p>Throttle is an open-source CLI (MIT) for any OpenAI-compatible endpoint: vLLM, SGLang, Ollama, LMDeploy. It runs on your machine, and the only traffic it sends goes to your own endpoint.</p>
-      <div class="cta-row">
-        <button class="copy magnetic" type="button" data-copy="pipx install throttle-pro" aria-label="Copy install command">
-          <span class="prompt">$</span><code>pipx install throttle-pro</code><span class="copy-state" aria-live="polite">copy</span>
-        </button>
-        <a class="btn btn-ghost magnetic" href="/cost-index">See the Cost Index</a>
+<main id="main">
+<section class="r-hero" aria-labelledby="r-h">
+  <div class="wrap r-hero-in">
+    <p class="eyebrow mono">Guides</p>
+    <h1 id="r-h">What AI really <em>costs.</em></h1>
+    <p class="lede">How to work out and measure cost per million tokens on your own GPUs, and what real config changes did to it. Every number comes from a measured run.</p>
+  </div>
+</section>
+
+<section class="sec-list" aria-label="Guides">
+  <div class="wrap">
+  <ol class="entries">
+    <li><a class="entry" href="/guides/llm-cost-per-million-tokens">
+      <span class="e-k mono">Calculator</span>
+      <h2 class="e-t">LLM cost per million tokens: the formula, a calculator, and real numbers</h2>
+      <span class="e-d">How to calculate LLM inference cost per million tokens from your GPU price and throughput, with a calculator, a worked example from a real AMD MI300X run, and the pitfalls that make the number wrong.</span>
+      <span class="e-m mono"><i aria-hidden="true">&rarr;</i></span>
+    </a></li>
+    <li><a class="entry" href="/guides/vllm-cost-per-token">
+      <span class="e-k mono">Guide</span>
+      <h2 class="e-t">vLLM cost per token: measure it, then change one flag at a time</h2>
+      <span class="e-d">Measure vLLM cost per million tokens on your own GPU, then test max-num-seqs, tensor parallel size and FP8 one at a time. Real results from AMD MI300X and NVIDIA A100 runs.</span>
+      <span class="e-m mono"><i aria-hidden="true">&rarr;</i></span>
+    </a></li>
+    <li><a class="entry" href="/guides/fp8-quantization-cost-vs-quality">
+      <span class="e-k mono">Case study</span>
+      <h2 class="e-t">FP8 quantization in vLLM: 47% cheaper tokens, until you read the answers</h2>
+      <span class="e-d">Real AMD MI300X results for FP8 quantization in vLLM: pre-quantized FP8 cut 72B cost per token by 32% with correct answers, while on-the-fly FP8 looked 41–47% cheaper but produced broken output.</span>
+      <span class="e-m mono"><i aria-hidden="true">&rarr;</i></span>
+    </a></li>
+    <li><a class="entry" href="/guides/tensor-parallel-cost">
+      <span class="e-k mono">Case study</span>
+      <h2 class="e-t">Tensor parallel size and cost: one GPU vs two for a 72B model</h2>
+      <span class="e-d">Does tensor_parallel_size 2 make tokens cheaper? A measured 1:1 on AMD MI300X: Qwen2.5-72B cost $1.67 per million tokens on one GPU and $2.14 on two, 1.56× faster but 28% more per token.</span>
+      <span class="e-m mono"><i aria-hidden="true">&rarr;</i></span>
+    </a></li>
+    <li><a class="entry" href="/guides/self-hosted-llm-cost">
+      <span class="e-k mono">Guide</span>
+      <h2 class="e-t">Self-hosted LLM cost: how to compare it with an API, honestly</h2>
+      <span class="e-d">What does a self-hosted LLM really cost? How to turn GPU rental prices into dollars per million tokens, why utilization decides the answer, and real measurements on AMD MI300X.</span>
+      <span class="e-m mono"><i aria-hidden="true">&rarr;</i></span>
+    </a></li>
+  </ol>
+  </div>
+</section>
+
+<!--read-cta-->
+<section class="read-cta" aria-labelledby="rc-h">
+  <div class="wrap rc-in">
+    <div class="rc-main">
+      <h2 id="rc-h" class="h2">Stop renting your <em>AI.</em></h2>
+      <p class="body-l">Throttle tests every AI job in your app against other models, closed or open, on your own traffic. When one does the job as well for less, the job moves. If it ever slips, the request falls back.</p>
+      <div class="hero-actions">
+        <a class="cta" href="/#free-look">Get a free look <i aria-hidden="true">&rarr;</i></a>
+        <a class="ghost" href="/#how">How it works</a>
       </div>
-    </aside>
-  </article>
+    </div>
+    <div class="rc-cli">
+      <p class="mono rc-k">Measure your own server today</p>
+      <button class="copy" type="button" data-copy="pipx install throttle-pro" aria-label="Copy the install command: pipx install throttle-pro"><span class="copy-p" aria-hidden="true">$</span><code>pipx install throttle-pro</code><span class="copy-state" aria-live="polite">copy</span></button>
+      <p class="rc-fine">The open-source CLI behind these numbers (MIT). It runs on your machine and only talks to your own endpoint: vLLM, SGLang, Ollama or LMDeploy.</p>
+    </div>
+  </div>
+</section>
+<!--/read-cta-->
 </main>
 
+<!--foot-->
 <footer class="foot">
-  <div class="wrap foot-in">
-    <a class="brand" href="/"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="22" r="2.6" fill="var(--accent)"/></svg><span>throttle</span></a>
-    <p>Cut your GPU bill. Keep the proof.</p>
-    <nav aria-label="Footer">
-      <a href="/cost-index">Cost Index</a>
-      <a href="/guides">Guides</a>
-      <a href="/pricing">Pricing</a>
-      <a href="/blog">Blog</a>
-      <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a>
-      <a href="https://pypi.org/project/throttle-pro/" target="_blank" rel="noopener">PyPI</a>
-      <a href="https://github.com/KushagraKanaujia/throttle/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>
-    </nav>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <a class="logo" href="/" aria-label="Throttle home"><img src="/assets/brand/wordmark-dark.svg" alt="Throttle" width="118" height="28" loading="lazy"></a>
+        <p class="foot-line">Stop renting your AI.</p>
+      </div>
+      <nav class="foot-cols" aria-label="Footer">
+        <div><h2>Product</h2><ul>
+          <li><a href="/#how">How it works</a></li>
+          <li><a href="/#watch">Watch it run</a></li>
+          <li><a href="/#compare">Why Throttle</a></li>
+          <li><a href="/pricing">Pricing</a></li>
+          <li><a href="/#free-look">Get a free look</a></li>
+        </ul></div>
+        <div><h2>Read</h2><ul>
+          <li><a href="/blog">Blog</a></li>
+          <li><a href="/guides">Guides</a></li>
+          <li><a href="/cost-index">Cost Index</a></li>
+        </ul></div>
+        <div><h2>Company</h2><ul>
+          <li><a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="mailto:kush@throttle-pro.com">kush@throttle-pro.com</a></li>
+        </ul></div>
+      </nav>
+    </div>
+    <div class="foot-b">
+      <span>&copy; 2026 Throttle &middot; Open source, MIT</span>
+      <div class="badges">
+        <a href="https://www.producthunt.com/products/throttle-3?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-throttle-4" target="_blank" rel="noopener noreferrer"><img alt="Throttle on Product Hunt" width="157" height="34" loading="lazy" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1260050&amp;theme=dark&amp;t=1790246355863"></a>
+        <a href="https://fazier.com/launches/www.throttle-pro.com" target="_blank" rel="noopener noreferrer"><img alt="Throttle on Fazier" width="79" height="34" loading="lazy" src="https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=launched&amp;theme=dark"></a>
+        <a href="https://dang.ai" target="_blank" rel="dofollow noopener"><img alt="Verified on DANG!" width="94" height="34" loading="lazy" src="https://assets.dang.ai/badges/dang-verified-dark.png"></a>
+      </div>
+    </div>
   </div>
 </footer>
+<!--/foot-->
+
+<script src="/assets/js/light.js?v=0f77ba40" defer></script>
 </body>
 </html>

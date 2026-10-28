@@ -12,7 +12,8 @@
   var path = location.pathname.replace(/\.html$/, "").replace(/\/$/, "") || "/";
   $$(".links a, .sheet nav a").forEach(function (a) {
     var h = a.getAttribute("href");
-    if (h === path || (path !== "/" && h.indexOf(path) === 0 && h.indexOf("#") < 0)) a.setAttribute("aria-current", "page");
+    if (h.indexOf("#") >= 0) return;
+    if (h === path || (h !== "/" && path.indexOf(h + "/") === 0)) a.setAttribute("aria-current", h === path ? "page" : "true");
   });
 
   /* nav: clear over the light, solid once you leave it */
@@ -94,6 +95,80 @@
     }, { rootMargin: "0px 0px -14% 0px" });
     targets.forEach(function (e) { io.observe(e); });
     $$(".log-lines li").forEach(function (li, i) { li.style.transitionDelay = (0.15 + i * 0.12).toFixed(2) + "s"; });
+  }
+
+  /* copy buttons (reading pages) */
+  $$("[data-copy]").forEach(function (b) {
+    var st = $(".copy-state", b);
+    b.addEventListener("click", function () {
+      var t = b.getAttribute("data-copy");
+      var done = function () {
+        b.classList.add("copied"); if (st) st.textContent = "copied";
+        setTimeout(function () { b.classList.remove("copied"); if (st) st.textContent = "copy"; }, 1800);
+      };
+      if (navigator.clipboard && w.isSecureContext) navigator.clipboard.writeText(t).then(done, function () {});
+      else { var ta = d.createElement("textarea"); ta.value = t; ta.style.position = "fixed"; ta.style.opacity = "0"; d.body.appendChild(ta); ta.select(); try { d.execCommand("copy"); done(); } catch (e) {} d.body.removeChild(ta); }
+    });
+  });
+
+  /* comparison tabs: one alternative at a time; without JS every panel shows */
+  var tabs = $$(".cmp-tabs [role=tab]");
+  if (tabs.length) {
+    var pick = function (t, focus) {
+      tabs.forEach(function (x) {
+        var on = x === t;
+        x.setAttribute("aria-selected", on ? "true" : "false");
+        x.tabIndex = on ? 0 : -1;
+        d.getElementById(x.getAttribute("aria-controls")).hidden = !on;
+      });
+      if (focus) t.focus();
+      if (t.scrollIntoView && w.innerWidth <= 600) t.scrollIntoView({ block: "nearest", inline: "center", behavior: reduce ? "auto" : "smooth" });
+    };
+    tabs.forEach(function (t, i) {
+      t.addEventListener("click", function () { pick(t); });
+      t.addEventListener("keydown", function (e) {
+        var k = e.key, n = null;
+        if (k === "ArrowDown" || k === "ArrowRight") n = tabs[(i + 1) % tabs.length];
+        else if (k === "ArrowUp" || k === "ArrowLeft") n = tabs[(i - 1 + tabs.length) % tabs.length];
+        else if (k === "Home") n = tabs[0];
+        else if (k === "End") n = tabs[tabs.length - 1];
+        if (n) { e.preventDefault(); pick(n, true); }
+      });
+    });
+    pick(tabs.filter(function (t) { return t.getAttribute("aria-selected") === "true"; })[0] || tabs[0]);
+  }
+
+  /* recorded demo: loads when near, plays muted while in view, pauses when it leaves */
+  var player = $("[data-player]");
+  var vid = player && $("video", player);
+  if (vid) {
+    var pbtn = $(".pl-btn", player), ptime = $(".pl-t", player), loaded = false, userPaused = reduce;
+    var fmt = function (t) { t = Math.max(0, Math.floor(t || 0)); return Math.floor(t / 60) + ":" + ("0" + (t % 60)).slice(-2); };
+    var load = function () {
+      if (loaded) return; loaded = true;
+      $$("source[data-src]", vid).forEach(function (s) { s.src = s.getAttribute("data-src"); });
+      vid.load();
+    };
+    var sync = function () {
+      var paused = vid.paused;
+      pbtn.classList.toggle("paused", paused);
+      pbtn.setAttribute("aria-label", paused ? "Play the recording" : "Pause the recording");
+    };
+    var play = function () { load(); var pr = vid.play(); if (pr && pr.catch) pr.catch(function () { sync(); }); };
+    pbtn.hidden = false; sync();
+    pbtn.addEventListener("click", function () {
+      if (vid.paused) { userPaused = false; play(); } else { userPaused = true; vid.pause(); }
+    });
+    vid.addEventListener("play", sync); vid.addEventListener("pause", sync);
+    if (ptime) vid.addEventListener("timeupdate", function () { ptime.textContent = fmt(vid.currentTime) + " / " + fmt(vid.duration); });
+    if ("IntersectionObserver" in w) {
+      new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          if (e.isIntersecting) { load(); if (!userPaused && e.intersectionRatio > 0.35) play(); }
+          else if (!vid.paused) vid.pause();
+        });
+      }, { rootMargin: "200px 0px", threshold: [0, 0.35, 0.6] }).observe(player);
+    } else load();
   }
 
   /* free look form: POST /api/assessment, else open a prefilled email so no lead is lost */

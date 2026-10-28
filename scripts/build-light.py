@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Build the "Living light" pages (index.html, pricing.html).
+"""Build the "Living light" site: every HTML page shares one nav, footer and look.
 
-- Syncs the shared nav and footer from scripts/partials-light/ into each page.
+- Syncs the shared nav, footer and reading CTA from scripts/partials-light/ into every page
+  (index, pricing, cost-index, blog/*, guides/*), wherever the <!--name--> markers are.
 - Renders the ledger job rows from assets/data/demo-report.json, so every per-job sample
   number comes from real `throttle demo` output (made-up traffic, labelled as sample).
 - Builds FAQPage JSON-LD from the visible FAQ on each page.
-- Bumps ?v= on light.css / field.js / light.js / story.js so browsers fetch fresh files.
+- Bumps ?v= on every shared CSS/JS file so browsers fetch fresh files.
 
 Run after editing a partial, the CSS/JS, the FAQ, or the demo report:
 
@@ -16,7 +17,8 @@ import hashlib, html, json, pathlib, re
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 PART = ROOT / "scripts/partials-light"
 DATA = json.loads((ROOT / "assets/data/demo-report.json").read_text())
-PAGES = ["index.html", "pricing.html"]
+PAGES = ["index.html", "pricing.html", "cost-index.html"] + sorted(
+    str(p.relative_to(ROOT)) for d in ("blog", "guides") for p in (ROOT / d).glob("*.html"))
 
 STATE = {
     "MOVE": ("own", "Moved"),
@@ -90,13 +92,17 @@ def ver(path):
 
 nav = (PART / "nav.html").read_text()
 foot = (PART / "foot.html").read_text()
-assets = {p: ver(p) for p in ["assets/css/light.css", "assets/js/field.js", "assets/js/light.js", "assets/js/story.js"]}
+read_cta = (PART / "read-cta.html").read_text()
+assets = {p: ver(p) for p in [
+    "assets/css/light.css", "assets/css/read.css", "assets/js/field.js", "assets/js/light.js",
+    "assets/js/story.js", "assets/js/calc.js", "assets/js/cost-index.js"]}
 
 for name in PAGES:
     path = ROOT / name
     page = path.read_text()
     page = put(page, "nav", nav)
     page = put(page, "foot", foot)
+    page = put(page, "read-cta", read_cta)
     page = put(page, "jobs", jobs())
     page = put(page, "faq-ld", faq_ld(page))
     for a, h in assets.items():
