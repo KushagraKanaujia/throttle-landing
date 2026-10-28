@@ -52,6 +52,8 @@ code{font-family:var(--mono);font-size:.86em}
 .tlink i{font-style:normal;transition:transform .3s var(--ease)}
 .tlink:hover{border-color:var(--gold)}
 .tlink:hover i{transform:translateX(3px)}
+.soon{display:inline-block;font:400 9.5px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;font-style:normal;color:var(--sage);border:1px dashed rgba(157,180,154,.55);border-radius:2px;padding:3px 5px 2px;margin-left:2px;vertical-align:.18em;white-space:nowrap}
+[data-light] .soon,.sec-founder .soon{color:#4F6B4C;border-color:rgba(79,107,76,.5)}
 .tag-s{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(216,180,106,.38);padding:3px 6px 2px;border-radius:2px;white-space:nowrap}
 
 /* ---------- nav ---------- */

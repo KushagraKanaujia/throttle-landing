@@ -20,10 +20,10 @@
 <meta name="twitter:title" content="Throttle: Stop renting your AI">
 <meta name="twitter:description" content="Throttle tests every AI job against other models, closed or open, on your own traffic. It moves the job when one does as well for less, and falls back if not. Your data stays in your cloud.">
 <meta name="twitter:image" content="https://www.throttle-pro.com/assets/og-light.png">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Throttle", "applicationCategory": "DeveloperApplication", "operatingSystem": "Linux, macOS", "url": "https://www.throttle-pro.com/", "description": "Throttle lives in your code. When your team adds or changes an AI feature, it tests whether your own open model does the job as well as OpenAI or Anthropic, moves it if so, falls back if not, and learns from every miss. Your model runs in your own cloud.", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD", "description": "Free first look. Then a flat monthly fee, always smaller than what Throttle saves you."}, "license": "https://opensource.org/licenses/MIT", "codeRepository": "https://github.com/KushagraKanaujia/throttle"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Throttle", "applicationCategory": "DeveloperApplication", "operatingSystem": "Linux, macOS", "url": "https://www.throttle-pro.com/", "description": "Throttle lives in your code. When your team adds or changes an AI feature, it tests whether your own open model does the job as well as OpenAI or Anthropic, moves it if so, falls back if not, and saves every miss as a lesson. Your model runs in your own cloud.", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD", "description": "Free first look. Then a flat monthly fee, always smaller than what Throttle saves you."}, "license": "https://opensource.org/licenses/MIT", "codeRepository": "https://github.com/KushagraKanaujia/throttle"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Throttle", "url": "https://www.throttle-pro.com/", "logo": "https://www.throttle-pro.com/assets/brand/icon-app.svg", "founder": {"@type": "Person", "name": "Kushagra Kanaujia"}, "sameAs": ["https://github.com/KushagraKanaujia/throttle", "https://pypi.org/project/throttle-pro/"]}</script>
 <!--faq-ld-->
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Does it need access to my code?", "acceptedAnswer": {"@type": "Answer", "text": "It uses a GitHub app that reads where your code calls an AI API. That is how it finds your AI jobs and comments on pull requests. Your prompts and data stay in your cloud."}}, {"@type": "Question", "name": "Where does my model run?", "acceptedAnswer": {"@type": "Answer", "text": "In your own cloud, on GPUs you control. Your prompts and answers never come to us, and Throttle never stores your API keys."}}, {"@type": "Question", "name": "What if my model gets something wrong?", "acceptedAnswer": {"@type": "Answer", "text": "That request goes to OpenAI or Anthropic automatically, so your users still get a good answer. The miss is saved as a lesson that trains your model."}}, {"@type": "Question", "name": "Do I have to approve every move?", "acceptedAnswer": {"@type": "Answer", "text": "You choose. Approve each move yourself, or let jobs that pass move on their own. You can pin any job to the API or undo a move, and every decision is logged."}}, {"@type": "Question", "name": "What does it cost?", "acceptedAnswer": {"@type": "Answer", "text": "The free look costs nothing and moves nothing. After that it is a flat monthly fee that is always smaller than what Throttle saves you. More on pricing."}}, {"@type": "Question", "name": "Which models does it test?", "acceptedAnswer": {"@type": "Answer", "text": "Closed models from OpenAI and Anthropic, and open models you serve yourself with vLLM, SGLang, Ollama or LMDeploy. Every one runs the same tests on the same traffic. Owning a model is the upgrade when it wins."}}, {"@type": "Question", "name": "I already use a gateway or an eval tool. Do I still need this?", "acceptedAnswer": {"@type": "Answer", "text": "Keep them. A gateway carries your requests and an eval tool runs the tests you write. Throttle answers a different question: which model should do each job this week, on your traffic, and it moves the job when the answer changes. See how it compares."}}, {"@type": "Question", "name": "Is Throttle running at real companies yet?", "acceptedAnswer": {"@type": "Answer", "text": "Not yet. Every number on this page is a sample from made-up traffic. We are choosing the first teams to run it with now."}}, {"@type": "Question", "name": "Is it open source?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The Throttle code is on GitHub under the MIT license."}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Does it need access to my code?", "acceptedAnswer": {"@type": "Answer", "text": "It uses a GitHub Action that reads where your code calls an AI API. That is how it finds your AI jobs and comments on pull requests. It runs in your own CI, and your prompts and data stay in your cloud."}}, {"@type": "Question", "name": "Where does my model run?", "acceptedAnswer": {"@type": "Answer", "text": "In your own cloud, on GPUs you control. Your prompts and answers never come to us, and Throttle never stores your API keys."}}, {"@type": "Question", "name": "What if my model gets something wrong?", "acceptedAnswer": {"@type": "Answer", "text": "If your model errors, times out or sends a broken answer (cut off, empty, bad JSON or a bad tool call), that request goes to OpenAI or Anthropic automatically, so your users still get an answer. The miss is saved as a lesson. Training your model on lessons is coming"}}, {"@type": "Question", "name": "Do I have to approve every move?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. A job moves only after it passes its tests and you approve it. You can pin any job to the API or undo a move, and every decision is logged. Letting passing jobs move on their own is coming"}}, {"@type": "Question", "name": "What does it cost?", "acceptedAnswer": {"@type": "Answer", "text": "The free look costs nothing and moves nothing. After that it is a flat monthly fee that is always smaller than what Throttle saves you. More on pricing."}}, {"@type": "Question", "name": "Which models does it test?", "acceptedAnswer": {"@type": "Answer", "text": "Any model behind an OpenAI-compatible endpoint, closed or open: a hosted API model with your key, or an open model you serve with vLLM, SGLang, Ollama or LMDeploy. Every one runs the same tests on the same requests your app sent to OpenAI or Anthropic. The savings math is built for models you own; for cheaper API models it is coming"}}, {"@type": "Question", "name": "I already use a gateway or an eval tool. Do I still need this?", "acceptedAnswer": {"@type": "Answer", "text": "Keep them. A gateway carries your requests and an eval tool runs the tests you write. Throttle answers a different question: which model should do each job this week, on your traffic, and it moves the job when the answer changes. See how it compares."}}, {"@type": "Question", "name": "Is Throttle running at real companies yet?", "acceptedAnswer": {"@type": "Answer", "text": "Not yet. Every number on this page is a sample from made-up traffic. We are choosing the first teams to run it with now."}}, {"@type": "Question", "name": "Is it open source?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The Throttle code is on GitHub under the MIT license."}}]}</script>
 <!--/faq-ld-->
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/assets/favicon-32.png" type="image/png" sizes="32x32">
@@ -32,7 +32,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,200..600,0..100;1,9..144,200..600,0..100&amp;display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/light.css?v=65d0599a">
+<link rel="stylesheet" href="/assets/css/light.css?v=9ae42120">
 <script>document.documentElement.classList.add("js");if(matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("rm")</script>
 </head>
 <body>
@@ -75,7 +75,7 @@
     <div class="hero-copy" id="heroCopy">
       <p class="eyebrow mono">For teams paying OpenAI &amp; Anthropic</p>
       <h1 id="hero-h">Stop renting<br>your <em>AI.</em></h1>
-      <p class="lede">Throttle lives in your code and tests every AI job against other models, closed or open, on your own traffic. When one does the job as well for less, the job moves. If not, nothing moves.</p>
+      <p class="lede">Throttle lives in your code and tests every AI job against other models, closed or open, on your own traffic. When one does the job as well for less, you move it with one approval. If not, nothing moves.</p>
       <div class="hero-actions">
         <a class="cta" href="#free-look">Get a free look <i aria-hidden="true">&rarr;</i></a>
         <a class="ghost" href="#how">See how it works</a>
@@ -85,7 +85,7 @@
     <p class="tag mono" id="tagRent" aria-hidden="true"><span>OpenAI / Anthropic &middot; renting</span><i class="dot"></i></p>
     <p class="tag mono" id="tagApp" aria-hidden="true"><i class="dot"></i><span>Your app&rsquo;s AI calls</span></p>
 
-    <p class="shift" id="shift" aria-hidden="true">Every month it learns,<br>more of it <em>comes home.</em></p>
+    <p class="shift" id="shift" aria-hidden="true">Job by job,<br>more of it <em>comes home.</em></p>
 
     <div class="home" id="home">
       <p class="mono home-k"><span>Your own model &middot; owning</span><i class="dot"></i></p>
@@ -159,7 +159,7 @@
         <li class="beat is-on" data-beat="0">
           <span class="b-n mono">01</span>
           <h3>Set up once.</h3>
-          <p>Add one line to your code and the GitHub app. Throttle sees every call your app makes to OpenAI or Anthropic. Nothing else changes.</p>
+          <p>Point your API base URL at Throttle and add the GitHub Action. Throttle sees every call your app makes to OpenAI or Anthropic. Nothing else changes.</p>
         </li>
         <li class="beat" data-beat="1">
           <span class="b-n mono">02</span>
@@ -169,12 +169,12 @@
         <li class="beat" data-beat="2">
           <span class="b-n mono">03</span>
           <h3>Tests before it moves. Falls back if not.</h3>
-          <p>Other models, closed or open, answer the same requests in the background, your own model among them. If one does the job as well for less, the job moves. If it ever slips, that request goes straight back to the API.</p>
+          <p>Other models, closed or open, answer the same requests in the background, your own model among them. If one does the job as well for less, you approve and the job moves. If it errors or gives a broken answer, that request goes straight back to the API.</p>
         </li>
         <li class="beat" data-beat="3">
           <span class="b-n mono">04</span>
-          <h3>Learns from every miss.</h3>
-          <p>Each miss is saved in your cloud as a lesson for your model. Next month, more of your AI comes home.</p>
+          <h3>Keeps every miss.</h3>
+          <p>Every fallback and every lost test is saved in your cloud as a lesson for your model. Training your model on them is <span class="soon">coming</span></p>
         </li>
       </ol>
     </div>
@@ -268,7 +268,7 @@
             </div>
           </details></li>
           <li class="job" data-s="test"><details>
-            <summary><span class="j-n">summarization</span><span class="j-amt num">$7,235.34<small>/mo</small></span><span class="j-st">Testing</span><span class="j-why">Worse on 31% of tests. Learning from its misses.</span></summary>
+            <summary><span class="j-n">summarization</span><span class="j-amt num">$7,235.34<small>/mo</small></span><span class="j-st">Testing</span><span class="j-why">Worse on 31% of tests. Stays on the API; misses saved as lessons.</span></summary>
             <div class="j-more">
               <span class="wtl" aria-hidden="true"><i class="w" style="--p:8.3"></i><i class="t" style="--p:61.1"></i><i class="l" style="--p:30.6"></i></span>
               <p class="mono"><span>better 8.3%</span><span>same 61.1%</span><span>worse 30.6%</span></p>
@@ -276,7 +276,7 @@
             </div>
           </details></li>
           <li class="job" data-s="test"><details>
-            <summary><span class="j-n">code</span><span class="j-amt num">$1,937.46<small>/mo</small></span><span class="j-st">Testing</span><span class="j-why">Worse on 50% of tests. Learning from its misses.</span></summary>
+            <summary><span class="j-n">code</span><span class="j-amt num">$1,937.46<small>/mo</small></span><span class="j-st">Testing</span><span class="j-why">Worse on 50% of tests. Stays on the API; misses saved as lessons.</span></summary>
             <div class="j-more">
               <span class="wtl" aria-hidden="true"><i class="w" style="--p:10.0"></i><i class="t" style="--p:40.0"></i><i class="l" style="--p:50.0"></i></span>
               <p class="mono"><span>better 10.0%</span><span>same 40.0%</span><span>worse 50.0%</span></p>
@@ -320,7 +320,7 @@
       <li class="word">
         <h3 class="w-p"><span class="w-n mono">01</span>Re-testing every release costs too much, so it gets skipped.</h3>
         <blockquote class="w-q" cite="https://news.ycombinator.com/item?id=47029675"><p>&ldquo;Pin to a specific model version, run evals on every new release, and only upgrade when your test suite passes. But that&rsquo;s expensive engineering overhead that shouldn&rsquo;t be necessary.&rdquo;</p><footer><a href="https://news.ycombinator.com/item?id=47029675" target="_blank" rel="noopener">An engineer on Hacker News, Feb 2026 <i aria-hidden="true">&nearr;</i></a></footer></blockquote>
-        <p class="w-a"><span class="mono">Throttle</span>Runs those tests for you, on a sample of your own traffic, every time a model, a prompt or a price changes.</p>
+        <p class="w-a"><span class="mono">Throttle</span>Keeps every job&rsquo;s tests on your own traffic. A changed prompt sends the job back to testing, and trying a new model is one command. Watching prices for you is <span class="soon">coming</span></p>
       </li>
       <li class="word">
         <h3 class="w-p"><span class="w-n mono">02</span>Nobody wants to find out later that the cheaper model was worse.</h3>
@@ -330,12 +330,12 @@
       <li class="word">
         <h3 class="w-p"><span class="w-n mono">03</span>The model you rent changes under you.</h3>
         <blockquote class="w-q" cite="https://news.ycombinator.com/item?id=48625385"><p>&ldquo;Tuesdays behaviour changes by Thursday, 10AMs production isn&rsquo;t possible at 11:30AM.&rdquo;</p><footer><a href="https://news.ycombinator.com/item?id=48625385" target="_blank" rel="noopener">An engineer on Hacker News, Jun 2026 <i aria-hidden="true">&nearr;</i></a></footer></blockquote>
-        <p class="w-a"><span class="mono">Throttle</span>Re-runs a job&rsquo;s tests when the model behind it changes or is retired. A model you own only changes when you say so.</p>
+        <p class="w-a"><span class="mono">Throttle</span>A model you own only changes when you say so, and its tests run again in one command. Spotting changes on the vendor&rsquo;s side for you is <span class="soon">coming</span></p>
       </li>
       <li class="word">
         <h3 class="w-p"><span class="w-n mono">04</span>The AI bill grows faster than revenue.</h3>
         <blockquote class="w-q" cite="https://news.ycombinator.com/item?id=48980244"><p>&ldquo;Our competitors are giving half of their margin over to these large AI service providers&rdquo;</p><footer><a href="https://news.ycombinator.com/item?id=48980244" target="_blank" rel="noopener">A company owner on Hacker News, Jul 2026 <i aria-hidden="true">&nearr;</i></a></footer></blockquote>
-        <p class="w-a"><span class="mono">Throttle</span>Every job that passes on a cheaper model, closed or open, comes off the bill. The ledger shows what you kept after GPU costs.</p>
+        <p class="w-a"><span class="mono">Throttle</span>Every job that moves to your own model comes off the API bill. The monthly savings statement shows what you kept after GPU costs.</p>
       </li>
       <li class="word">
         <h3 class="w-p"><span class="w-n mono">05</span>One cheap model does most jobs well, and fails a few.</h3>
@@ -345,12 +345,12 @@
       <li class="word">
         <h3 class="w-p"><span class="w-n mono">06</span>The fallback was there. It didn&rsquo;t fire.</h3>
         <blockquote class="w-q" cite="https://github.com/BerriAI/litellm/issues/8632"><p>&ldquo;Today gemini was having issues and kept returning 500 errors, but the fallbacks didn&rsquo;t seem to kick in at all.&rdquo;</p><footer><a href="https://github.com/BerriAI/litellm/issues/8632" target="_blank" rel="noopener">An engineer in a GitHub issue, Feb 2025 <i aria-hidden="true">&nearr;</i></a></footer></blockquote>
-        <p class="w-a"><span class="mono">Throttle</span>Fallback comes with every move and is always on. Every time it fires, it shows up in the log, so you know it works.</p>
+        <p class="w-a"><span class="mono">Throttle</span>Fallback comes with every move. Errors, timeouts and broken answers go back to the API, and every fallback is logged with its reason, so you can see it work.</p>
       </li>
       <li class="word">
         <h3 class="w-p"><span class="w-n mono">07</span>Owning GPUs brings its own bills.</h3>
         <blockquote class="w-q" cite="https://news.ycombinator.com/item?id=47677447"><p>&ldquo;We&rsquo;re paying for servers that sit idle at night, you don&rsquo;t find enough sysadmins&rdquo;</p><footer><a href="https://news.ycombinator.com/item?id=47677447" target="_blank" rel="noopener">An engineer on Hacker News, Apr 2026 <i aria-hidden="true">&nearr;</i></a></footer></blockquote>
-        <p class="w-a"><span class="mono">Throttle</span>Owning is not always the answer. Throttle counts GPU costs before it calls anything a saving, and when a cheaper API model wins, it says so.</p>
+        <p class="w-a"><span class="mono">Throttle</span>Owning is not always the answer. Throttle counts GPU costs before it calls anything a saving, and when the API is still cheaper, it says keep it there.</p>
       </li>
     </ol>
   </div>
@@ -361,16 +361,17 @@
      LiteLLM   https://github.com/BerriAI/litellm (MIT, 100+ providers), https://docs.litellm.ai/docs/proxy/reliability (fallbacks),
                https://docs.litellm.ai/docs/auto_router/ (complexity-tier auto router), https://www.litellm.ai/enterprise (custom pricing)
      Portkey   https://portkey.ai/docs/product/ai-gateway/fallbacks, https://portkey.ai/docs/product/ai-gateway/conditional-routing,
-               https://portkey.ai/docs/guides/getting-started/a-b-test-prompts-and-models (live A/B), https://portkey.ai/pricing ($49/mo for 100k logs),
+               https://portkey.ai/docs/guides/getting-started/a-b-test-prompts-and-models (live A/B), https://portkey.ai/pricing ($49/mo Production plan, 100k recorded logs; re-checked 10/28),
                https://github.com/Portkey-AI/gateway (MIT gateway, self-host)
      OpenRouter https://openrouter.ai/docs/guides/routing/model-fallbacks, https://openrouter.ai/docs/guides/routing/auto-model-selection,
-               https://openrouter.ai/pricing (5.5% fee on the standard plan)
+               https://openrouter.ai/pricing (Standard plan platform fee "5.5%", applied to credit purchases; re-checked 10/28)
      Not Diamond https://www.notdiamond.ai/ ("train a custom router on your evaluation data"), https://www.notdiamond.ai/pricing (per million tokens routed)
      Martian   https://docs.withmartian.com/ (model router over many models)
      promptfoo https://www.promptfoo.dev/docs/intro/ (MIT, local), https://www.promptfoo.dev/docs/integrations/github-action/ (before/after on PRs)
      Langfuse  https://langfuse.com/docs/evaluation/overview (scores live traces), https://langfuse.com/docs/evaluation/experiments/datasets,
                https://langfuse.com/pricing, https://langfuse.com/ (MIT, self-host)
      Together AI https://docs.together.ai/docs/fine-tuning-overview (LoRA/full fine-tuning, download weights), https://www.together.ai/pricing (per training token)
+     Throttle cells match throttle main (2fb17af) on 10/28; anything planned but not built is labelled "coming".
      Where a group differs inside itself, the cell says "varies" or names who does what. -->
 <section id="compare" class="sec sec-compare" aria-labelledby="cmp-h">
   <div class="wrap cmp-grid">
@@ -394,12 +395,12 @@
           <thead><tr><th scope="col"><span class="sr">What matters</span></th><th scope="col">Gateways</th><th scope="col" class="c-us">Throttle</th></tr></thead>
           <tbody>
             <tr><th scope="row">Tests each AI job on your traffic before moving it</th><td>Not their job. You pick the model. Portkey can A/B test live traffic.</td><td class="c-us">Yes. Every job, before anything moves.</td></tr>
-            <tr><th scope="row">Catches prompt and code changes in pull requests</th><td>No.</td><td class="c-us">Yes. Re-tests the job in the pull request.</td></tr>
-            <tr><th scope="row">Falls back automatically</th><td class="c-yes">Yes. This is what they do best.</td><td class="c-us">Yes. Always on, and logged.</td></tr>
-            <tr><th scope="row">Learns from misses, trains a model you own</th><td>No.</td><td class="c-us">Saves every miss as a lesson for your model.</td></tr>
+            <tr><th scope="row">Catches prompt and code changes in pull requests</th><td>No.</td><td class="c-us">Yes. Flags every new or changed AI job in the pull request. A moved job whose prompt changed goes back to testing.</td></tr>
+            <tr><th scope="row">Falls back automatically</th><td class="c-yes">Yes. This is what they do best.</td><td class="c-us">Yes, on errors and broken answers. Every fallback is logged.</td></tr>
+            <tr><th scope="row">Learns from misses, trains a model you own</th><td>No.</td><td class="c-us">Saves every miss as a lesson for your model. Training on them is <span class="soon">coming</span></td></tr>
             <tr><th scope="row">Runs in your cloud</th><td>Varies. LiteLLM and Portkey&rsquo;s gateway can. OpenRouter is hosted.</td><td class="c-us">Yes. Prompts and answers never reach us.</td></tr>
-            <tr><th scope="row">Closed and open models</th><td class="c-yes">Yes, hundreds.</td><td class="c-us">Yes, closed or open.</td></tr>
-            <tr><th scope="row">Pricing</th><td>Free and open source (LiteLLM), per-log plans (Portkey, from $49/mo), or a share of spend (OpenRouter, 5.5%).</td><td class="c-us">Free look, then a flat monthly fee smaller than what you save.</td></tr>
+            <tr><th scope="row">Closed and open models</th><td class="c-yes">Yes, hundreds.</td><td class="c-us">Yes. Any OpenAI-compatible model, closed or open.</td></tr>
+            <tr><th scope="row">Pricing</th><td>Free and open source (LiteLLM), per-log plans (Portkey, from $49/mo), or a 5.5% fee on credits (OpenRouter&rsquo;s standard plan).</td><td class="c-us">Free look, then a flat monthly fee smaller than what you save.</td></tr>
           </tbody>
         </table>
       </div>
@@ -411,11 +412,11 @@
           <thead><tr><th scope="col"><span class="sr">What matters</span></th><th scope="col">Smart routers</th><th scope="col" class="c-us">Throttle</th></tr></thead>
           <tbody>
             <tr><th scope="row">Tests each AI job on your traffic before moving it</th><td>A trained router guesses per request. Not Diamond can train it on your eval data.</td><td class="c-us">Yes. Proof per job first, so there is nothing to guess.</td></tr>
-            <tr><th scope="row">Catches prompt and code changes in pull requests</th><td>Not that we could find.</td><td class="c-us">Yes. Re-tests the job in the pull request.</td></tr>
-            <tr><th scope="row">Falls back automatically</th><td>Varies.</td><td class="c-us">Yes. Always on, and logged.</td></tr>
-            <tr><th scope="row">Learns from misses, trains a model you own</th><td>The router learns. The models stay someone else&rsquo;s.</td><td class="c-us">Saves every miss as a lesson for your model.</td></tr>
+            <tr><th scope="row">Catches prompt and code changes in pull requests</th><td>Not that we could find.</td><td class="c-us">Yes. Flags every new or changed AI job in the pull request. A moved job whose prompt changed goes back to testing.</td></tr>
+            <tr><th scope="row">Falls back automatically</th><td>Varies.</td><td class="c-us">Yes, on errors and broken answers. Every fallback is logged.</td></tr>
+            <tr><th scope="row">Learns from misses, trains a model you own</th><td>The router learns. The models stay someone else&rsquo;s.</td><td class="c-us">Saves every miss as a lesson for your model. Training on them is <span class="soon">coming</span></td></tr>
             <tr><th scope="row">Runs in your cloud</th><td>Varies. Not Diamond offers a private deployment on its enterprise plan.</td><td class="c-us">Yes. Prompts and answers never reach us.</td></tr>
-            <tr><th scope="row">Closed and open models</th><td class="c-yes">Yes.</td><td class="c-us">Yes, closed or open.</td></tr>
+            <tr><th scope="row">Closed and open models</th><td class="c-yes">Yes.</td><td class="c-us">Yes. Any OpenAI-compatible model, closed or open.</td></tr>
             <tr><th scope="row">Pricing</th><td>Per token routed (Not Diamond).</td><td class="c-us">Free look, then a flat monthly fee smaller than what you save.</td></tr>
           </tbody>
         </table>
@@ -427,12 +428,12 @@
         <table class="cmp">
           <thead><tr><th scope="col"><span class="sr">What matters</span></th><th scope="col">Eval tools</th><th scope="col" class="c-us">Throttle</th></tr></thead>
           <tbody>
-            <tr><th scope="row">Tests each AI job on your traffic before moving it</th><td class="c-yes">Yes, on tests you write. Langfuse can also score live traces. Moving the traffic is still up to you.</td><td class="c-us">Yes, and then it moves the job when it passes.</td></tr>
-            <tr><th scope="row">Catches prompt and code changes in pull requests</th><td class="c-yes">Yes, with a GitHub Action you set up.</td><td class="c-us">Yes. Finds new AI jobs in the pull request on its own.</td></tr>
-            <tr><th scope="row">Falls back automatically</th><td>No. They don&rsquo;t sit in the request path.</td><td class="c-us">Yes. Always on, and logged.</td></tr>
-            <tr><th scope="row">Learns from misses, trains a model you own</th><td>Langfuse can turn bad traces into test sets. No training.</td><td class="c-us">Saves every miss as a lesson for your model.</td></tr>
+            <tr><th scope="row">Tests each AI job on your traffic before moving it</th><td class="c-yes">Yes, on tests you write. Langfuse can also score live traces. Moving the traffic is still up to you.</td><td class="c-us">Yes, and once a job passes, it moves with your approval.</td></tr>
+            <tr><th scope="row">Catches prompt and code changes in pull requests</th><td class="c-yes">Yes, with a GitHub Action you set up.</td><td class="c-us">Yes. Finds new and changed AI jobs in the pull request, with no tests to write.</td></tr>
+            <tr><th scope="row">Falls back automatically</th><td>No. They don&rsquo;t sit in the request path.</td><td class="c-us">Yes, on errors and broken answers. Every fallback is logged.</td></tr>
+            <tr><th scope="row">Learns from misses, trains a model you own</th><td>Langfuse can turn bad traces into test sets. No training.</td><td class="c-us">Saves every miss as a lesson for your model. Training on them is <span class="soon">coming</span></td></tr>
             <tr><th scope="row">Runs in your cloud</th><td class="c-yes">Yes. Both can be self-hosted.</td><td class="c-us">Yes. Prompts and answers never reach us.</td></tr>
-            <tr><th scope="row">Closed and open models</th><td class="c-yes">Yes.</td><td class="c-us">Yes, closed or open.</td></tr>
+            <tr><th scope="row">Closed and open models</th><td class="c-yes">Yes.</td><td class="c-us">Yes. Any OpenAI-compatible model, closed or open.</td></tr>
             <tr><th scope="row">Pricing</th><td>Free and open source, with paid cloud and enterprise plans.</td><td class="c-us">Free look, then a flat monthly fee smaller than what you save.</td></tr>
           </tbody>
         </table>
@@ -445,11 +446,11 @@
           <thead><tr><th scope="col"><span class="sr">What matters</span></th><th scope="col">Fine-tuning</th><th scope="col" class="c-us">Throttle</th></tr></thead>
           <tbody>
             <tr><th scope="row">Tests each AI job on your traffic before moving it</th><td>No. You bring the data and decide what to train.</td><td class="c-us">Yes. Finds which jobs are worth it first.</td></tr>
-            <tr><th scope="row">Catches prompt and code changes in pull requests</th><td>No.</td><td class="c-us">Yes. Re-tests the job in the pull request.</td></tr>
-            <tr><th scope="row">Falls back automatically</th><td>No.</td><td class="c-us">Yes. Always on, and logged.</td></tr>
-            <tr><th scope="row">Learns from misses, trains a model you own</th><td class="c-yes">Yes. Together AI lets you download the weights. Each run is a project you start.</td><td class="c-us">Every miss becomes a lesson, without a project.</td></tr>
+            <tr><th scope="row">Catches prompt and code changes in pull requests</th><td>No.</td><td class="c-us">Yes. Flags every new or changed AI job in the pull request. A moved job whose prompt changed goes back to testing.</td></tr>
+            <tr><th scope="row">Falls back automatically</th><td>No.</td><td class="c-us">Yes, on errors and broken answers. Every fallback is logged.</td></tr>
+            <tr><th scope="row">Learns from misses, trains a model you own</th><td class="c-yes">Yes. Together AI lets you download the weights. Each run is a project you start.</td><td class="c-us">Saves every miss as a lesson, with no project to start. Training on them is <span class="soon">coming</span></td></tr>
             <tr><th scope="row">Runs in your cloud</th><td>Training and hosting run on their cloud.</td><td class="c-us">Yes. Prompts and answers never reach us.</td></tr>
-            <tr><th scope="row">Closed and open models</th><td>Open models.</td><td class="c-us">Yes, closed or open.</td></tr>
+            <tr><th scope="row">Closed and open models</th><td>Open models.</td><td class="c-us">Yes. Any OpenAI-compatible model, closed or open.</td></tr>
             <tr><th scope="row">Pricing</th><td>Per training token, plus hosting.</td><td class="c-us">Free look, then a flat monthly fee smaller than what you save.</td></tr>
           </tbody>
         </table>
@@ -461,12 +462,12 @@
         <table class="cmp">
           <thead><tr><th scope="col"><span class="sr">What matters</span></th><th scope="col">Build it</th><th scope="col" class="c-us">Throttle</th></tr></thead>
           <tbody>
-            <tr><th scope="row">Tests each AI job on your traffic before moving it</th><td>Yes, once. Then again for every new model, prompt and price.</td><td class="c-us">Yes, every time, without anyone asking.</td></tr>
-            <tr><th scope="row">Catches prompt and code changes in pull requests</th><td>If you wire it into CI and keep it up.</td><td class="c-us">Yes. Re-tests the job in the pull request.</td></tr>
-            <tr><th scope="row">Falls back automatically</th><td>Hand-wired. Worth testing often.</td><td class="c-us">Yes. Always on, and logged.</td></tr>
-            <tr><th scope="row">Learns from misses, trains a model you own</th><td>A training project per model.</td><td class="c-us">Saves every miss as a lesson for your model.</td></tr>
+            <tr><th scope="row">Tests each AI job on your traffic before moving it</th><td>Yes, once. Then again for every new model, prompt and price.</td><td class="c-us">Yes. Keeps every job&rsquo;s tests, and flags each change that needs them run again.</td></tr>
+            <tr><th scope="row">Catches prompt and code changes in pull requests</th><td>If you wire it into CI and keep it up.</td><td class="c-us">Yes. Flags every new or changed AI job in the pull request. A moved job whose prompt changed goes back to testing.</td></tr>
+            <tr><th scope="row">Falls back automatically</th><td>Hand-wired. Worth testing often.</td><td class="c-us">Yes, on errors and broken answers. Every fallback is logged.</td></tr>
+            <tr><th scope="row">Learns from misses, trains a model you own</th><td>A training project per model.</td><td class="c-us">Saves every miss as a lesson for your model. Training on them is <span class="soon">coming</span></td></tr>
             <tr><th scope="row">Runs in your cloud</th><td class="c-yes">Yes.</td><td class="c-us">Yes. Prompts and answers never reach us.</td></tr>
-            <tr><th scope="row">Closed and open models</th><td>Whatever you wire up.</td><td class="c-us">Yes, closed or open.</td></tr>
+            <tr><th scope="row">Closed and open models</th><td>Whatever you wire up.</td><td class="c-us">Yes. Any OpenAI-compatible model, closed or open.</td></tr>
             <tr><th scope="row">Pricing</th><td>Engineer time, every week.</td><td class="c-us">Free look, then a flat monthly fee smaller than what you save.</td></tr>
           </tbody>
         </table>
@@ -483,8 +484,8 @@
       <h2 id="trust-h" class="h2">Nothing moves without proof. Nothing leaves your cloud.</h2>
       <ol class="promises">
         <li><b>Your data stays in your cloud.</b><span>Your model runs on GPUs you control. Prompts and answers never come to us, and keys are never stored.</span></li>
-        <li><b>You approve the moves.</b><span>Approve each one, or let jobs that pass move on their own. Pin any job to the API. Undo any move.</span></li>
-        <li><b>Fallback is always on.</b><span>If your model misses, that request goes to OpenAI or Anthropic. Your users still get a good answer.</span></li>
+        <li><b>You approve the moves.</b><span>Each move needs a passing test and your approval. Pin any job to the API. Undo any move.</span></li>
+        <li><b>Fallback is always on.</b><span>If your model errors, times out or sends a broken answer, that request goes to OpenAI or Anthropic. Your users still get an answer.</span></li>
         <li><b>Every decision is logged.</b><span>With the tests behind it, in plain words.</span></li>
       </ol>
     </div>
@@ -494,7 +495,7 @@
         <li data-s="own"><time class="mono">09:12</time><span class="lj">extraction</span><span class="lv">moved to your model</span><span class="lr">99% same or better &middot; approved by you</span></li>
         <li data-s="own"><time class="mono">09:14</time><span class="lj">chat</span><span class="lv">moved to your model</span><span class="lr">99% same or better &middot; approved by you</span></li>
         <li data-s="api"><time class="mono">09:15</time><span class="lj">agent</span><span class="lv">stays on the API</span><span class="lr">worse on 46% of tests</span></li>
-        <li data-s="test"><time class="mono">11:40</time><span class="lj">summarization</span><span class="lv">training</span><span class="lr">worse on 31% &middot; learning from its misses</span></li>
+        <li data-s="test"><time class="mono">11:40</time><span class="lj">summarization</span><span class="lv">stays in testing</span><span class="lr">worse on 31% &middot; misses saved as lessons</span></li>
         <li data-s="api"><time class="mono">14:03</time><span class="lj">chat</span><span class="lv">fell back once</span><span class="lr">the API answered &middot; no error for the user</span></li>
         <li data-s="api"><time class="mono">16:30</time><span class="lj">agent</span><span class="lv">pinned to the API</span><span class="lr">by you &middot; stays until you say</span></li>
       </ol>
@@ -511,7 +512,7 @@
       <h2 id="founder-h" class="letter-h">Throttle started as my idea. I built the first version <em>alone.</em></h2>
       <div class="letter-body">
         <p>For six weeks I measured what it really costs to run AI on your own machines. Every team I showed it to asked the same next question: should we even keep paying the API?</p>
-        <p>So I built the loop that answers it on a team&rsquo;s own traffic. Watch, test, move, learn. Then do it again next week.</p>
+        <p>So I built the loop that answers it on a team&rsquo;s own traffic. Watch, test, move. Then do it again next week.</p>
         <p>Now Throttle is growing past one person. I&rsquo;m looking for the first teams to run it with, and for people who want to build it with me. If your AI bill keeps growing, write to me. I read every email.</p>
       </div>
       <footer class="sign">
@@ -580,7 +581,7 @@
       <p class="body-l">See what could move on your own traffic, and what it would save. Nothing moves, and it costs nothing.</p>
       <ol class="look-steps">
         <li><span class="mono">1</span>Tell us where to reach you.</li>
-        <li><span class="mono">2</span>We help you add the GitHub app and one line.</li>
+        <li><span class="mono">2</span>We help you add the GitHub Action and point one setting at Throttle.</li>
         <li><span class="mono">3</span>You see what could move, what should stay, and what it would save.</li>
       </ol>
     </div>
@@ -617,12 +618,12 @@
       <p class="body-l">Something else? <a href="mailto:kush@throttle-pro.com">Ask Kush</a>.</p>
     </div>
     <div class="faq">
-      <details><summary>Does it need access to my code?</summary><p>It uses a GitHub app that reads where your code calls an AI API. That is how it finds your AI jobs and comments on pull requests. Your prompts and data stay in your cloud.</p></details>
+      <details><summary>Does it need access to my code?</summary><p>It uses a GitHub Action that reads where your code calls an AI API. That is how it finds your AI jobs and comments on pull requests. It runs in your own CI, and your prompts and data stay in your cloud.</p></details>
       <details><summary>Where does my model run?</summary><p>In your own cloud, on GPUs you control. Your prompts and answers never come to us, and Throttle never stores your API keys.</p></details>
-      <details><summary>What if my model gets something wrong?</summary><p>That request goes to OpenAI or Anthropic automatically, so your users still get a good answer. The miss is saved as a lesson that trains your model.</p></details>
-      <details><summary>Do I have to approve every move?</summary><p>You choose. Approve each move yourself, or let jobs that pass move on their own. You can pin any job to the API or undo a move, and every decision is logged.</p></details>
+      <details><summary>What if my model gets something wrong?</summary><p>If your model errors, times out or sends a broken answer (cut off, empty, bad JSON or a bad tool call), that request goes to OpenAI or Anthropic automatically, so your users still get an answer. The miss is saved as a lesson. Training your model on lessons is <span class="soon">coming</span></p></details>
+      <details><summary>Do I have to approve every move?</summary><p>Yes. A job moves only after it passes its tests and you approve it. You can pin any job to the API or undo a move, and every decision is logged. Letting passing jobs move on their own is <span class="soon">coming</span></p></details>
       <details><summary>What does it cost?</summary><p>The free look costs nothing and moves nothing. After that it is a flat monthly fee that is always smaller than what Throttle saves you. <a href="/pricing">More on pricing</a>.</p></details>
-      <details><summary>Which models does it test?</summary><p>Closed models from OpenAI and Anthropic, and open models you serve yourself with vLLM, SGLang, Ollama or LMDeploy. Every one runs the same tests on the same traffic. Owning a model is the upgrade when it wins.</p></details>
+      <details><summary>Which models does it test?</summary><p>Any model behind an OpenAI-compatible endpoint, closed or open: a hosted API model with your key, or an open model you serve with vLLM, SGLang, Ollama or LMDeploy. Every one runs the same tests on the same requests your app sent to OpenAI or Anthropic. The savings math is built for models you own; for cheaper API models it is <span class="soon">coming</span></p></details>
       <details><summary>I already use a gateway or an eval tool. Do I still need this?</summary><p>Keep them. A gateway carries your requests and an eval tool runs the tests you write. Throttle answers a different question: which model should do each job this week, on your traffic, and it moves the job when the answer changes. <a href="#compare">See how it compares</a>.</p></details>
       <details><summary>Is Throttle running at real companies yet?</summary><p>Not yet. Every number on this page is a sample from made-up traffic. We are choosing the first teams to run it with now.</p></details>
       <details><summary>Is it open source?</summary><p>Yes. The Throttle code is on <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a> under the MIT license.</p></details>
@@ -642,7 +643,7 @@
         <a class="cta cta-lg" id="closeCta" href="#free-look">Get a free look <i aria-hidden="true">&rarr;</i></a>
         <ul class="fine-list mono">
           <li>Your data stays in your cloud</li>
-          <li>Falls back if quality slips</li>
+          <li>Falls back on errors and broken answers</li>
           <li>Nothing moves without proof</li>
         </ul>
       </div>

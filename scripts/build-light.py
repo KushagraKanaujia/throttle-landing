@@ -46,7 +46,7 @@ def reason(w):
     if v == "KEEP ON API":
         return f"Worse on {pct(q['loss'])} of tests. Stays on the API."
     if v == "NEEDS FINETUNE":
-        return f"Worse on {pct(q['loss'])} of tests. Learning from its misses."
+        return f"Worse on {pct(q['loss'])} of tests. Stays on the API; misses saved as lessons."
     return "Not enough traffic yet. Still watching."
 
 
