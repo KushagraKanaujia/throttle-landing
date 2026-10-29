@@ -40,27 +40,36 @@
           "value": "public, max-age=31536000, immutable"
         }
       ]
+    },
+    {
+      "source": "/assets/brand/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, stale-while-revalidate=604800"
+        }
+      ]
     }
   ],
   "redirects": [
     {
       "source": "/pilot",
-      "destination": "/#assessment",
-      "statusCode": 301
+      "destination": "/#free-look",
+      "statusCode": 302
     },
     {
       "source": "/upgrade",
-      "destination": "/#assessment",
+      "destination": "/#free-look",
       "statusCode": 302
     },
     {
       "source": "/audit/book",
-      "destination": "/#assessment",
+      "destination": "/#free-look",
       "statusCode": 302
     },
     {
       "source": "/audit",
-      "destination": "/#assessment",
+      "destination": "/#free-look",
       "statusCode": 301
     }
   ]

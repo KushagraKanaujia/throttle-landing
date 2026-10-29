@@ -1,155 +1,599 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<script>document.documentElement.classList.add("js")</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Throttle: own your intelligence, keep the savings</title>
-<meta name="description" content="Throttle helps companies own their intelligence. It proves which of your OpenAI or Anthropic traffic can run on an open model you host, moves it, and keeps improving it. Free assessment, then a share of measured savings. No savings, no bill.">
-<meta name="theme-color" content="#000000">
+<title>Throttle: Stop renting your AI</title>
+<meta name="description" content="Throttle lives in your code. When your team adds or changes an AI feature, it tests the job against other models, closed or open, on your own traffic, moves it when one does as well for less, and falls back if not. Your data stays in your cloud. Free first look.">
+<meta name="theme-color" content="#070D22">
 <link rel="canonical" href="https://www.throttle-pro.com/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Throttle">
-<meta property="og:title" content="Throttle: own your intelligence. Keep the savings.">
-<meta property="og:description" content="Throttle proves which of your AI traffic can run on models you own, moves it, and keeps improving it. No savings, no bill.">
+<meta property="og:title" content="Throttle: Stop renting your AI">
+<meta property="og:description" content="Throttle tests every AI job against other models, closed or open, on your own traffic. It moves the job when one does as well for less, and falls back if not. Your data stays in your cloud.">
 <meta property="og:url" content="https://www.throttle-pro.com/">
-<meta property="og:image" content="https://www.throttle-pro.com/assets/og-own.png">
+<meta property="og:image" content="https://www.throttle-pro.com/assets/og-light.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Throttle. Stop renting your AI. Light streams flowing home into a gold savings number, labelled sample.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Throttle: own your intelligence. Keep the savings.">
-<meta name="twitter:description" content="Throttle proves which of your AI traffic can run on models you own, moves it, and keeps improving it. No savings, no bill.">
-<meta name="twitter:image" content="https://www.throttle-pro.com/assets/og-own.png">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Throttle", "applicationCategory": "DeveloperApplication", "operatingSystem": "Linux, macOS", "url": "https://www.throttle-pro.com/", "description": "Throttle sits in front of your OpenAI or Anthropic API calls, proves which share can move to an open-weight model you run yourself without losing quality, moves it with automatic fallback, and retests when new open models come out.", "license": "https://opensource.org/licenses/MIT", "codeRepository": "https://github.com/KushagraKanaujia/throttle"}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Throttle", "url": "https://www.throttle-pro.com/", "logo": "https://www.throttle-pro.com/assets/favicon.svg", "sameAs": ["https://github.com/KushagraKanaujia/throttle", "https://pypi.org/project/throttle-pro/"]}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Does my data leave my machines?", "acceptedAnswer": {"@type": "Answer", "text": "No. Throttle runs on your machines. Your requests only go to the API you already call and to models you run yourself. We never see your prompts or answers."}}, {"@type": "Question", "name": "Which models and servers does it work with?", "acceptedAnswer": {"@type": "Answer", "text": "Open-weight models you run on vLLM, SGLang, Ollama or LMDeploy. You pick the model and the GPUs. Throttle tests it on your own traffic."}}, {"@type": "Question", "name": "What if quality drops?", "acceptedAnswer": {"@type": "Answer", "text": "Then that kind of request stays on the API. If your model has a bad moment later, the request goes to the API on its own. Fallback is automatic."}}, {"@type": "Question", "name": "How are savings measured?", "acceptedAnswer": {"@type": "Answer", "text": "We take what that traffic cost on the API before the move. Then we take what it costs now: your GPU bill plus any calls that fell back to the API. The gap is your savings. Both sides come from your own logs and bills, never from guesses."}}, {"@type": "Question", "name": "What do I need to start?", "acceptedAnswer": {"@type": "Answer", "text": "An app that calls OpenAI or Anthropic. A GPU machine to run an open model on, yours or rented. Then you point your API calls at Throttle, and it starts learning from real traffic."}}]}</script>
+<meta name="twitter:title" content="Throttle: Stop renting your AI">
+<meta name="twitter:description" content="Throttle tests every AI job against other models, closed or open, on your own traffic. It moves the job when one does as well for less, and falls back if not. Your data stays in your cloud.">
+<meta name="twitter:image" content="https://www.throttle-pro.com/assets/og-light.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Throttle", "applicationCategory": "DeveloperApplication", "operatingSystem": "Linux, macOS", "url": "https://www.throttle-pro.com/", "description": "Throttle lives in your code. When your team adds or changes an AI feature, it tests whether your own open model does the job as well as OpenAI or Anthropic, moves it if so, falls back if not, and saves every miss as a lesson. Your model runs in your own cloud.", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD", "description": "Free first look. Then a flat monthly fee, always smaller than what Throttle saves you."}, "license": "https://opensource.org/licenses/MIT", "codeRepository": "https://github.com/KushagraKanaujia/throttle"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Throttle", "url": "https://www.throttle-pro.com/", "logo": "https://www.throttle-pro.com/assets/brand/icon-app.svg", "founder": {"@type": "Person", "name": "Kushagra Kanaujia"}, "sameAs": ["https://github.com/KushagraKanaujia/throttle", "https://pypi.org/project/throttle-pro/"]}</script>
+<!--faq-ld-->
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Does it need access to my code?", "acceptedAnswer": {"@type": "Answer", "text": "It uses a GitHub Action that reads where your code calls an AI API. That is how it finds your AI jobs and comments on pull requests. It runs in your own CI, and your prompts and data stay in your cloud."}}, {"@type": "Question", "name": "Where does my model run?", "acceptedAnswer": {"@type": "Answer", "text": "In your own cloud, on GPUs you control. Your prompts and answers never come to us, and Throttle never stores your API keys."}}, {"@type": "Question", "name": "What if my model gets something wrong?", "acceptedAnswer": {"@type": "Answer", "text": "If your model errors, times out or sends a broken answer (cut off, empty, bad JSON or a bad tool call), that request goes to OpenAI or Anthropic automatically, so your users still get an answer. The miss is saved as a lesson. Training your model on lessons is coming"}}, {"@type": "Question", "name": "Do I have to approve every move?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. A job moves only after it passes its tests and you approve it. You can pin any job to the API or undo a move, and every decision is logged. Letting passing jobs move on their own is coming"}}, {"@type": "Question", "name": "What does it cost?", "acceptedAnswer": {"@type": "Answer", "text": "The free look costs nothing and moves nothing. After that it is a flat monthly fee that is always smaller than what Throttle saves you. More on pricing."}}, {"@type": "Question", "name": "Which models does it test?", "acceptedAnswer": {"@type": "Answer", "text": "Any model behind an OpenAI-compatible endpoint, closed or open: a hosted API model with your key, or an open model you serve with vLLM, SGLang, Ollama or LMDeploy. Every one runs the same tests on the same requests your app sent to OpenAI or Anthropic. The savings math is built for models you own; for cheaper API models it is coming"}}, {"@type": "Question", "name": "I already use a gateway or an eval tool. Do I still need this?", "acceptedAnswer": {"@type": "Answer", "text": "Keep them. A gateway carries your requests and an eval tool runs the tests you write. Throttle answers a different question: which model should do each job this week, on your traffic, and it moves the job when the answer changes. See how it compares."}}, {"@type": "Question", "name": "Is Throttle running at real companies yet?", "acceptedAnswer": {"@type": "Answer", "text": "Not yet. Every number on this page is a sample from made-up traffic. We are choosing the first teams to run it with now."}}, {"@type": "Question", "name": "Is it open source?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The Throttle code is on GitHub under the MIT license."}}]}</script>
+<!--/faq-ld-->
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/assets/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<style id="v3css">@font-face{font-family:Geist;src:url(/assets/fonts/geist-latin.woff2) format("woff2");font-weight:100 900;font-style:normal;font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}@font-face{font-family:JetBrains Mono;src:url(/assets/fonts/jetbrains-mono-latin.woff2) format("woff2");font-weight:100 800;font-style:normal;font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}:root{--ground:#000;--bone:#f5f5f0;--dim:#a1a29a;--faint:#6f7069;--panel:#0c0c0b;--panel-2:#121210;--well:#0a0a09;--rule:rgba(255,255,255,.09);--rule-strong:rgba(255,255,255,.16);--accent:#d6ff6b;--accent-ink:#0b0c0a;--accent-soft:rgba(214,255,107,.14);--v-cheaper:#9be564;--v-costlier:#ff8a65;--v-none:#a3a499;--v-cal:#ffc857;--v-changed:#c9a0ff;--sans:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;--mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;--shell:72rem;--ease:cubic-bezier(.22,.8,.2,1);--r-lg:24px;--r-md:16px;color-scheme:dark}*,*:before,*:after{box-sizing:border-box}html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:72px}body{margin:0;background:var(--ground);color:var(--bone);font:400 17px/1.55 var(--sans);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:hidden;text-rendering:optimizeLegibility}a{color:inherit}img,svg,canvas,video{display:block;max-width:100%}code,kbd,pre{font-family:var(--mono)}::selection{background:var(--accent);color:var(--accent-ink)}:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}.shell{max-width:var(--shell);margin:0 auto;padding:0 32px}@media (max-width:600px){.shell{padding:0 16px}}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}.nav{position:sticky;top:0;z-index:50;background:#0000008c;backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border-bottom:1px solid transparent;transition:border-color .3s,background .3s}.nav.scrolled{border-color:var(--rule);background:#000000b8}.nav-in{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;height:60px}.brand{display:inline-flex;align-items:center;gap:9px;text-decoration:none;font-weight:500;letter-spacing:-.02em;font-size:17px;width:fit-content}.brand svg{width:24px;height:24px;overflow:visible}.nav-links{display:flex;gap:2px}.nav-links a,.nav-r .lnk{font-size:13.5px;color:var(--dim);text-decoration:none;padding:8px 12px;transition:color .2s}.nav-links a:hover,.nav-r .lnk:hover,.nav-links a[aria-current]{color:var(--bone)}.nav-r{display:flex;justify-content:flex-end;align-items:center;gap:4px}.nav-r .lnk{display:inline-flex;align-items:center;gap:6px}.nav-r .lnk svg{width:15px;height:15px}@media (max-width:880px){.nav-in{grid-template-columns:1fr auto}.nav-links{display:none}}@media (max-width:420px){.nav-r .lnk span{display:none}}.mark .arc{stroke-dasharray:1;stroke-dashoffset:0}.mark .ndl,.mark .hub{transform-origin:16px 22px;transform-box:view-box}.mark.play .arc{animation:mk-arc 1s var(--ease) both}.mark.play .ndl{animation:mk-ndl 1.5s cubic-bezier(.3,1.5,.5,1) both,mk-idle 9s ease-in-out 4s infinite}.mark.play .hub{animation:mk-hub .6s var(--ease) both}@keyframes mk-arc{0%{stroke-dashoffset:1}to{stroke-dashoffset:0}}@keyframes mk-ndl{0%{transform:rotate(-100deg)}35%{transform:rotate(-100deg)}to{transform:rotate(0)}}@keyframes mk-hub{0%{transform:scale(0)}to{transform:scale(1)}}.mark .ndl{animation:mk-idle 9s ease-in-out 3s infinite}@keyframes mk-idle{0%,86%,to{transform:rotate(0)}90%{transform:rotate(-14deg)}94%{transform:rotate(4deg)}}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 24px;border-radius:999px;font:500 15.5px/1 var(--sans);letter-spacing:-.01em;text-decoration:none;border:1px solid transparent;cursor:pointer;transition:background .2s,opacity .2s,border-color .2s,color .2s,transform .15s;white-space:nowrap}.btn:active{transform:scale(.97)}.btn svg{width:16px;height:16px;transition:transform .25s var(--ease)}.btn:hover svg{transform:translate(3px)}.btn-primary{background:var(--accent);color:var(--accent-ink)}.btn-primary:hover{background:#e2ff94}.btn-ghost{border-color:var(--rule-strong);color:var(--bone);background:transparent}.btn-ghost:hover{border-color:#ffffff52}.btn-sm{height:34px;padding:0 15px;font-size:13.5px}.tlink{display:inline-flex;align-items:center;gap:6px;color:var(--accent);text-decoration:none;font-size:16px;font-weight:500;letter-spacing:-.01em}.tlink:after{content:"\203a";font-size:1.25em;line-height:1;transition:transform .25s var(--ease)}.tlink:hover:after{transform:translate(3px)}.tlink:hover{text-decoration:underline;text-underline-offset:4px}h1{margin:0;font-weight:400;font-size:46px;line-height:1.04;letter-spacing:-.045em;text-wrap:balance}@media (min-width:640px){h1{font-size:72px}}@media (min-width:1100px){h1{font-size:76px}}h1 em,h2 em{font-style:normal;color:var(--faint)}h2{margin:0 0 22px;font-weight:400;font-size:36px;line-height:1.08;letter-spacing:-.035em;text-wrap:balance;max-width:20ch}@media (min-width:640px){h2{font-size:56px}}h3{margin:0 0 8px;font-weight:500;font-size:21px;line-height:1.25;letter-spacing:-.02em;text-wrap:balance}p{margin:0 0 14px}.lede{margin:28px auto 0;max-width:36rem;color:var(--dim);font-size:19px;line-height:1.5;text-wrap:pretty}@media (min-width:640px){.lede{font-size:21px}}.lede b{color:var(--bone);font-weight:500}.eyebrow{font:500 14px var(--sans);letter-spacing:-.01em;color:var(--accent);margin:0 0 16px}.sec-lede{color:var(--dim);max-width:34rem;margin:0;font-size:19px;line-height:1.5;text-wrap:pretty}.muted{color:var(--dim)}code.i{font-size:.86em;background:var(--panel-2);border:1px solid var(--rule);border-radius:6px;padding:1px 6px;color:var(--bone)}.hero{position:relative;isolation:isolate;overflow:hidden}.hero canvas{position:absolute;inset:0;width:100%;height:100%;z-index:-2;opacity:.75}.hero:before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(60% 46% at 50% 28%,#000000eb,#00000080 70%,#0003),linear-gradient(to bottom,transparent 55%,#000 92%)}.hero-in{display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:clamp(40px,7vh,72px)}.cred{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;margin:0 0 24px;padding:7px 14px;border:1px solid var(--rule);border-radius:999px;background:#ffffff08;font-size:13px;color:var(--dim)}.cred b{color:var(--bone);font-weight:500}.cred i{width:3px;height:3px;border-radius:50%;background:var(--faint);display:inline-block}.dot-live{width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;animation:pulse 2.4s infinite}@keyframes pulse{0%{box-shadow:0 0 #d6ff6b80}70%{box-shadow:0 0 0 8px #d6ff6b00}to{box-shadow:0 0 #d6ff6b00}}.hero h1{max-width:12.5em}.hero .lede{max-width:40rem;margin-top:24px}.hero-in>*{animation:rise .9s var(--ease) both}.hero-in>:nth-child(2){animation-delay:.06s}.hero-in>:nth-child(3){animation-delay:.12s}.hero-in>:nth-child(4){animation-delay:.18s}@keyframes rise{0%{transform:translateY(16px)}to{transform:none}}.cta-row{margin-top:32px;display:flex;align-items:center;justify-content:center;gap:16px 24px;flex-wrap:wrap}.well{display:flex;align-items:stretch;height:48px;width:100%;max-width:24rem;margin-top:32px;border:1px solid var(--rule);border-radius:var(--r-md);background:#0c0c0bcc;overflow:hidden}.well code{flex:1;min-width:0;display:flex;align-items:center;gap:10px;padding:0 18px;font-size:14px;white-space:nowrap;overflow-x:auto;color:var(--bone)}.well code .p{color:var(--accent);user-select:none}.well button{display:inline-flex;align-items:center;gap:7px;border:0;border-left:1px solid var(--rule);background:transparent;color:var(--dim);font:500 12.5px var(--sans);padding:0 16px;cursor:pointer;min-width:88px;justify-content:center;transition:color .2s}.well button svg{width:14px;height:14px}.well button:hover,.well button.ok{color:var(--accent)}.cta-row .well{margin-top:0;max-width:22rem}@media (max-width:600px){.cta-row{flex-direction:column;align-items:stretch;width:100%}.cta-row .btn{width:100%}.cta-row .well{max-width:none}.cta-row .tlink{justify-content:center}}.under{margin:14px 0 0;font-size:13.5px;color:var(--faint)}.under a{color:var(--dim)}.under a:hover{color:var(--bone)}.stage{position:relative;margin:56px auto 0;max-width:56rem;padding:0 0 clamp(80px,12vh,128px)}.stage:before{content:"";position:absolute;left:0;right:0;top:0;height:80%;z-index:-1;background:radial-gradient(45% 45% at 50% 50%,rgba(214,255,107,.1),transparent 75%)}.stage-cap{margin:18px auto 0;text-align:center;font-size:13.5px;color:var(--faint);max-width:40rem}.panel{position:relative;border:1px solid var(--rule);border-radius:var(--r-lg);background:linear-gradient(180deg,#ffffff09,#ffffff03 40%),var(--panel);overflow:hidden}.panel:after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 1px #ffffff0f}.scene{display:block;width:100%;height:auto;font-family:var(--mono)}.scene text{font-family:var(--mono);white-space:pre}.scene .ln{fill:none;stroke:var(--rule-strong);stroke-width:1.5}.scene .ln-b{fill:none;stroke:#f5f5f080;stroke-width:1.5}.scene .ln-d{fill:none;stroke:var(--rule-strong);stroke-width:1.2;stroke-dasharray:4 5}.scene .hd{fill:none;stroke:var(--accent);stroke-width:2.6;stroke-linecap:round;opacity:0}.scene .box{fill:#ffffff06;stroke:var(--rule-strong);stroke-width:1.2}.scene .box-a{fill:#d6ff6b0f;stroke:#d6ff6b8c;stroke-width:1.2}.scene .t{fill:var(--dim);font-size:13px}.scene .t-s{fill:var(--faint);font-size:11.5px;letter-spacing:.04em}.scene .t-b{fill:var(--bone);font-size:15px}.scene .t-xl{fill:var(--bone);font-family:var(--sans);font-weight:400;letter-spacing:-.04em}.scene .t-a{fill:var(--accent)}.scene .t-r{fill:var(--v-costlier)}.scene .t-v{fill:var(--v-changed)}.scene .t-g{fill:var(--v-cheaper)}.scene .t-y{fill:var(--v-cal)}.scene .f-a{fill:var(--accent)}.scene .f-soft{fill:var(--accent-soft)}.scene .f-trk{fill:#ffffff0d}.scene .f-bone{fill:#f5f5f0d9}.scene .f-r{fill:var(--v-costlier)}.scene .f-v{fill:var(--v-changed)}.scene .gx,.scene .gy,.scene .gc{transform-box:fill-box}.scene .gx{transform-origin:left center}.scene .gy{transform-origin:center bottom}.scene .gc{transform-origin:center center}.scene .blink{animation:blink 1.05s steps(1) infinite}@keyframes blink{50%{opacity:0}}.js .scene.sc-on [data-a=draw]{stroke-dasharray:1 1}.scene .hd{stroke-dasharray:.07 2}.sec{padding:clamp(96px,14vw,168px) 0}.sec+.sec{border-top:1px solid var(--rule)}.sec-head{margin-bottom:clamp(48px,6vw,64px)}.sec-head.c{text-align:center;display:flex;flex-direction:column;align-items:center}.sec-head.c .sec-lede{margin:0 auto}.cards{display:grid;gap:24px}.cards.c3{grid-template-columns:repeat(3,1fr)}.cards.c2{grid-template-columns:repeat(2,1fr)}@media (max-width:1000px){.cards.c3{grid-template-columns:1fr;max-width:40rem;margin:0 auto}}@media (max-width:780px){.cards.c2{grid-template-columns:1fr}}.card{display:flex;flex-direction:column}.card .scene{border-bottom:1px solid var(--rule)}.card .txt{padding:24px 32px 32px}@media (max-width:600px){.card .txt{padding:22px 22px 24px}}.card .k{font:400 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--faint);display:block;margin-bottom:12px}.card p{color:var(--dim);font-size:15.5px;margin:0}.card .chip{margin-top:18px}.foot-note{margin-top:28px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13.5px;color:var(--faint)}.foot-note a{color:var(--dim)}.foot-note a:hover{color:var(--bone)}.chip{display:inline-flex;align-items:center;gap:7px;font:700 11px var(--mono);letter-spacing:.06em;padding:5px 10px;border:1px solid currentColor;border-radius:999px;white-space:nowrap;width:fit-content}.chip:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}.v-cheaper{color:var(--v-cheaper)}.v-costlier{color:var(--v-costlier)}.v-none{color:var(--v-none)}.v-cal{color:var(--v-cal)}.v-changed{color:var(--v-changed)}.film-frame{position:relative;border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--rule);background:#050505;aspect-ratio:16/9;box-shadow:0 60px 140px -60px #d6ff6b2e,0 40px 100px #000000b3}.film-frame video{width:100%;height:100%;object-fit:cover;cursor:pointer}.film-ctl{position:absolute;left:16px;bottom:16px;right:16px;display:flex;justify-content:space-between;align-items:center;gap:10px;pointer-events:none}.film-ctl button{pointer-events:auto;display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 16px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:#14141299;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:var(--bone);font:500 13px var(--sans);cursor:pointer;transition:background .2s}.film-ctl button:hover{background:#282824cc}.film-ctl button svg{width:15px;height:15px}.film-ctl .ic{width:38px;padding:0;justify-content:center}.film-cap{margin:18px 0 0;text-align:center;font-size:13.5px;color:var(--faint)}.term{border-radius:var(--r-lg);border:1px solid var(--rule);background:var(--well);text-align:left;overflow:hidden;box-shadow:0 40px 100px -40px #000000e6}.term-bar{display:flex;align-items:center;gap:12px;height:42px;padding:0 16px;border-bottom:1px solid var(--rule);font:12px var(--mono);color:var(--faint)}.term-bar .dots{display:flex;gap:7px}.term-bar .dots i{width:11px;height:11px;border-radius:50%;background:#ffffff1f;display:block}.term-bar .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center}.term-bar button{border:1px solid var(--rule);border-radius:999px;background:none;color:var(--dim);font:11.5px var(--sans);padding:4px 11px;cursor:pointer}.term-bar button:hover{color:var(--bone);border-color:var(--rule-strong)}.term pre{margin:0;padding:20px 22px 24px;font-size:13px;line-height:1.62;color:var(--bone);overflow-x:auto;min-height:33.5em;white-space:pre}@media (max-width:640px){.term pre{font-size:10.5px;padding:14px;min-height:36em}}.term .ln{display:block}.term .js-hide{visibility:hidden}.c-p{color:var(--accent)}.c-d{color:var(--faint)}.c-m{color:var(--dim)}.c-b{font-weight:700}.c-g{color:var(--v-cheaper)}.c-r{color:var(--v-costlier)}.c-y{color:var(--v-cal)}.c-v{color:var(--v-changed)}.caret{display:inline-block;width:.6em;height:1.1em;background:var(--bone);vertical-align:-.2em;animation:blink 1s steps(1) infinite}.term-cap{margin:16px 0 0;font-size:13.5px;color:var(--faint);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}.term-cap a{color:var(--dim)}.tabs{display:inline-flex;gap:4px;padding:4px;border:1px solid var(--rule);border-radius:999px;background:#ffffff08;margin:0 auto 28px}.tabs button{position:relative;overflow:hidden;border:0;background:none;color:var(--dim);font:500 14px var(--sans);padding:9px 18px;border-radius:999px;cursor:pointer;transition:color .2s,background .2s}.tabs button[aria-selected=true]{color:var(--bone);background:#ffffff14}.tabs button i{position:absolute;left:18px;right:18px;bottom:4px;height:2px;border-radius:2px;background:var(--accent);transform:scaleX(0);transform-origin:left}.tabs button[aria-selected=true] i{animation:tabprog var(--tab-dur,6s) linear forwards}.tabs.paused button i{animation:none;transform:scaleX(0)}@keyframes tabprog{to{transform:scaleX(1)}}.shots{position:relative;aspect-ratio:1440/900;border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--rule);background:#0d0e10;box-shadow:0 60px 140px -60px #000}.shots figure{position:absolute;inset:0;margin:0;opacity:0;transform:scale(1.015);transition:opacity .7s var(--ease),transform 1.2s var(--ease)}.shots figure.on{opacity:1;transform:none}.shots img{width:100%;height:100%;object-fit:cover;object-position:top left}.shots-cap{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:32px}.shots-cap p{margin:0;font-size:15px;color:var(--faint);transition:color .4s}.shots-cap p b{display:block;color:var(--dim);font-weight:500;margin-bottom:4px;transition:color .4s}.shots-cap p.on{color:var(--dim)}.shots-cap p.on b{color:var(--bone)}@media (max-width:700px){.shots{aspect-ratio:390/844;max-width:320px;margin:0 auto;border-radius:30px}.shots-cap{grid-template-columns:1fr;gap:14px}.shots-cap p:not(.on){display:none}}.center{text-align:center}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;padding:0;margin:0;list-style:none}.steps li{padding:32px;border:1px solid var(--rule);border-radius:var(--r-lg);background:var(--panel)}.step-n{font:400 13px var(--mono);color:var(--accent);display:block;margin-bottom:40px}.steps p{color:var(--dim);font-size:15.5px;margin:0}@media (max-width:860px){.steps{grid-template-columns:1fr}}.offer{margin-top:24px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;border:1px solid var(--rule);border-radius:var(--r-lg);padding:32px;background:radial-gradient(80% 140% at 0% 0%,rgba(214,255,107,.08),transparent 60%),var(--panel)}.offer p{margin:0;font-size:19px;max-width:34rem;letter-spacing:-.01em}.offer p span{color:var(--dim)}.offer .acts{display:flex;gap:24px;flex-wrap:wrap;align-items:center}.faq-wrap{display:grid;grid-template-columns:1fr 2fr;gap:48px}@media (max-width:860px){.faq-wrap{grid-template-columns:1fr;gap:20px}}.faq{border-top:1px solid var(--rule)}.faq details{border-bottom:1px solid var(--rule)}.faq summary{cursor:pointer;list-style:none;padding:24px 44px 24px 0;font-size:18px;letter-spacing:-.01em;position:relative}.faq summary::-webkit-details-marker{display:none}.faq summary:after{content:"";position:absolute;right:8px;top:50%;width:9px;height:9px;border-right:1.5px solid var(--dim);border-bottom:1.5px solid var(--dim);transform:translateY(-70%) rotate(45deg);transition:transform .3s var(--ease)}.faq details[open] summary:after{transform:translateY(-30%) rotate(-135deg)}.faq details p{color:var(--dim);margin:0 0 24px;max-width:42rem}.close{text-align:center;padding:clamp(112px,16vw,184px) 0;border-top:1px solid var(--rule);position:relative;overflow:hidden;isolation:isolate}.close:before{content:"";position:absolute;left:50%;top:60%;width:900px;height:500px;transform:translate(-50%,-50%);z-index:-1;background:radial-gradient(50% 50% at 50% 50%,rgba(214,255,107,.1),transparent 70%)}.close h2{margin:0 auto 8px;max-width:16ch}.close .well{margin-left:auto;margin-right:auto}.foot{padding:64px 0 40px;border-top:1px solid var(--rule)}.foot-g{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px}@media (max-width:760px){.foot-g{grid-template-columns:1fr 1fr}.foot-g>:first-child{grid-column:1/-1}}.foot p{color:var(--faint);font-size:14px;margin:14px 0 0;max-width:22rem}.foot h4{margin:0 0 14px;font:500 12.5px var(--sans);color:var(--bone)}.foot ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}.foot ul a{color:var(--faint);text-decoration:none;font-size:13.5px;transition:color .2s}.foot ul a:hover{color:var(--bone)}.foot-b{margin-top:56px;padding-top:24px;border-top:1px solid var(--rule);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--faint)}.badges{display:flex;gap:10px;flex-wrap:wrap;align-items:center;opacity:.5;transition:opacity .2s}.badges:hover{opacity:1}.badges img{height:30px;width:auto}.js [data-reveal]{opacity:0;transform:translateY(24px);transition:opacity .9s var(--ease),transform .9s var(--ease);transition-delay:var(--d,0s)}.js [data-reveal].shown{opacity:1;transform:none}.page-hero{padding:clamp(72px,12vh,128px) 0 clamp(72px,10vh,112px);text-align:center}.page-hero h1{max-width:14ch;margin:0 auto}.facts{margin:44px auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:var(--r-md);overflow:hidden;max-width:48rem}.facts div{padding:20px 22px;background:var(--ground);text-align:left}.facts span{display:block;font-size:13px;color:var(--faint);margin-bottom:6px}.facts b{font-weight:500;font-size:17px;letter-spacing:-.01em}@media (max-width:700px){.facts{grid-template-columns:1fr}}.page-hero .cta-row{margin-top:36px}.page-hero .note{display:block;margin-top:18px;font-size:14px;color:var(--faint)}.two{display:grid;grid-template-columns:1fr 1.5fr;gap:64px;align-items:start}@media (max-width:900px){.two{grid-template-columns:1fr;gap:32px}}.prose{max-width:40rem}.prose ul{padding-left:20px;color:var(--dim)}.prose li{margin-bottom:12px}.prose li strong{color:var(--bone);font-weight:500}.prose p{color:var(--dim)}.prose a{color:var(--bone)}.prose strong{color:var(--bone);font-weight:500}@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}.js [data-reveal]{opacity:1;transform:none}}.scene:not(.sc-on) .fr,.scene:not(.sc-on) .nh{display:none}@media (max-width:600px){.stage .scene .t-s:not(.keep){font-size:16px}.stage .scene .t{font-size:16px}.stage .scene .t-b{font-size:18px}.c2 .scene .t-s{font-size:13px}.c2 .scene .t{font-size:14px}.page-hero .stage .scene .t,.page-hero .stage .scene .t-b{font-size:18px}}.pr-hero{padding:clamp(56px,10vh,104px) 0 48px;text-align:center}.pr-hero h1{max-width:13em;margin:0 auto}.ea{display:inline-flex;align-items:center;gap:8px;margin:0 0 24px;padding:6px 14px;border:1px solid var(--rule);border-radius:999px;font-size:13px;color:var(--dim)}.ea:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent)}.tiers{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:stretch}@media (max-width:1100px){.tiers{grid-template-columns:repeat(2,1fr)}}@media (max-width:680px){.tiers{grid-template-columns:1fr;gap:32px}}.tier{position:relative;display:flex;flex-direction:column;padding:32px 24px 24px;border:1px solid var(--rule);border-radius:var(--r-lg);background:var(--panel)}.tier.rec{border-color:#d6ff6b8c;background:radial-gradient(120% 60% at 50% 0%,rgba(214,255,107,.08),transparent 60%),var(--panel);box-shadow:0 0 0 1px #d6ff6b33,0 40px 80px -40px #d6ff6b40}.tier .badge{position:absolute;top:-12px;left:24px;height:24px;padding:0 10px;display:inline-flex;align-items:center;border-radius:999px;background:var(--accent);color:var(--accent-ink);font:600 12px var(--sans)}.tier h3{font-size:18px;margin:0 0 8px}.tier .for{color:var(--faint);font-size:14px;margin:0 0 24px;min-height:42px}.price{display:flex;align-items:baseline;gap:6px;margin:0 0 8px}.price b{font-weight:300;font-size:56px;line-height:1;letter-spacing:-.05em}.price span{color:var(--faint);font-size:15px}.incl{font-size:14px;color:var(--accent);margin:0 0 24px;min-height:21px}.tier .btn{width:100%;margin-bottom:24px}.tier ul{list-style:none;margin:0;padding:24px 0 0;border-top:1px solid var(--rule);display:grid;gap:12px;font-size:14.5px;color:var(--dim)}.tier li{position:relative;padding-left:24px;line-height:1.45}.tier li:before{content:"";position:absolute;left:2px;top:5px;width:10px;height:6px;border-left:1.5px solid var(--accent);border-bottom:1.5px solid var(--accent);transform:rotate(-45deg)}.tier li b{color:var(--bone);font-weight:500}.pr-note{margin:24px auto 0;max-width:40rem;text-align:center;font-size:14px;color:var(--faint)}.usage{max-width:40rem;margin:0 auto;border:1px solid var(--rule);border-radius:var(--r-lg);overflow:hidden}.usage table{width:100%;border-collapse:collapse;font-size:16px}.usage th,.usage td{padding:16px 24px;text-align:left;border-bottom:1px solid var(--rule)}.usage th{font:400 13px var(--sans);color:var(--faint)}.usage td:last-child,.usage th:last-child{text-align:right;font-family:var(--mono);font-size:15px}.usage tr:last-child td{border-bottom:0}.usage td small{display:block;color:var(--faint);font-size:13.5px;margin-top:2px}.usage-foot{max-width:40rem;margin:16px auto 0;font-size:14px;color:var(--faint);text-align:center}.tease{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}@media (max-width:900px){.tease{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (max-width:600px){.tease{gap:8px}.tease a{padding:16px}.tease b{font-size:32px}}.tease a{display:block;padding:24px;border:1px solid var(--rule);border-radius:var(--r-lg);background:var(--panel);text-decoration:none;transition:border-color .2s,transform .3s var(--ease)}.tease a:hover{border-color:var(--rule-strong);transform:translateY(-2px)}.tease a.rec{border-color:#d6ff6b80}.tease span{display:block;font-size:14px;color:var(--faint);margin-bottom:16px}.tease b{font-weight:300;font-size:40px;letter-spacing:-.04em;line-height:1}.tease small{color:var(--faint);font-size:14px;margin-left:4px}.tease p{margin:8px 0 0;font-size:14px;color:var(--dim)}.tease-foot{margin-top:24px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;font-size:15px;color:var(--dim)}.faq details p a{color:var(--bone)}@media (min-width:640px){h2{max-width:24ch}h2 em{display:block}}.steps.s5{grid-template-columns:repeat(5,minmax(0,1fr));gap:16px}.steps.s5 li{padding:24px 22px 26px}.steps.s5 .step-n{margin-bottom:28px}.steps.s5 h3{font-size:19px}.steps.s5 p{font-size:15px}@media (max-width:1100px){.steps.s5{grid-template-columns:repeat(3,minmax(0,1fr))}}@media (max-width:760px){.steps.s5{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (max-width:520px){.steps.s5{grid-template-columns:1fr}.steps.s5 .step-n{margin-bottom:16px}}.steps.s3{grid-template-columns:repeat(3,minmax(0,1fr))}@media (max-width:860px){.steps.s3{grid-template-columns:1fr}}.steps h3{margin-bottom:10px}.flow{display:grid;grid-template-columns:1fr auto 1fr auto 1.2fr;align-items:center;gap:16px;padding:32px;text-align:left}.flow .node{border:1px solid var(--rule-strong);border-radius:var(--r-md);padding:16px 18px;background:#ffffff06}.flow .node b{display:block;font-weight:500;font-size:16px;letter-spacing:-.01em}.flow .node span{display:block;font-size:13.5px;color:var(--faint);margin-top:4px}.flow .node.a{border-color:#d6ff6b8c;background:#d6ff6b0f}.flow .node.a b{color:var(--accent)}.flow .outs{display:grid;gap:12px}.flow .arr{color:var(--faint);font:400 20px var(--mono);text-align:center}.flow .arr:before{content:"\2192"}@media (max-width:760px){.flow{grid-template-columns:1fr;padding:20px;gap:10px}.flow .arr:before{content:"\2193"}}.demo-badge{display:inline-flex;align-items:center;gap:8px;margin:0 0 20px;padding:6px 12px;border:1px solid var(--v-cal);border-radius:999px;color:var(--v-cal);font:700 11.5px var(--mono);letter-spacing:.06em;text-transform:uppercase}.demo-badge:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}.report{padding:32px}@media (max-width:600px){.report{padding:20px}}.report-empty{min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px}.report-empty b{font-weight:400;font-size:28px;letter-spacing:-.03em}.report-empty span{color:var(--faint);font-size:15px}.rep-tot{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:var(--r-md);overflow:hidden;margin-bottom:24px}.rep-tot div{background:var(--panel);padding:18px 20px}.rep-tot span{display:block;font-size:13px;color:var(--faint);margin-bottom:6px}.rep-tot b{font:400 28px var(--sans);letter-spacing:-.03em}.rep-tot .hi b{color:var(--accent)}@media (max-width:600px){.rep-tot{grid-template-columns:1fr}}.rep-wrap{overflow-x:auto}.rep-table{width:100%;border-collapse:collapse;font-size:15px;min-width:36rem}.rep-table th,.rep-table td{padding:14px 12px;text-align:left;border-bottom:1px solid var(--rule);vertical-align:middle}.rep-table th{font:400 12.5px var(--sans);color:var(--faint)}.rep-table td.n{font-family:var(--mono);font-size:14px;text-align:right}.rep-table th.n{text-align:right}.rep-table tr:last-child td{border-bottom:0}.rep-foot{margin:16px 0 0;font-size:13.5px;color:var(--faint)}.who{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}.who article{padding:32px;border:1px solid var(--rule);border-radius:var(--r-lg);background:var(--panel)}.who p{color:var(--dim);margin:0;font-size:16px}@media (max-width:780px){.who{grid-template-columns:1fr}}.aform{margin:40px auto 0;max-width:32rem;text-align:left;display:grid;gap:18px}.aform label{display:grid;gap:8px;font-size:14px;color:var(--dim)}.aform label small{color:var(--faint);font-size:13px}.aform input,.aform select{width:100%;height:48px;padding:0 16px;border:1px solid var(--rule-strong);border-radius:12px;background:var(--panel);color:var(--bone);font:400 16px var(--sans);appearance:none;-webkit-appearance:none}.aform select{background-image:linear-gradient(45deg,transparent 50%,var(--dim) 50%),linear-gradient(135deg,var(--dim) 50%,transparent 50%);background-position:calc(100% - 22px) 50%,calc(100% - 16px) 50%;background-size:6px 6px;background-repeat:no-repeat}.aform input:focus,.aform select:focus{outline:none;border-color:var(--accent)}.aform .btn{width:100%;margin-top:6px}.aform .btn[disabled]{opacity:.6;cursor:wait}.aform .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}.form-msg{min-height:1.5em;margin:0;font-size:15px;color:var(--dim);text-align:center}.form-msg.ok{color:var(--accent)}.form-msg a{color:var(--bone)}.aform-alt{margin:4px 0 0;text-align:center;font-size:13.5px;color:var(--faint)}.aform-alt a{color:var(--dim)}.hero h1 em{display:block}</style>
-<script src="/assets/js/v3.min.js?v=3" defer></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,200..600,0..100;1,9..144,200..600,0..100&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/light.css?v=9ae42120">
+<script>document.documentElement.classList.add("js");if(matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("rm")</script>
 </head>
 <body>
+<!--nav-->
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav" id="nav" data-nav>
+  <a class="logo" href="/" aria-label="Throttle home"><img class="lg-d" src="/assets/brand/wordmark-dark.svg" alt="Throttle" width="118" height="28"><img class="lg-l" src="/assets/brand/wordmark-light.svg" alt="" width="118" height="28"></a>
+  <nav class="links" aria-label="Main">
+    <a href="/#how">How it works</a>
+    <a href="/pricing">Pricing</a>
+    <a href="/blog">Blog</a>
+    <a href="/guides">Guides</a>
+    <a href="/cost-index">Cost Index</a>
+  </nav>
+  <div class="nav-r">
+    <a class="cta cta-sm" href="/#free-look">Get a free look <i aria-hidden="true">&rarr;</i></a>
+    <button class="menu" type="button" aria-expanded="false" aria-controls="sheet" data-menu><span class="sr">Menu</span><i aria-hidden="true"></i></button>
+  </div>
+</header>
+<div class="sheet" id="sheet" hidden>
+  <nav aria-label="Menu">
+    <a href="/#how">How it works</a>
+    <a href="/pricing">Pricing</a>
+    <a href="/blog">Blog</a>
+    <a href="/guides">Guides</a>
+    <a href="/cost-index">Cost Index</a>
+  </nav>
+  <a class="cta" href="/#free-look">Get a free look <i aria-hidden="true">&rarr;</i></a>
+</div>
+<!--/nav-->
 
-<header class="nav">
-  <div class="shell nav-in">
-    <a class="brand" href="/" aria-label="Throttle home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><path class="arc" pathLength="1" d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path class="ndl" d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><rect class="hub" x="13.6" y="19.6" width="4.8" height="4.8" rx="1.2" fill="var(--accent)"/></svg><span>throttle</span></a>
-    <nav class="nav-links" aria-label="Pages">
-      <a href="#how">How it works</a>
-      <a href="#proof">Sample report</a>
-      <a href="/pricing">Pricing</a>
-      <a href="#faq">FAQ</a>
-    </nav>
-    <div class="nav-r">
-      <a class="lnk" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener" aria-label="Throttle on GitHub">
-        <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-        <span>GitHub</span>
-      </a>
-      <a class="btn btn-primary btn-sm" href="#assessment">Free assessment</a>
+<main id="main">
+
+<!-- ============ HERO: the living light ============ -->
+<header id="hero" class="pg" aria-labelledby="hero-h">
+  <div class="stage" id="stage">
+    <div class="still" aria-hidden="true"></div>
+    <canvas id="flow" aria-hidden="true"></canvas>
+
+    <div class="hero-copy" id="heroCopy">
+      <p class="eyebrow mono">For teams paying OpenAI &amp; Anthropic</p>
+      <h1 id="hero-h">Stop renting<br>your <em>AI.</em></h1>
+      <p class="lede">Throttle lives in your code and tests every AI job against other models, closed or open, on your own traffic. When one does the job as well for less, you move it with one approval. If not, nothing moves.</p>
+      <div class="hero-actions">
+        <a class="cta" href="#free-look">Get a free look <i aria-hidden="true">&rarr;</i></a>
+        <a class="ghost" href="#how">See how it works</a>
+      </div>
     </div>
+
+    <p class="tag mono" id="tagRent" aria-hidden="true"><span>OpenAI / Anthropic &middot; renting</span><i class="dot"></i></p>
+    <p class="tag mono" id="tagApp" aria-hidden="true"><i class="dot"></i><span>Your app&rsquo;s AI calls</span></p>
+
+    <p class="shift" id="shift" aria-hidden="true">Job by job,<br>more of it <em>comes home.</em></p>
+
+    <div class="home" id="home">
+      <p class="mono home-k"><span>Your own model &middot; owning</span><i class="dot"></i></p>
+      <p class="counter num" id="counter" aria-label="$8,882.61 saved per month, sample numbers">$8,882<small>.61</small></p>
+      <p class="sub">saved per month &middot; <b>sample</b> numbers</p>
+    </div>
+    <span class="cue" aria-hidden="true"><i></i></span>
   </div>
 </header>
 
-<main>
-
-<section class="hero" aria-label="Throttle">
-  <canvas data-stream aria-hidden="true"></canvas>
-  <div class="shell hero-in">
-    <p class="cred"><span class="dot-live" aria-hidden="true"></span><b>Open source</b><i aria-hidden="true"></i>Runs on your machines<i aria-hidden="true"></i>OpenAI &middot; Anthropic</p>
-    <h1>Own your intelligence. <em>Keep the savings.</em></h1>
-    <p class="lede">Throttle proves which of your AI traffic can run on models you own, moves it, and keeps improving it.</p>
-    <div class="cta-row">
-      <a class="btn btn-primary" href="#assessment">Get a free savings assessment <svg viewBox="0 0 256 256" aria-hidden="true"><path fill="currentColor" d="M224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01z"/></svg></a>
-      <a class="btn btn-ghost" href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> Open source on GitHub</a>
+<!-- ============ FIG. 1: WHERE THE MONEY GOES ============ -->
+<section id="money" class="pg sec-money" aria-labelledby="money-h">
+  <div class="wrap money-grid">
+    <div class="money-copy">
+            <h2 id="money-h" class="h2">Where the money goes.</h2>
+      <p class="body-l">Today every AI job your app runs goes out to OpenAI or Anthropic. You pay for it by the token. Throttle redraws that map, one job at a time.</p>
+      <dl class="money-key">
+        <div><dt><i class="k-own"></i>Moved home</dt><dd>Your own model does the job as well.</dd></div>
+        <div><dt><i class="k-test"></i>Testing</dt><dd>Still being checked. Stays on the API meanwhile.</dd></div>
+        <div><dt><i class="k-api"></i>Stayed</dt><dd>The API is still better at it, so it stays.</dd></div>
+      </dl>
     </div>
-    <p class="under">No savings, no bill.</p>
+
+    <figure class="fig" aria-labelledby="figcap">
+      <div class="fighead"><span class="mono">Fig. 1 <b>One month, six jobs</b></span><span class="tag-s">sample</span></div>
+      <svg id="sankey" viewBox="0 0 760 480" role="img" aria-label="Sample. Six AI jobs start out flowing to OpenAI and Anthropic, about $27,215 a month. Extraction, chat and classification are redrawn to your own model. Summarization and code are being tested. Agent stays on the API.">
+        <g id="skLines"></g><g id="skLabels"></g>
+      </svg>
+      <div class="tally">
+        <p class="tally-n num" aria-label="$8,882.61 saved a month, sample"><span class="cy">$</span><span id="tw">8,882</span><span class="c" id="tc">.61</span></p>
+        <p class="tally-cap"><span class="mono">Saved a month</span>What came home once three jobs moved, after paying for your own GPUs.</p>
+      </div>
+      <figcaption class="figfoot" id="figcap"><span>Sample figures from <code>throttle demo</code> on made-up traffic. One line is about $500 a month.</span><button type="button" id="replay">Replay figure</button></figcaption>
+    </figure>
   </div>
-  <div class="shell">
-    <div class="stage">
-      <div class="panel flow" role="img" aria-label="Your app sends AI calls to Throttle. Throttle sends the proven kinds of requests to your own model and the rest to the OpenAI or Anthropic API.">
-        <div class="node"><b>Your app</b><span>Calls OpenAI or Anthropic today</span></div>
-        <div class="arr" aria-hidden="true"></div>
-        <div class="node a"><b>Throttle</b><span>Runs on your machines</span></div>
-        <div class="arr" aria-hidden="true"></div>
-        <div class="outs">
-          <div class="node a"><b>Your model</b><span>Kinds of requests that proved they hold up</span></div>
-          <div class="node"><b>OpenAI or Anthropic API</b><span>Everything else, and the fallback</span></div>
+</section>
+
+<!-- ============ WATCH IT RUN: the real CLI, recorded ============ -->
+<section id="watch" class="sec sec-watch" aria-labelledby="watch-h">
+  <div class="wrap watch-grid">
+    <div class="watch-copy">
+      <h2 id="watch-h" class="h2">Watch it <em>run.</em></h2>
+      <p class="body-l">25 seconds of the real Throttle command line on a sample support app. It finds every AI job in the code, prices each one, refuses a model that answers worse, moves one that passes, sends a job back to testing when a pull request edits its prompt, undoes a move, and checks for newer open models.</p>
+      <p class="watch-note"><span class="tag-s">sample data</span>Made-up app and traffic, real tool output. Dollar figures are synthetic. Your numbers will differ.</p>
+    </div>
+    <figure class="player" data-player>
+      <div class="pl-h"><img src="/assets/brand/icon-dark.svg" alt="" width="14" height="14"><span>throttle</span><span class="d">&middot;</span><span>recorded session</span><span class="sp"></span><span class="tag-s">sample</span></div>
+      <div class="pl-v">
+        <!--demo-video-->
+        <video class="pl-video" muted playsinline loop preload="none" poster="/assets/media/demo/throttle-demo-poster.jpg?v=e61db625" aria-label="Recording of the Throttle command line on a sample app: finding AI jobs, pricing them, refusing a worse model, approving one that passes, re-testing after a prompt edit, undoing a move, and watching for new models.">
+          <source data-src="/assets/media/demo/throttle-demo.webm?v=8372d83e" type="video/webm">
+          <source data-src="/assets/media/demo/throttle-demo.mp4?v=c93f581f" type="video/mp4">
+        </video>
+<!--/demo-video-->
+        <button class="pl-btn" type="button" aria-label="Pause the recording" hidden><i aria-hidden="true"></i></button>
+      </div>
+      <figcaption class="pl-cap"><!--demo-cap-->
+<span>Recorded in a terminal, no sound. Plays when it scrolls into view.</span>
+<!--/demo-cap--><span class="pl-t mono" aria-hidden="true"></span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS: four beats in light ============ -->
+<section id="how" class="sec-how" aria-labelledby="how-h">
+  <span id="install" class="anchor" aria-hidden="true"></span>
+  <div class="how-stage">
+    <div class="how-text">
+      <h2 id="how-h" class="h2">Every AI job, tested for the way <em>home.</em></h2>
+      <ol class="beats" id="beats" style="--p:0">
+        <li class="beat is-on" data-beat="0">
+          <span class="b-n mono">01</span>
+          <h3>Set up once.</h3>
+          <p>Point your API base URL at Throttle and add the GitHub Action. Throttle sees every call your app makes to OpenAI or Anthropic. Nothing else changes.</p>
+        </li>
+        <li class="beat" data-beat="1">
+          <span class="b-n mono">02</span>
+          <h3>It watches every change.</h3>
+          <p>When your team adds or changes an AI feature, Throttle notices in the pull request and picks the job up. No ticket, no project.</p>
+        </li>
+        <li class="beat" data-beat="2">
+          <span class="b-n mono">03</span>
+          <h3>Tests before it moves. Falls back if not.</h3>
+          <p>Other models, closed or open, answer the same requests in the background, your own model among them. If one does the job as well for less, you approve and the job moves. If it errors or gives a broken answer, that request goes straight back to the API.</p>
+        </li>
+        <li class="beat" data-beat="3">
+          <span class="b-n mono">04</span>
+          <h3>Keeps every miss.</h3>
+          <p>Every fallback and every lost test is saved in your cloud as a lesson for your model. Training your model on them is <span class="soon">coming</span></p>
+        </li>
+      </ol>
+    </div>
+    <div class="how-fig" aria-hidden="true">
+      <canvas id="howCanvas"></canvas>
+      <span class="hf hf-app mono">Your app</span>
+      <span class="hf hf-gate mono">Throttle</span>
+      <span class="hf hf-api mono">OpenAI / Anthropic</span>
+      <span class="hf hf-home mono">Your own model<b>in your cloud</b></span>
+      <span class="hf hf-new mono">+ new AI feature</span>
+      <span class="hf hf-fb mono">falls back</span>
+      <span class="hf hf-lesson mono">lesson</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SEE IT WORK: the live session ============ -->
+<section id="see" class="sec sec-see" aria-labelledby="see-h">
+  <div class="wrap">
+    <div class="see-head">
+      <h2 id="see-h" class="h2">See it work.</h2>
+      <p class="body-l">A sample session on made-up traffic. On the right, the commands. On the left, where every request goes while they run.</p>
+    </div>
+
+    <div class="tmux" id="tmux">
+      <div class="tm-h"><img src="/assets/brand/icon-dark.svg" alt="" width="14" height="14"><span>throttle</span><span class="d">&middot;</span><span>~/your-app</span><span class="sp"></span><span class="tag-s">sample</span><button id="tmReplay" type="button" aria-label="Replay the session">&#8635; replay</button></div>
+      <div class="tm-b">
+        <div class="pane flowpane" role="img" aria-label="Sample animation: requests that went to OpenAI and Anthropic move one job at a time to your own model, while the savings counter climbs to $8,882.61 a month.">
+          <div class="pane-l"><span>throttle top<span class="hide-s"> &nbsp;&middot;&nbsp; where every request goes</span></span></div>
+          <canvas id="tmFlow" height="280"></canvas>
+          <div class="readout">
+            <div><p class="l">API bill</p><p class="v r num" id="roApi">$27,215<small>/mo</small></p></div>
+            <div><p class="l">moved home</p><p class="v num" id="roMoved">$0<small>/mo</small></p></div>
+            <div><p class="l">your GPUs</p><p class="v num" id="roGpu">$0<small>/mo</small></p></div>
+            <div class="save"><p class="l">saved &middot; sample</p><p class="v num" id="roSave">$0.00<small>/mo</small></p></div>
+          </div>
         </div>
+        <div class="pane" aria-label="A sample Throttle terminal session">
+          <div class="pane-l"><span>zsh &nbsp;&middot;&nbsp; sample session</span></div>
+          <div class="term-b"><div class="scroll" id="tscroll" aria-live="off"></div></div>
+        </div>
+      </div>
+      <div class="tm-s"><span class="on">0 top</span><span>1 zsh</span><span class="sp"></span><span id="stStep">shadow</span><span class="gv" id="stSave">saved $0.00/mo</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ THE LEDGER ============ -->
+<section id="ledger" class="sec sec-ledger" aria-labelledby="ledger-h">
+  <div class="wrap">
+    <div class="ledger-head">
+      <h2 id="ledger-h" class="h2">One month, settled up.</h2>
+      <p class="body-l">Money you can see, job by job. Every job shows what it cost on the API, where it runs now, and the tests behind that call. Open any job for the error bars.</p>
+    </div>
+    <div class="ledger-grid">
+      <div class="stmt">
+        <p class="col-h mono"><span>Statement</span><span>Per month &middot; sample</span></p>
+        <div class="row"><span class="k">API bill<small>Everything sent to OpenAI and Anthropic</small></span><span class="dots"></span><span class="v num">$27,215</span></div>
+        <div class="row"><span class="k">Moved home<small>Extraction, chat, classification</small></span><span class="dots"></span><span class="v num">$12,518</span></div>
+        <div class="row minus"><span class="k">Your GPUs<small>What running those jobs yourself costs</small></span><span class="dots"></span><span class="v num">$3,635</span></div>
+        <div class="row total"><span class="k">Saved</span><span class="dots"></span><span class="v num">$8,882.61</span></div>
+        <div class="split" aria-hidden="true"><i class="s-api"></i><i class="s-gpu"></i><i class="s-save"></i></div>
+        <p class="legend"><span class="l-api">Still on the API</span><span class="l-gpu">Your GPUs</span><span class="l-save">Saved</span></p>
+      </div>
+      <div class="jobs">
+        <p class="col-h mono"><span>The six jobs</span><span>Tests vs the API</span></p>
+<!--jobs-->
+        <ol class="job-list">
+          <li class="job" data-s="own"><details>
+            <summary><span class="j-n">extraction</span><span class="j-amt num">$5,652.59<small>/mo</small></span><span class="j-st">Moved</span><span class="j-why">Same or better on 99% of tests. Runs on your model now.</span></summary>
+            <div class="j-more">
+              <span class="wtl" aria-hidden="true"><i class="w" style="--p:1.7"></i><i class="t" style="--p:97.5"></i><i class="l" style="--p:0.8"></i></span>
+              <p class="mono"><span>better 1.7%</span><span>same 97.5%</span><span>worse 0.8%</span></p>
+              <p>Net score against the API, with error bars: &minus;1.7 to +3.3 points.</p>
+            </div>
+          </details></li>
+          <li class="job" data-s="own"><details>
+            <summary><span class="j-n">chat</span><span class="j-amt num">$4,523.51<small>/mo</small></span><span class="j-st">Moved</span><span class="j-why">Same or better on 99% of tests. Runs on your model now.</span></summary>
+            <div class="j-more">
+              <span class="wtl" aria-hidden="true"><i class="w" style="--p:1.7"></i><i class="t" style="--p:97.5"></i><i class="l" style="--p:0.8"></i></span>
+              <p class="mono"><span>better 1.7%</span><span>same 97.5%</span><span>worse 0.8%</span></p>
+              <p>Net score against the API, with error bars: &minus;1.7 to +4.2 points.</p>
+            </div>
+          </details></li>
+          <li class="job" data-s="own"><details>
+            <summary><span class="j-n">classification</span><span class="j-amt num">$2,341.91<small>/mo</small></span><span class="j-st">Moved</span><span class="j-why">Same or better on 99% of tests. Runs on your model now.</span></summary>
+            <div class="j-more">
+              <span class="wtl" aria-hidden="true"><i class="w" style="--p:2.1"></i><i class="t" style="--p:97.2"></i><i class="l" style="--p:0.7"></i></span>
+              <p class="mono"><span>better 2.1%</span><span>same 97.2%</span><span>worse 0.7%</span></p>
+              <p>Net score against the API, with error bars: &minus;1.4 to +4.2 points.</p>
+            </div>
+          </details></li>
+          <li class="job" data-s="test"><details>
+            <summary><span class="j-n">summarization</span><span class="j-amt num">$7,235.34<small>/mo</small></span><span class="j-st">Testing</span><span class="j-why">Worse on 31% of tests. Stays on the API; misses saved as lessons.</span></summary>
+            <div class="j-more">
+              <span class="wtl" aria-hidden="true"><i class="w" style="--p:8.3"></i><i class="t" style="--p:61.1"></i><i class="l" style="--p:30.6"></i></span>
+              <p class="mono"><span>better 8.3%</span><span>same 61.1%</span><span>worse 30.6%</span></p>
+              <p>Net score against the API, with error bars: &minus;36.1 to &minus;8.3 points.</p>
+            </div>
+          </details></li>
+          <li class="job" data-s="test"><details>
+            <summary><span class="j-n">code</span><span class="j-amt num">$1,937.46<small>/mo</small></span><span class="j-st">Testing</span><span class="j-why">Worse on 50% of tests. Stays on the API; misses saved as lessons.</span></summary>
+            <div class="j-more">
+              <span class="wtl" aria-hidden="true"><i class="w" style="--p:10.0"></i><i class="t" style="--p:40.0"></i><i class="l" style="--p:50.0"></i></span>
+              <p class="mono"><span>better 10.0%</span><span>same 40.0%</span><span>worse 50.0%</span></p>
+              <p>Net score against the API, with error bars: &minus;56.7 to &minus;23.3 points.</p>
+            </div>
+          </details></li>
+          <li class="job" data-s="api"><details>
+            <summary><span class="j-n">agent</span><span class="j-amt num">$5,524.31<small>/mo</small></span><span class="j-st">Stayed</span><span class="j-why">Worse on 46% of tests. Stays on the API.</span></summary>
+            <div class="j-more">
+              <span class="wtl" aria-hidden="true"><i class="w" style="--p:0.0"></i><i class="t" style="--p:53.6"></i><i class="l" style="--p:46.4"></i></span>
+              <p class="mono"><span>better 0.0%</span><span>same 53.6%</span><span>worse 46.4%</span></p>
+              <p>Net score against the API, with error bars: &minus;57.1 to &minus;35.7 points.</p>
+            </div>
+          </details></li>
+        </ol>
+<!--/jobs-->
+        <p class="fine">Sample. Real <code>throttle demo</code> output on made-up traffic, not a customer. Your numbers will differ. The free look shows you yours.</p>
       </div>
     </div>
   </div>
 </section>
 
-<section class="sec" id="how">
-  <div class="shell">
-    <div class="sec-head">
-      <p class="eyebrow" data-reveal>How it works</p>
-      <h2 data-reveal>Prove it first. <em>Then move it.</em></h2>
-      <p class="sec-lede" data-reveal>Nothing moves until your own traffic shows it is safe to move.</p>
+<!-- ============ IN THEIR WORDS: real problems, real quotes ============
+     Quotes are exact words, checked against their source on 2026-10-28 (HN via hn.algolia.com/api/v1/items/<id>, GitHub via gh issue view).
+     Stats checked on the primary source the same day. -->
+<section id="problems" class="sec sec-words" aria-labelledby="words-h">
+  <div class="wrap">
+    <div class="words-head">
+      <h2 id="words-h" class="h2">The problems, in engineers&rsquo; <em>own words.</em></h2>
+      <p class="body-l">We read what teams running AI in production write on Hacker News and GitHub. The same problems kept coming up. Here they are in the words people used, and what Throttle does about each.</p>
     </div>
-    <ol class="steps s5">
-      <li data-reveal><h3>Capture</h3><p>Point your OpenAI or Anthropic calls at Throttle. It logs them on your machines, with personal data masked.</p></li>
-      <li data-reveal><h3>Shadow</h3><p>It sends a sample of each kind of request to an open model on your GPUs. Those answers are scored, never shown to users.</p></li>
-      <li data-reveal><h3>Prove</h3><p>Your own traffic becomes the test. You see wins, ties and losses with error bars, per kind of request.</p></li>
-      <li data-reveal><h3>Move</h3><p>Kinds that hold up move to your model, with automatic fallback to the API.</p></li>
-      <li data-reveal><h3>Refresh</h3><p>When a new open model comes out, Throttle reruns your tests and tells you whether to switch.</p></li>
+
+    <dl class="stats" aria-label="The numbers behind it">
+      <div class="stat"><dt class="st-n num">52<small>%</small></dt><dd><span>of teams run offline evals on a test set. Just over half.</span><a class="st-src mono" href="https://www.langchain.com/state-of-agent-engineering" target="_blank" rel="noopener">LangChain, 1,340 teams <i aria-hidden="true">&nearr;</i></a></dd></div>
+      <div class="stat"><dt class="st-n num">45<small>%</small></dt><dd><span>average gross margin on AI products in 2025.</span><a class="st-src mono" href="https://www.iconiq.com/growth/reports/state-of-ai-2026" target="_blank" rel="noopener">ICONIQ State of AI 2026 <i aria-hidden="true">&nearr;</i></a></dd></div>
+      <div class="stat"><dt class="st-n num">32<small>%</small></dt><dd><span>of model pairs where the model with the lower list price cost more in real use, by up to 28x.</span><a class="st-src mono" href="https://arxiv.org/abs/2603.23971" target="_blank" rel="noopener">Chen, Zaharia, Stoica et al. 2026 <i aria-hidden="true">&nearr;</i></a></dd></div>
+      <div class="stat"><dt class="st-n num">16<small>%</small></dt><dd><span>of Sonnet 4 requests hit in the worst hour of a bug that Anthropic&rsquo;s own evals &ldquo;simply didn&rsquo;t capture&rdquo;.</span><a class="st-src mono" href="https://www.anthropic.com/engineering/a-postmortem-of-three-recent-issues" target="_blank" rel="noopener">Anthropic postmortem <i aria-hidden="true">&nearr;</i></a></dd></div>
+    </dl>
+
+    <ol class="words">
+      <li class="word">
+        <h3 class="w-p"><span class="w-n mono">01</span>Re-testing every release costs too much, so it gets skipped.</h3>
+        <blockquote class="w-q" cite="https://news.ycombinator.com/item?id=47029675"><p>&ldquo;Pin to a specific model version, run evals on every new release, and only upgrade when your test suite passes. But that&rsquo;s expensive engineering overhead that shouldn&rsquo;t be necessary.&rdquo;</p><footer><a href="https://news.ycombinator.com/item?id=47029675" target="_blank" rel="noopener">An engineer on Hacker News, Feb 2026 <i aria-hidden="true">&nearr;</i></a></footer></blockquote>
+        <p class="w-a"><span class="mono">Throttle</span>Keeps every job&rsquo;s tests on your own traffic. A changed prompt sends the job back to testing, and trying a new model is one command. Watching prices for you is <span class="soon">coming</span></p>
+      </li>
+      <li class="word">
+        <h3 class="w-p"><span class="w-n mono">02</span>Nobody wants to find out later that the cheaper model was worse.</h3>
+        <blockquote class="w-q" cite="https://news.ycombinator.com/item?id=48490034"><p>&ldquo;The hard part with these routers is deciding the cheap model is &lsquo;good enough&rsquo; without already knowing the answer.&rdquo;</p><footer><a href="https://news.ycombinator.com/item?id=48490034" target="_blank" rel="noopener">An engineer on Hacker News, Jun 2026 <i aria-hidden="true">&nearr;</i></a></footer></blockquote>
+        <p class="w-a"><span class="mono">Throttle</span>Nothing moves until it passes. Each job shows better, same or worse on real requests, with error bars one click away.</p>
+      </li>
+      <li class="word">
+        <h3 class="w-p"><span class="w-n mono">03</span>The model you rent changes under you.</h3>
+        <blockquote class="w-q" cite="https://news.ycombinator.com/item?id=48625385"><p>&ldquo;Tuesdays behaviour changes by Thursday, 10AMs production isn&rsquo;t possible at 11:30AM.&rdquo;</p><footer><a href="https://news.ycombinator.com/item?id=48625385" target="_blank" rel="noopener">An engineer on Hacker News, Jun 2026 <i aria-hidden="true">&nearr;</i></a></footer></blockquote>
+        <p class="w-a"><span class="mono">Throttle</span>A model you own only changes when you say so, and its tests run again in one command. Spotting changes on the vendor&rsquo;s side for you is <span class="soon">coming</span></p>
+      </li>
+      <li class="word">
+        <h3 class="w-p"><span class="w-n mono">04</span>The AI bill grows faster than revenue.</h3>
+        <blockquote class="w-q" cite="https://news.ycombinator.com/item?id=48980244"><p>&ldquo;Our competitors are giving half of their margin over to these large AI service providers&rdquo;</p><footer><a href="https://news.ycombinator.com/item?id=48980244" target="_blank" rel="noopener">A company owner on Hacker News, Jul 2026 <i aria-hidden="true">&nearr;</i></a></footer></blockquote>
+        <p class="w-a"><span class="mono">Throttle</span>Every job that moves to your own model comes off the API bill. The monthly savings statement shows what you kept after GPU costs.</p>
+      </li>
+      <li class="word">
+        <h3 class="w-p"><span class="w-n mono">05</span>One cheap model does most jobs well, and fails a few.</h3>
+        <blockquote class="w-q" cite="https://news.ycombinator.com/item?id=44058601"><p>&ldquo;Gemini flash was pretty good for my needs (and significantly cheaper), but failed to follow the XML schema in the prompt that Claude could follow.&rdquo;</p><footer><a href="https://news.ycombinator.com/item?id=44058601" target="_blank" rel="noopener">A SaaS developer on Hacker News, May 2025 <i aria-hidden="true">&nearr;</i></a></footer></blockquote>
+        <p class="w-a"><span class="mono">Throttle</span>Decides job by job, never all at once. Extraction can move while the agent stays where it works.</p>
+      </li>
+      <li class="word">
+        <h3 class="w-p"><span class="w-n mono">06</span>The fallback was there. It didn&rsquo;t fire.</h3>
+        <blockquote class="w-q" cite="https://github.com/BerriAI/litellm/issues/8632"><p>&ldquo;Today gemini was having issues and kept returning 500 errors, but the fallbacks didn&rsquo;t seem to kick in at all.&rdquo;</p><footer><a href="https://github.com/BerriAI/litellm/issues/8632" target="_blank" rel="noopener">An engineer in a GitHub issue, Feb 2025 <i aria-hidden="true">&nearr;</i></a></footer></blockquote>
+        <p class="w-a"><span class="mono">Throttle</span>Fallback comes with every move. Errors, timeouts and broken answers go back to the API, and every fallback is logged with its reason, so you can see it work.</p>
+      </li>
+      <li class="word">
+        <h3 class="w-p"><span class="w-n mono">07</span>Owning GPUs brings its own bills.</h3>
+        <blockquote class="w-q" cite="https://news.ycombinator.com/item?id=47677447"><p>&ldquo;We&rsquo;re paying for servers that sit idle at night, you don&rsquo;t find enough sysadmins&rdquo;</p><footer><a href="https://news.ycombinator.com/item?id=47677447" target="_blank" rel="noopener">An engineer on Hacker News, Apr 2026 <i aria-hidden="true">&nearr;</i></a></footer></blockquote>
+        <p class="w-a"><span class="mono">Throttle</span>Owning is not always the answer. Throttle counts GPU costs before it calls anything a saving, and when the API is still cheaper, it says keep it there.</p>
+      </li>
     </ol>
   </div>
 </section>
 
-<section class="sec" id="proof">
-  <div class="shell">
-    <div class="sec-head">
-      <p class="eyebrow" data-reveal>Proof</p>
-      <h2 data-reveal>A sample savings report.</h2>
-      <p class="sec-lede" data-reveal>This is the report an assessment gives you. Here it runs on made-up traffic. Yours runs on your own requests.</p>
+<!-- ============ WHY TEAMS PICK THROTTLE: an honest comparison ============
+     Every competitor fact below was checked on the competitor's own pages on 2026-10-28:
+     LiteLLM   https://github.com/BerriAI/litellm (MIT, 100+ providers), https://docs.litellm.ai/docs/proxy/reliability (fallbacks),
+               https://docs.litellm.ai/docs/auto_router/ (complexity-tier auto router), https://www.litellm.ai/enterprise (custom pricing)
+     Portkey   https://portkey.ai/docs/product/ai-gateway/fallbacks, https://portkey.ai/docs/product/ai-gateway/conditional-routing,
+               https://portkey.ai/docs/guides/getting-started/a-b-test-prompts-and-models (live A/B), https://portkey.ai/pricing ($49/mo Production plan, 100k recorded logs; re-checked 10/28),
+               https://github.com/Portkey-AI/gateway (MIT gateway, self-host)
+     OpenRouter https://openrouter.ai/docs/guides/routing/model-fallbacks, https://openrouter.ai/docs/guides/routing/auto-model-selection,
+               https://openrouter.ai/pricing (Standard plan platform fee "5.5%", applied to credit purchases; re-checked 10/28)
+     Not Diamond https://www.notdiamond.ai/ ("train a custom router on your evaluation data"), https://www.notdiamond.ai/pricing (per million tokens routed)
+     Martian   https://docs.withmartian.com/ (model router over many models)
+     promptfoo https://www.promptfoo.dev/docs/intro/ (MIT, local), https://www.promptfoo.dev/docs/integrations/github-action/ (before/after on PRs)
+     Langfuse  https://langfuse.com/docs/evaluation/overview (scores live traces), https://langfuse.com/docs/evaluation/experiments/datasets,
+               https://langfuse.com/pricing, https://langfuse.com/ (MIT, self-host)
+     Together AI https://docs.together.ai/docs/fine-tuning-overview (LoRA/full fine-tuning, download weights), https://www.together.ai/pricing (per training token)
+     Throttle cells match throttle main (2fb17af) on 10/28; anything planned but not built is labelled "coming".
+     Where a group differs inside itself, the cell says "varies" or names who does what. -->
+<section id="compare" class="sec sec-compare" aria-labelledby="cmp-h">
+  <div class="wrap cmp-grid">
+    <div class="cmp-side">
+      <h2 id="cmp-h" class="h2">Why teams pick <em>Throttle.</em></h2>
+      <p class="body-l">Good tools already exist for parts of this. Here is what each one is great at, and the one question none of them answers for you: which model should do each job, this week, on your traffic.</p>
+      <div class="cmp-tabs" role="tablist" aria-label="Compare Throttle with">
+        <button role="tab" id="ct-gw" aria-controls="cp-gw" aria-selected="true" type="button"><span class="mono">01</span>API gateways<small>LiteLLM, Portkey, OpenRouter</small></button>
+        <button role="tab" id="ct-rt" aria-controls="cp-rt" aria-selected="false" tabindex="-1" type="button"><span class="mono">02</span>Smart routers<small>Not Diamond, Martian</small></button>
+        <button role="tab" id="ct-ev" aria-controls="cp-ev" aria-selected="false" tabindex="-1" type="button"><span class="mono">03</span>Eval tools<small>promptfoo, Langfuse</small></button>
+        <button role="tab" id="ct-ft" aria-controls="cp-ft" aria-selected="false" tabindex="-1" type="button"><span class="mono">04</span>Fine-tuning platforms<small>Together AI and others</small></button>
+        <button role="tab" id="ct-diy" aria-controls="cp-diy" aria-selected="false" tabindex="-1" type="button"><span class="mono">05</span>Build it yourself<small>A gateway, a test suite, a script</small></button>
+      </div>
     </div>
-    <p class="demo-badge" data-reveal>DEMO: synthetic traffic, not a customer</p>
-    <div class="panel report" data-reveal data-report="/assets/data/demo-report.json" aria-live="polite">
-      <div class="report-empty"><b>Sample report coming soon</b><span>We will post it here once the demo run is done.</span></div>
+
+    <div class="cmp-panels">
+      <div class="cmp-panel" role="tabpanel" id="cp-gw" aria-labelledby="ct-gw" tabindex="0">
+        <h3 class="cp-h">API gateways <small>LiteLLM, Portkey, OpenRouter</small></h3>
+        <p class="cp-good"><span class="mono">Great at</span>One API for hundreds of models, with retries and fallback. LiteLLM is a great free gateway you can run yourself.</p>
+        <table class="cmp">
+          <thead><tr><th scope="col"><span class="sr">What matters</span></th><th scope="col">Gateways</th><th scope="col" class="c-us">Throttle</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Tests each AI job on your traffic before moving it</th><td>Not their job. You pick the model. Portkey can A/B test live traffic.</td><td class="c-us">Yes. Every job, before anything moves.</td></tr>
+            <tr><th scope="row">Catches prompt and code changes in pull requests</th><td>No.</td><td class="c-us">Yes. Flags every new or changed AI job in the pull request. A moved job whose prompt changed goes back to testing.</td></tr>
+            <tr><th scope="row">Falls back automatically</th><td class="c-yes">Yes. This is what they do best.</td><td class="c-us">Yes, on errors and broken answers. Every fallback is logged.</td></tr>
+            <tr><th scope="row">Learns from misses, trains a model you own</th><td>No.</td><td class="c-us">Saves every miss as a lesson for your model. Training on them is <span class="soon">coming</span></td></tr>
+            <tr><th scope="row">Runs in your cloud</th><td>Varies. LiteLLM and Portkey&rsquo;s gateway can. OpenRouter is hosted.</td><td class="c-us">Yes. Prompts and answers never reach us.</td></tr>
+            <tr><th scope="row">Closed and open models</th><td class="c-yes">Yes, hundreds.</td><td class="c-us">Yes. Any OpenAI-compatible model, closed or open.</td></tr>
+            <tr><th scope="row">Pricing</th><td>Free and open source (LiteLLM), per-log plans (Portkey, from $49/mo), or a 5.5% fee on credits (OpenRouter&rsquo;s standard plan).</td><td class="c-us">Free look, then a flat monthly fee smaller than what you save.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="cmp-panel" role="tabpanel" id="cp-rt" aria-labelledby="ct-rt" tabindex="0">
+        <h3 class="cp-h">Smart routers <small>Not Diamond, Martian</small></h3>
+        <p class="cp-good"><span class="mono">Great at</span>Picking a model for each request across many models, without you writing the rules.</p>
+        <table class="cmp">
+          <thead><tr><th scope="col"><span class="sr">What matters</span></th><th scope="col">Smart routers</th><th scope="col" class="c-us">Throttle</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Tests each AI job on your traffic before moving it</th><td>A trained router guesses per request. Not Diamond can train it on your eval data.</td><td class="c-us">Yes. Proof per job first, so there is nothing to guess.</td></tr>
+            <tr><th scope="row">Catches prompt and code changes in pull requests</th><td>Not that we could find.</td><td class="c-us">Yes. Flags every new or changed AI job in the pull request. A moved job whose prompt changed goes back to testing.</td></tr>
+            <tr><th scope="row">Falls back automatically</th><td>Varies.</td><td class="c-us">Yes, on errors and broken answers. Every fallback is logged.</td></tr>
+            <tr><th scope="row">Learns from misses, trains a model you own</th><td>The router learns. The models stay someone else&rsquo;s.</td><td class="c-us">Saves every miss as a lesson for your model. Training on them is <span class="soon">coming</span></td></tr>
+            <tr><th scope="row">Runs in your cloud</th><td>Varies. Not Diamond offers a private deployment on its enterprise plan.</td><td class="c-us">Yes. Prompts and answers never reach us.</td></tr>
+            <tr><th scope="row">Closed and open models</th><td class="c-yes">Yes.</td><td class="c-us">Yes. Any OpenAI-compatible model, closed or open.</td></tr>
+            <tr><th scope="row">Pricing</th><td>Per token routed (Not Diamond).</td><td class="c-us">Free look, then a flat monthly fee smaller than what you save.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="cmp-panel" role="tabpanel" id="cp-ev" aria-labelledby="ct-ev" tabindex="0">
+        <h3 class="cp-h">Eval tools <small>promptfoo, Langfuse</small></h3>
+        <p class="cp-good"><span class="mono">Great at</span>Writing tests for prompts and models, and tracing what your app does. Both are open source and excellent.</p>
+        <table class="cmp">
+          <thead><tr><th scope="col"><span class="sr">What matters</span></th><th scope="col">Eval tools</th><th scope="col" class="c-us">Throttle</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Tests each AI job on your traffic before moving it</th><td class="c-yes">Yes, on tests you write. Langfuse can also score live traces. Moving the traffic is still up to you.</td><td class="c-us">Yes, and once a job passes, it moves with your approval.</td></tr>
+            <tr><th scope="row">Catches prompt and code changes in pull requests</th><td class="c-yes">Yes, with a GitHub Action you set up.</td><td class="c-us">Yes. Finds new and changed AI jobs in the pull request, with no tests to write.</td></tr>
+            <tr><th scope="row">Falls back automatically</th><td>No. They don&rsquo;t sit in the request path.</td><td class="c-us">Yes, on errors and broken answers. Every fallback is logged.</td></tr>
+            <tr><th scope="row">Learns from misses, trains a model you own</th><td>Langfuse can turn bad traces into test sets. No training.</td><td class="c-us">Saves every miss as a lesson for your model. Training on them is <span class="soon">coming</span></td></tr>
+            <tr><th scope="row">Runs in your cloud</th><td class="c-yes">Yes. Both can be self-hosted.</td><td class="c-us">Yes. Prompts and answers never reach us.</td></tr>
+            <tr><th scope="row">Closed and open models</th><td class="c-yes">Yes.</td><td class="c-us">Yes. Any OpenAI-compatible model, closed or open.</td></tr>
+            <tr><th scope="row">Pricing</th><td>Free and open source, with paid cloud and enterprise plans.</td><td class="c-us">Free look, then a flat monthly fee smaller than what you save.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="cmp-panel" role="tabpanel" id="cp-ft" aria-labelledby="ct-ft" tabindex="0">
+        <h3 class="cp-h">Fine-tuning platforms <small>Together AI and others</small></h3>
+        <p class="cp-good"><span class="mono">Great at</span>Training an open model on your data when you already know which job to train and have the examples.</p>
+        <table class="cmp">
+          <thead><tr><th scope="col"><span class="sr">What matters</span></th><th scope="col">Fine-tuning</th><th scope="col" class="c-us">Throttle</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Tests each AI job on your traffic before moving it</th><td>No. You bring the data and decide what to train.</td><td class="c-us">Yes. Finds which jobs are worth it first.</td></tr>
+            <tr><th scope="row">Catches prompt and code changes in pull requests</th><td>No.</td><td class="c-us">Yes. Flags every new or changed AI job in the pull request. A moved job whose prompt changed goes back to testing.</td></tr>
+            <tr><th scope="row">Falls back automatically</th><td>No.</td><td class="c-us">Yes, on errors and broken answers. Every fallback is logged.</td></tr>
+            <tr><th scope="row">Learns from misses, trains a model you own</th><td class="c-yes">Yes. Together AI lets you download the weights. Each run is a project you start.</td><td class="c-us">Saves every miss as a lesson, with no project to start. Training on them is <span class="soon">coming</span></td></tr>
+            <tr><th scope="row">Runs in your cloud</th><td>Training and hosting run on their cloud.</td><td class="c-us">Yes. Prompts and answers never reach us.</td></tr>
+            <tr><th scope="row">Closed and open models</th><td>Open models.</td><td class="c-us">Yes. Any OpenAI-compatible model, closed or open.</td></tr>
+            <tr><th scope="row">Pricing</th><td>Per training token, plus hosting.</td><td class="c-us">Free look, then a flat monthly fee smaller than what you save.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="cmp-panel" role="tabpanel" id="cp-diy" aria-labelledby="ct-diy" tabindex="0">
+        <h3 class="cp-h">Build it yourself <small>A gateway, a test suite, a script</small></h3>
+        <p class="cp-good"><span class="mono">Great at</span>Full control. Plenty of strong teams do it, and the first version is not hard.</p>
+        <table class="cmp">
+          <thead><tr><th scope="col"><span class="sr">What matters</span></th><th scope="col">Build it</th><th scope="col" class="c-us">Throttle</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Tests each AI job on your traffic before moving it</th><td>Yes, once. Then again for every new model, prompt and price.</td><td class="c-us">Yes. Keeps every job&rsquo;s tests, and flags each change that needs them run again.</td></tr>
+            <tr><th scope="row">Catches prompt and code changes in pull requests</th><td>If you wire it into CI and keep it up.</td><td class="c-us">Yes. Flags every new or changed AI job in the pull request. A moved job whose prompt changed goes back to testing.</td></tr>
+            <tr><th scope="row">Falls back automatically</th><td>Hand-wired. Worth testing often.</td><td class="c-us">Yes, on errors and broken answers. Every fallback is logged.</td></tr>
+            <tr><th scope="row">Learns from misses, trains a model you own</th><td>A training project per model.</td><td class="c-us">Saves every miss as a lesson for your model. Training on them is <span class="soon">coming</span></td></tr>
+            <tr><th scope="row">Runs in your cloud</th><td class="c-yes">Yes.</td><td class="c-us">Yes. Prompts and answers never reach us.</td></tr>
+            <tr><th scope="row">Closed and open models</th><td>Whatever you wire up.</td><td class="c-us">Yes. Any OpenAI-compatible model, closed or open.</td></tr>
+            <tr><th scope="row">Pricing</th><td>Engineer time, every week.</td><td class="c-us">Free look, then a flat monthly fee smaller than what you save.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="cmp-fine">From each company&rsquo;s own site, checked October 2026. Products change. If we got one wrong, <a href="mailto:kush@throttle-pro.com?subject=Comparison%20correction">tell us</a> and we&rsquo;ll fix it.</p>
     </div>
   </div>
 </section>
 
-<section class="sec" id="pricing">
-  <div class="shell">
-    <div class="sec-head">
-      <p class="eyebrow" data-reveal>Pricing</p>
-      <h2 data-reveal>Free assessment. Then a share of what you save. <em>No savings, no bill.</em></h2>
+<!-- ============ TRUST ============ -->
+<section id="trust" class="sec sec-trust pg" aria-labelledby="trust-h">
+  <div class="wrap trust-grid">
+    <div>
+      <h2 id="trust-h" class="h2">Nothing moves without proof. Nothing leaves your cloud.</h2>
+      <ol class="promises">
+        <li><b>Your data stays in your cloud.</b><span>Your model runs on GPUs you control. Prompts and answers never come to us, and keys are never stored.</span></li>
+        <li><b>You approve the moves.</b><span>Each move needs a passing test and your approval. Pin any job to the API. Undo any move.</span></li>
+        <li><b>Fallback is always on.</b><span>If your model errors, times out or sends a broken answer, that request goes to OpenAI or Anthropic. Your users still get an answer.</span></li>
+        <li><b>Every decision is logged.</b><span>With the tests behind it, in plain words.</span></li>
+      </ol>
     </div>
-    <ol class="steps s3">
-      <li data-reveal><h3>Free assessment</h3><p>The assessment is free. It runs on your machines.</p></li>
-      <li data-reveal><h3>A share of savings</h3><p>After the move, we take a share of the measured monthly savings.</p></li>
-      <li data-reveal><h3>Measured, not guessed</h3><p>Savings come from your own traffic and GPU bill. We never estimate them.</p></li>
-    </ol>
-    <div class="tease-foot" data-reveal><span>You only pay out of money you were already spending.</span><a class="tlink" href="/pricing">See how pricing works</a></div>
+    <figure class="log" aria-labelledby="log-cap">
+      <p class="log-top mono"><span>Decision log</span><span class="tag-s">sample</span></p>
+      <ol class="log-lines">
+        <li data-s="own"><time class="mono">09:12</time><span class="lj">extraction</span><span class="lv">moved to your model</span><span class="lr">99% same or better &middot; approved by you</span></li>
+        <li data-s="own"><time class="mono">09:14</time><span class="lj">chat</span><span class="lv">moved to your model</span><span class="lr">99% same or better &middot; approved by you</span></li>
+        <li data-s="api"><time class="mono">09:15</time><span class="lj">agent</span><span class="lv">stays on the API</span><span class="lr">worse on 46% of tests</span></li>
+        <li data-s="test"><time class="mono">11:40</time><span class="lj">summarization</span><span class="lv">stays in testing</span><span class="lr">worse on 31% &middot; misses saved as lessons</span></li>
+        <li data-s="api"><time class="mono">14:03</time><span class="lj">chat</span><span class="lv">fell back once</span><span class="lr">the API answered &middot; no error for the user</span></li>
+        <li data-s="api"><time class="mono">16:30</time><span class="lj">agent</span><span class="lv">pinned to the API</span><span class="lr">by you &middot; stays until you say</span></li>
+      </ol>
+      <figcaption id="log-cap" class="mono">Sample log from made-up traffic</figcaption>
+    </figure>
   </div>
 </section>
 
-<section class="sec" id="who">
-  <div class="shell">
-    <div class="sec-head">
-      <p class="eyebrow" data-reveal>Who it is for</p>
-      <h2 data-reveal>Built for two kinds of teams.</h2>
+<!-- ============ FOUNDER NOTE (ivory page) ============ -->
+<section id="founder" class="pg sec-founder" data-light aria-labelledby="founder-h">
+  <div class="wrap">
+    <article class="letter">
+      <p class="mono letter-k">A note from the founder</p>
+      <h2 id="founder-h" class="letter-h">Throttle started as my idea. I built the first version <em>alone.</em></h2>
+      <div class="letter-body">
+        <p>For six weeks I measured what it really costs to run AI on your own machines. Every team I showed it to asked the same next question: should we even keep paying the API?</p>
+        <p>So I built the loop that answers it on a team&rsquo;s own traffic. Watch, test, move. Then do it again next week.</p>
+        <p>Now Throttle is growing past one person. I&rsquo;m looking for the first teams to run it with, and for people who want to build it with me. If your AI bill keeps growing, write to me. I read every email.</p>
+      </div>
+      <footer class="sign">
+        <span class="sig">Kush</span>
+        <span class="sig-n">Kushagra Kanaujia, founder<br><a href="mailto:kush@throttle-pro.com">kush@throttle-pro.com</a></span>
+      </footer>
+    </article>
+  </div>
+</section>
+
+<!-- ============ PRICING TEASER ============ -->
+<section id="pricing" class="sec sec-price" aria-labelledby="price-h">
+  <div class="wrap price-grid">
+    <div>
+      <h2 id="price-h" class="h2">A free look first. Then one flat fee.</h2>
+      <p class="body-l">See what could move and what it would save, on your own traffic. Nothing moves during the free look, and it costs nothing. If you keep Throttle, you pay one flat monthly fee, always smaller than what it saves you.</p>
+      <a class="tlink" href="/pricing">How pricing works <i aria-hidden="true">&rarr;</i></a>
     </div>
-    <div class="who">
-      <article data-reveal><h3>Teams spending heavily on frontier APIs</h3><p>Your OpenAI or Anthropic bill keeps growing. Throttle shows which part of it a model you run could handle, and moves only that part.</p></article>
-      <article data-reveal><h3>Regulated teams that need data to stay inside their walls</h3><p>Health, finance, legal or public work where data can&rsquo;t leave. Throttle and your models run inside your walls, so your prompts stay with you.</p></article>
+    <figure class="scale" aria-labelledby="scale-cap">
+      <div class="sc-row"><span class="sc-k">What Throttle saves you</span><span class="sc-bar save"><i></i></span></div>
+      <div class="sc-row"><span class="sc-k">Throttle&rsquo;s flat fee</span><span class="sc-bar fee"><i></i></span></div>
+      <div class="sc-keep" aria-hidden="true"><span class="sc-br"></span><span class="sc-kt">You keep the difference</span></div>
+      <figcaption id="scale-cap" class="mono">Shape only, not real prices</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ READ THE WORK ============ -->
+<section id="read" class="sec sec-read" aria-labelledby="read-h">
+  <div class="wrap">
+    <h2 id="read-h" class="h2">Read the work.</h2>
+    <p class="body-l read-lede">Six weeks of measuring what AI really costs, written up in plain numbers.</p>
+    <div class="read-grid">
+      <a class="idx" href="/cost-index">
+        <span class="mono idx-k">Cost Index</span>
+        <span class="idx-t">What tokens really cost.</span>
+        <span class="idx-d">Measured cost per million tokens for real serving changes on real hardware. With error bars, and the cases where a cheaper token broke the answers.</span>
+        <span class="idx-bars" aria-hidden="true"><i style="--h:.92"></i><i style="--h:.71"></i><i style="--h:.78"></i><i style="--h:.44"></i><i style="--h:.53"></i><i style="--h:.31"></i><i style="--h:.36"></i><i style="--h:.22"></i></span>
+        <span class="tlink">Open the index <i aria-hidden="true">&rarr;</i></span>
+      </a>
+      <div class="shelf">
+        <h3 class="mono"><a href="/blog">Blog</a></h3>
+        <ul>
+          <li><a href="/blog/i-changed-nothing-27-percent-more-expensive">I changed nothing and my LLM server got 27% more expensive</a></li>
+          <li><a href="/blog/one-vllm-flag-counterbalanced-benchmark">One vLLM flag, &minus;68.6% cost per token</a></li>
+          <li><a href="/blog/cost-per-million-tokens-self-hosted-llm">How to measure cost per million tokens on a self-hosted LLM</a></li>
+        </ul>
+        <h3 class="mono"><a href="/guides">Guides</a></h3>
+        <ul>
+          <li><a href="/guides/self-hosted-llm-cost">Self-hosted LLM cost vs API, per token</a></li>
+          <li><a href="/guides/llm-cost-per-million-tokens">LLM cost per million tokens: formula and calculator</a></li>
+          <li><a href="/guides/fp8-quantization-cost-vs-quality">FP8 quantization in vLLM: cost vs quality</a></li>
+          <li><a href="/guides/vllm-cost-per-token">vLLM cost per token, flag by flag</a></li>
+        </ul>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="close" id="assessment">
-  <div class="shell">
-    <h2 data-reveal>Get a free savings assessment.</h2>
-    <p class="lede" data-reveal>Tell us where to reach you. We&rsquo;ll write back to set it up.</p>
-    <form class="aform" action="/api/assessment" method="post" data-assessment data-reveal>
+<!-- ============ FREE LOOK ============ -->
+<section id="free-look" class="sec sec-look" aria-labelledby="look-h">
+  <span id="assessment" class="anchor" aria-hidden="true"></span>
+  <div class="wrap look-grid">
+    <div>
+      <h2 id="look-h" class="h2">Get a free look.</h2>
+      <p class="body-l">See what could move on your own traffic, and what it would save. Nothing moves, and it costs nothing.</p>
+      <ol class="look-steps">
+        <li><span class="mono">1</span>Tell us where to reach you.</li>
+        <li><span class="mono">2</span>We help you add the GitHub Action and point one setting at Throttle.</li>
+        <li><span class="mono">3</span>You see what could move, what should stay, and what it would save.</li>
+      </ol>
+    </div>
+    <form class="ticket" action="/api/assessment" method="post" data-assessment>
+      <p class="ticket-h mono"><span>Free look</span><span>Takes a minute</span></p>
       <label>Work email
         <input type="email" name="email" required autocomplete="email" placeholder="you@company.com" maxlength="254">
       </label>
-      <label>Company <small>(optional)</small>
+      <label><span>Company <small>optional</small></span>
         <input type="text" name="company" autocomplete="organization" maxlength="200">
       </label>
-      <label>Roughly what you spend a month on AI APIs <small>(optional)</small>
+      <label><span>Roughly what you spend a month on AI APIs <small>optional</small></span>
         <select name="spend">
           <option value="">Choose one</option>
           <option value="lt5k">&lt;$5k</option>
@@ -159,49 +603,82 @@
         </select>
       </label>
       <div class="hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
-      <button class="btn btn-primary" type="submit">Get my free assessment</button>
+      <button class="cta" type="submit">Get my free look <i aria-hidden="true">&rarr;</i></button>
       <p class="form-msg" role="status" aria-live="polite"></p>
-      <p class="aform-alt">Or email <a href="mailto:kush@throttle-pro.com?subject=Free%20savings%20assessment">kush@throttle-pro.com</a></p>
+      <p class="ticket-alt">Or email <a href="mailto:kush@throttle-pro.com?subject=Free%20look">kush@throttle-pro.com</a></p>
     </form>
   </div>
 </section>
 
-<section class="sec" id="faq">
-  <div class="shell faq-wrap">
-    <div><p class="eyebrow">FAQ</p><h2>Questions.</h2></div>
+<!-- ============ FAQ ============ -->
+<section id="faq" class="sec sec-faq" aria-labelledby="faq-h">
+  <div class="wrap faq-grid">
+    <div>
+      <h2 id="faq-h" class="h2">Straight answers.</h2>
+      <p class="body-l">Something else? <a href="mailto:kush@throttle-pro.com">Ask Kush</a>.</p>
+    </div>
     <div class="faq">
-      <details><summary>Does my data leave my machines?</summary><p>No. Throttle runs on your machines. Your requests only go to the API you already call and to models you run yourself. We never see your prompts or answers.</p></details>
-      <details><summary>Which models and servers does it work with?</summary><p>Open-weight models you run on vLLM, SGLang, Ollama or LMDeploy. You pick the model and the GPUs. Throttle tests it on your own traffic.</p></details>
-      <details><summary>What if quality drops?</summary><p>Then that kind of request stays on the API. If your model has a bad moment later, the request goes to the API on its own. Fallback is automatic.</p></details>
-      <details><summary>How are savings measured?</summary><p>We take what that traffic cost on the API before the move. Then we take what it costs now: your GPU bill plus any calls that fell back to the API. The gap is your savings. Both sides come from your own logs and bills, never from guesses.</p></details>
-      <details><summary>What do I need to start?</summary><p>An app that calls OpenAI or Anthropic. A GPU machine to run an open model on, yours or rented. Then you point your API calls at Throttle, and it starts learning from real traffic.</p></details>
+      <details><summary>Does it need access to my code?</summary><p>It uses a GitHub Action that reads where your code calls an AI API. That is how it finds your AI jobs and comments on pull requests. It runs in your own CI, and your prompts and data stay in your cloud.</p></details>
+      <details><summary>Where does my model run?</summary><p>In your own cloud, on GPUs you control. Your prompts and answers never come to us, and Throttle never stores your API keys.</p></details>
+      <details><summary>What if my model gets something wrong?</summary><p>If your model errors, times out or sends a broken answer (cut off, empty, bad JSON or a bad tool call), that request goes to OpenAI or Anthropic automatically, so your users still get an answer. The miss is saved as a lesson. Training your model on lessons is <span class="soon">coming</span></p></details>
+      <details><summary>Do I have to approve every move?</summary><p>Yes. A job moves only after it passes its tests and you approve it. You can pin any job to the API or undo a move, and every decision is logged. Letting passing jobs move on their own is <span class="soon">coming</span></p></details>
+      <details><summary>What does it cost?</summary><p>The free look costs nothing and moves nothing. After that it is a flat monthly fee that is always smaller than what Throttle saves you. <a href="/pricing">More on pricing</a>.</p></details>
+      <details><summary>Which models does it test?</summary><p>Any model behind an OpenAI-compatible endpoint, closed or open: a hosted API model with your key, or an open model you serve with vLLM, SGLang, Ollama or LMDeploy. Every one runs the same tests on the same requests your app sent to OpenAI or Anthropic. The savings math is built for models you own; for cheaper API models it is <span class="soon">coming</span></p></details>
+      <details><summary>I already use a gateway or an eval tool. Do I still need this?</summary><p>Keep them. A gateway carries your requests and an eval tool runs the tests you write. Throttle answers a different question: which model should do each job this week, on your traffic, and it moves the job when the answer changes. <a href="#compare">See how it compares</a>.</p></details>
+      <details><summary>Is Throttle running at real companies yet?</summary><p>Not yet. Every number on this page is a sample from made-up traffic. We are choosing the first teams to run it with now.</p></details>
+      <details><summary>Is it open source?</summary><p>Yes. The Throttle code is on <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a> under the MIT license.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CLOSING BAND: living light again ============ -->
+<section id="close" class="sec-close" aria-labelledby="close-h">
+  <div class="close-stage" id="closeStage">
+    <div class="still" aria-hidden="true"></div>
+    <canvas id="closeFlow" aria-hidden="true"></canvas>
+    <div class="wrap close-in">
+      <h2 id="close-h" class="close-h">Bring your AI <em>home.</em></h2>
+      <div class="close-act">
+        <p class="body-l">Start with a free look at your own traffic. Then a flat monthly fee, smaller than what you save.</p>
+        <a class="cta cta-lg" id="closeCta" href="#free-look">Get a free look <i aria-hidden="true">&rarr;</i></a>
+        <ul class="fine-list mono">
+          <li>Your data stays in your cloud</li>
+          <li>Falls back on errors and broken answers</li>
+          <li>Nothing moves without proof</li>
+        </ul>
+      </div>
     </div>
   </div>
 </section>
 
 </main>
 
+<!--foot-->
 <footer class="foot">
-  <div class="shell">
-    <div class="foot-g">
-      <div>
-        <a class="brand" href="/"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><path class="arc" pathLength="1" d="M5 22a11 11 0 0 1 22 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path class="ndl" d="M16 22 23 12" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><rect class="hub" x="13.6" y="19.6" width="4.8" height="4.8" rx="1.2" fill="var(--accent)"/></svg><span>throttle</span></a>
-        <p>Own your intelligence. Keep the savings.</p>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <a class="logo" href="/" aria-label="Throttle home"><img src="/assets/brand/wordmark-dark.svg" alt="Throttle" width="118" height="28" loading="lazy"></a>
+        <p class="foot-line">Stop renting your AI.</p>
       </div>
-      <div><h4>Product</h4><ul>
-        <li><a href="/#how">How it works</a></li>
-        <li><a href="/pricing">Pricing</a></li>
-        <li><a href="/#assessment">Free assessment</a></li>
-      </ul></div>
-      <div><h4>Learn</h4><ul>
-        <li><a href="/blog">Blog</a></li>
-        <li><a href="/guides">Guides</a></li>
-        <li><a href="/cost-index">Cost Index</a></li>
-      </ul></div>
-      <div><h4>Company</h4><ul>
-        <li><a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a></li>
-        <li><a href="mailto:kush@throttle-pro.com">kush@throttle-pro.com</a></li>
-      </ul></div>
+      <nav class="foot-cols" aria-label="Footer">
+        <div><h2>Product</h2><ul>
+          <li><a href="/#how">How it works</a></li>
+          <li><a href="/#watch">Watch it run</a></li>
+          <li><a href="/#compare">Why Throttle</a></li>
+          <li><a href="/pricing">Pricing</a></li>
+          <li><a href="/#free-look">Get a free look</a></li>
+        </ul></div>
+        <div><h2>Read</h2><ul>
+          <li><a href="/blog">Blog</a></li>
+          <li><a href="/guides">Guides</a></li>
+          <li><a href="/cost-index">Cost Index</a></li>
+        </ul></div>
+        <div><h2>Company</h2><ul>
+          <li><a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="mailto:kush@throttle-pro.com">kush@throttle-pro.com</a></li>
+        </ul></div>
+      </nav>
     </div>
     <div class="foot-b">
       <span>&copy; 2026 Throttle &middot; Open source, MIT</span>
@@ -213,5 +690,10 @@
     </div>
   </div>
 </footer>
+<!--/foot-->
+
+<script src="/assets/js/field.js?v=89dc8645" defer></script>
+<script src="/assets/js/light.js?v=0f77ba40" defer></script>
+<script src="/assets/js/story.js?v=f273fc3e" defer></script>
 </body>
 </html>
