@@ -33,21 +33,23 @@ async function call(body, opts) { const r = res(); await handler(req(body, opts)
   handler._resetRateLimit();
   r = await call({ email: 'not-an-email' }); assert.strictEqual(r.statusCode, 400);
   r = await call({ email: 'a@b.co', spend: 'lots' }); assert.strictEqual(r.statusCode, 400);
+  r = await call({ email: 'a@b.co', plan: 'gold' }); assert.strictEqual(r.statusCode, 400);
   r = await call('{bad json'); assert.strictEqual(r.statusCode, 400);
   r = await call({}, { method: 'GET' }); assert.strictEqual(r.statusCode, 405);
 
   // 3. success: key set -> Resend called with the right payload, 200
   handler._resetRateLimit();
   process.env.RESEND_API_KEY = 're_test'; process.env.ASSESSMENT_FROM = 'Throttle <assessment@throttle-pro.com>';
-  r = await call({ email: 'cto@acme.com', company: 'Acme\nInc', spend: '50k-500k' });
+  r = await call({ email: 'cto@acme.com', company: 'Acme\nInc', spend: '50k-500k', plan: 'team' });
   assert.strictEqual(r.statusCode, 200); assert.deepStrictEqual(r.json(), { ok: true });
   assert.strictEqual(sent.length, 1);
   assert.strictEqual(sent[0].url, 'https://api.resend.com/emails');
   assert.strictEqual(sent[0].init.headers.Authorization, 'Bearer re_test');
   const p = JSON.parse(sent[0].init.body);
   assert.deepStrictEqual(p.to, ['kush@throttle-pro.com']); assert.strictEqual(p.reply_to, 'cto@acme.com');
-  assert.strictEqual(p.subject, 'Assessment request: Acme Inc');
+  assert.strictEqual(p.subject, 'Team request: Acme Inc');
   assert.ok(p.text.includes('$50k to $500k a month'));
+  assert.ok(p.text.includes('Plan: Team, $99.99 a month'));
 
   // 3b. Vercel pre-parsed body works too
   r = await call({ email: 'x@y.io' }, { preparsed: true }); assert.strictEqual(r.statusCode, 200);

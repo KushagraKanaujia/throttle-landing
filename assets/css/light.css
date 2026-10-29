@@ -487,6 +487,11 @@ h1{font-family:var(--serif);font-weight:300;font-size:clamp(54px,7.4vw,118px);li
 .phases p{color:var(--ivory-2);font-size:15.5px;max-width:28em}
 .phases .ph-t{display:inline-block;margin-top:20px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ivory-3)}
 .phases li:last-child .ph-t{color:var(--gold-l)}
+.plans li{display:flex;flex-direction:column}
+.plans .ph-t{display:block;margin-top:auto;padding-top:24px;font-family:var(--serif);font-size:clamp(30px,2.6vw,40px);letter-spacing:-.01em;text-transform:none;color:var(--ivory);font-variation-settings:"opsz" 72}
+.plans li:nth-child(2) .ph-t{color:var(--gold-l)}
+.plans li:last-child .ph-t{color:var(--ivory)}
+.plans .tlink{align-self:flex-start;margin:14px 0 24px}
 .ph-line{position:absolute;left:0;right:0;top:-1px;height:1px;background:linear-gradient(90deg,var(--gold),transparent);transform-origin:left;transform:scaleX(0);transition:transform 1.4s var(--ease)}
 .phases li + li .ph-line{left:34px}
 .phases.in .ph-line{transform:scaleX(1)}

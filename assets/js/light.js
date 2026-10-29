@@ -171,7 +171,7 @@
     } else load();
   }
 
-  /* free look form: POST /api/assessment, else open a prefilled email so no lead is lost */
+  /* start form: POST /api/assessment, else open a prefilled email so no lead is lost */
   var form = $("[data-assessment]");
   if (form) {
     var msg = $(".form-msg", form), sub = $('button[type="submit"]', form);
@@ -180,16 +180,20 @@
     var mailto = function (v) {
       var sel = form.spend;
       var spendTxt = sel && sel.selectedIndex > 0 ? sel.options[sel.selectedIndex].text : "not given";
-      var body = "Hi Kush,\n\nI would like a free look.\n\nWork email: " + v.email +
+      var ps = form.plan;
+      var planTxt = ps && ps.selectedIndex >= 0 ? ps.options[ps.selectedIndex].text : "not chosen";
+      var body = "Hi Kush,\n\nI would like to start with Throttle.\n\nPlan: " + planTxt + "\nWork email: " + v.email +
         "\nCompany: " + (v.company || "not given") + "\nMonthly AI API spend: " + spendTxt + "\n";
-      return "mailto:" + TO + "?subject=" + encodeURIComponent("Free look") + "&body=" + encodeURIComponent(body);
+      return "mailto:" + TO + "?subject=" + encodeURIComponent("Start with Throttle") + "&body=" + encodeURIComponent(body);
     };
+    var wanted = /[?&]plan=(starter|team|custom)\b/.exec(location.search);
+    if (wanted && form.plan) form.plan.value = wanted[1];
     var back = /[?&]assessment=(sent|error)/.exec(location.search);
     if (back) say(back[1] === "sent" ? "Thanks. We got it and will email you soon." : 'That did not go through. Please write to <a href="mailto:' + TO + '">' + TO + "</a>.", back[1] === "sent");
     form.addEventListener("submit", function (ev) {
       ev.preventDefault();
       if (form.checkValidity && !form.checkValidity()) { if (form.reportValidity) form.reportValidity(); return; }
-      var v = { email: form.email.value.trim(), company: form.company.value.trim(), spend: form.spend.value, website: form.website.value };
+      var v = { plan: form.plan ? form.plan.value : "", email: form.email.value.trim(), company: form.company.value.trim(), spend: form.spend.value, website: form.website.value };
       var fallback = function () {
         var href = mailto(v);
         say('Opening your email app with your details filled in. If nothing opens, <a href="' + href + '">click here</a> or write to <a href="mailto:' + TO + '">' + TO + "</a>.");
@@ -200,7 +204,7 @@
       fetch(form.getAttribute("action"), {
         method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify(v)
       }).then(function (r) {
-        if (r.status === 200) { form.reset(); sub.disabled = false; say("Thanks. We got it and will email you soon.", true); }
+        if (r.status === 200) { form.reset(); sub.disabled = false; say("Thanks. Kush will email you within a day to set you up.", true); }
         else fallback();
       }, fallback);
     });
