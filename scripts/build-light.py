@@ -3,8 +3,8 @@
 
 - Syncs the shared nav, footer and reading CTA from scripts/partials-light/ into every page
   (index, pricing, cost-index, blog/*, guides/*), wherever the <!--name--> markers are.
-- Renders the ledger job rows from assets/data/demo-report.json, so every per-job sample
-  number comes from real `throttle demo` output (made-up traffic, labelled as sample).
+- Renders the ledger job rows from assets/data/demo-report.json, so every per-job
+  number comes from real `throttle demo` output (made-up traffic).
 - Fills the "Watch it run" player: if assets/media/demo/throttle-demo.mp4 (plus optional .webm,
   -poster.jpg and .vtt captions) exist, it embeds the real recording; if not, a typographic placeholder.
 - Builds FAQPage JSON-LD from the visible FAQ on each page.
@@ -96,7 +96,7 @@ def demo_video():
         src += f'          <track kind="captions" src="/assets/media/demo/throttle-demo.vtt{v(vtt)}" srclang="en" label="English">\n'
     pst = f' poster="/assets/media/demo/throttle-demo-poster.jpg{v(poster)}"' if poster.exists() else ""
     return (f'        <video class="pl-video" muted playsinline loop preload="none"{pst} '
-            'aria-label="Recording of the Throttle command line testing AI jobs against other models on sample traffic, then showing which jobs move, which stay, and why.">\n'
+            'aria-label="Recording of the Throttle command line testing AI jobs against other models on a test app, then showing which jobs move, which stay, and why.">\n'
             + src + "        </video>")
 
 
@@ -128,7 +128,7 @@ for name in PAGES:
     page = put(page, "demo-video", demo_video())
     page = put(page, "demo-cap", "<span>Recorded in a terminal, no sound. Plays when it scrolls into view.</span>"
                if (ROOT / "assets/media/demo/throttle-demo.mp4").exists() else
-               "<span>The recording of the real command line is being made now. Until then, the sample session below shows the same steps.</span>")
+               "<span>The recording of the real command line is being made now. Until then, see how it works below.</span>")
     page = put(page, "faq-ld", faq_ld(page))
     for a, h in assets.items():
         page = re.sub(rf'(/{re.escape(a)})\?v=[\w]+', rf"\1?v={h}", page)

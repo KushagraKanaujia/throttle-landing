@@ -28,7 +28,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,200..600,0..100;1,9..144,200..600,0..100&amp;display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/light.css?v=eafefe25">
+<link rel="stylesheet" href="/assets/css/light.css?v=68d73967">
 <link rel="stylesheet" href="/assets/css/read.css?v=0849056a">
 <script>document.documentElement.classList.add("js");if(matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("rm")</script>
 </head>
@@ -111,7 +111,7 @@
 <tr class="ix-detail" id="ix-d0"><td colspan="8"><div class="ix-detail-in">
   <p class="ix-caveat">FP8 server ran on the VM&#x27;s second MI300X, the BF16 baseline on the first (same GPU model; Throttle flagged the different endpoint).</p>
   <dl class="ix-facts">
-    <div><dt>Answers</dt><dd>6 of 6 sample answers correct and coherent (temperature 0); output length per request within 1% of BF16.</dd></div>
+    <div><dt>Answers</dt><dd>All 6 test prompts answered correctly (temperature 0); output length per request within 1% of BF16.</dd></div>
     <div><dt>GPU price</dt><dd>$2.99/hr <b class="tag">ASSUMED</b> Hot Aisle on-demand list price per MI300X GPU. Tokens and time are <b class="tag tag-b">MEASURED</b>.</dd></div>
     <div><dt>Workload</dt><dd>5 blocks × 32 requests, concurrency 32, max 256 output tokens, temperature 0, cache: cold</dd></div>
     <div><dt>Baseline repeats</dt><dd>$1.67, $1.67, $1.67, $1.67 (noise bound 0.6%)</dd></div>
@@ -168,7 +168,7 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
 <tr class="ix-detail" id="ix-d1"><td colspan="8"><div class="ix-detail-in">
   <p class="ix-flag-note"><b>Not a saving.</b> Looked 47% cheaper per token; excluded as a saving because the answers changed shape.</p>
   <dl class="ix-facts">
-    <div><dt>Answers</dt><dd>Not sampled. Every request ran to the 256-token cap (8,016–8,192 output tokens per 32-request block vs 6,328 for BF16).</dd></div>
+    <div><dt>Answers</dt><dd>Answers not read by hand. Every request ran to the 256-token cap (8,016–8,192 output tokens per 32-request block vs 6,328 for BF16).</dd></div>
     <div><dt>GPU price</dt><dd>$2.99/hr <b class="tag">ASSUMED</b> Hot Aisle on-demand list price per MI300X GPU. Tokens and time are <b class="tag tag-b">MEASURED</b>.</dd></div>
     <div><dt>Workload</dt><dd>5 blocks × 32 requests, concurrency 32, max 256 output tokens, temperature 0, cache: cold</dd></div>
     <div><dt>Baseline repeats</dt><dd>$1.67, $1.67, $1.67, $1.67 (noise bound 2.5%)</dd></div>
@@ -278,7 +278,7 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
 <tr class="ix-detail" id="ix-d3"><td colspan="8"><div class="ix-detail-in">
   
   <dl class="ix-facts">
-    <div><dt>Answers</dt><dd>6 of 6 sample answers correct and coherent (temperature 0).</dd></div>
+    <div><dt>Answers</dt><dd>All 6 test prompts answered correctly (temperature 0).</dd></div>
     <div><dt>GPU price</dt><dd>$2.99/hr <b class="tag">ASSUMED</b> Hot Aisle on-demand list price per MI300X GPU. Tokens and time are <b class="tag tag-b">MEASURED</b>.</dd></div>
     <div><dt>Workload</dt><dd>5 blocks × 32 requests, concurrency 32, max 256 output tokens, temperature 0, cache: cold</dd></div>
     <div><dt>Baseline repeats</dt><dd>$0.227, $0.230, $0.228, $0.227 (noise bound 2.3%)</dd></div>
@@ -335,7 +335,7 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
 <tr class="ix-detail" id="ix-d4"><td colspan="8"><div class="ix-detail-in">
   
   <dl class="ix-facts">
-    <div><dt>Answers</dt><dd>6 of 6 sample answers correct and coherent (temperature 0); output length +6–9% (under the 10% OUTPUT CHANGED line).</dd></div>
+    <div><dt>Answers</dt><dd>All 6 test prompts answered correctly (temperature 0); output length +6–9% (under the 10% OUTPUT CHANGED line).</dd></div>
     <div><dt>GPU price</dt><dd>$2.99/hr <b class="tag">ASSUMED</b> Hot Aisle on-demand list price per MI300X GPU. Tokens and time are <b class="tag tag-b">MEASURED</b>.</dd></div>
     <div><dt>Workload</dt><dd>5 blocks × 32 requests, concurrency 32, max 256 output tokens, temperature 0, cache: cold</dd></div>
     <div><dt>Baseline repeats</dt><dd>$0.227, $0.230, $0.228, $0.227 (noise bound 2.8%)</dd></div>
@@ -390,7 +390,7 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
 <tr class="ix-detail" id="ix-d5"><td colspan="8"><div class="ix-detail-in">
   <p class="ix-caveat">A deliberately bad setting for this load: shows what a harmless-looking flag costs.</p>
   <dl class="ix-facts">
-    <div><dt>Answers</dt><dd>Not sampled; output length within 2.5% of baseline.</dd></div>
+    <div><dt>Answers</dt><dd>Answers not read by hand; output length within 2.5% of baseline.</dd></div>
     <div><dt>GPU price</dt><dd>$2.99/hr <b class="tag">ASSUMED</b> Hot Aisle on-demand list price per MI300X GPU. Tokens and time are <b class="tag tag-b">MEASURED</b>.</dd></div>
     <div><dt>Workload</dt><dd>5 blocks × 32 requests, concurrency 32, max 256 output tokens, temperature 0, cache: cold</dd></div>
     <div><dt>Baseline repeats</dt><dd>$0.227, $0.230, $0.228, $0.227 (noise bound 2.8%)</dd></div>
@@ -445,7 +445,7 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
 <tr class="ix-detail" id="ix-d6"><td colspan="8"><div class="ix-detail-in">
   <p class="ix-caveat">Throttle 0.5.1 printed CHEAPER here because its verdict rescaled to the baseline&#x27;s GPU rate; this row judges real dollars with the same rule (2 GPUs: 1.56x the speed, 2x the price). Since 0.6.0, <code>throttle check --gpus 2</code> counts the extra GPU and prints MORE EXPENSIVE.</p>
   <dl class="ix-facts">
-    <div><dt>Answers</dt><dd>Output per block identical (6,320–6,333 tokens); 6-prompt sample identical on 5 of 6, sixth differs in wording only.</dd></div>
+    <div><dt>Answers</dt><dd>Output per block identical (6,320–6,333 tokens); answers to the 6 test prompts identical on 5 of 6, sixth differs in wording only.</dd></div>
     <div><dt>GPU price</dt><dd>$5.98/hr <b class="tag">ASSUMED</b> Hot Aisle on-demand list price $2.99 per MI300X GPU x GPUs used. Tokens and time are <b class="tag tag-b">MEASURED</b>.</dd></div>
     <div><dt>Workload</dt><dd>5 blocks × 32 requests, concurrency 32, max 256 output tokens, temperature 0, cache: cold</dd></div>
     <div><dt>Baseline repeats</dt><dd>$1.67, $1.67, $1.66, $1.66 (noise bound 0.8%)</dd></div>
@@ -503,7 +503,7 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
 <tr class="ix-detail" id="ix-d7"><td colspan="8"><div class="ix-detail-in">
   <p class="ix-caveat">Laptop; the $/hr is an assumed rate for illustration.</p>
   <dl class="ix-facts">
-    <div><dt>Answers</dt><dd>Not sampled.</dd></div>
+    <div><dt>Answers</dt><dd>Not read by hand.</dd></div>
     <div><dt>GPU price</dt><dd>$1.50/hr <b class="tag">ASSUMED</b> assumed $1.50/hr (laptop, no real bill). Tokens and time are <b class="tag tag-b">MEASURED</b>.</dd></div>
     <div><dt>Workload</dt><dd>5 blocks × 8 requests, concurrency 4, max 128 output tokens, temperature 0, cache: cold</dd></div>
     <div><dt>Baseline repeats</dt><dd>$6.42, $6.22, $6.10, $5.93 (noise bound 15.0%)</dd></div>
@@ -557,7 +557,7 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
 <tr class="ix-detail" id="ix-d8"><td colspan="8"><div class="ix-detail-in">
   <p class="ix-caveat">Laptop; the $/hr is an assumed rate. Q4/Q8 order was interleaved to rule out drift.</p>
   <dl class="ix-facts">
-    <div><dt>Answers</dt><dd>Not sampled.</dd></div>
+    <div><dt>Answers</dt><dd>Not read by hand.</dd></div>
     <div><dt>GPU price</dt><dd>$1.50/hr <b class="tag">ASSUMED</b> assumed $1.50/hr (laptop, no real bill). Tokens and time are <b class="tag tag-b">MEASURED</b>.</dd></div>
     <div><dt>Workload</dt><dd>5 blocks × 8 requests, concurrency 4, max 128 output tokens, temperature 0, cache: cold</dd></div>
     <div><dt>Baseline repeats</dt><dd>$5.17, $5.22, $5.28, $5.18 (noise bound 3.9%)</dd></div>
@@ -612,7 +612,7 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
 <tr class="ix-detail" id="ix-d9"><td colspan="8"><div class="ix-detail-in">
   <p class="ix-caveat">Laptop; the $/hr is an assumed rate.</p>
   <dl class="ix-facts">
-    <div><dt>Answers</dt><dd>Not sampled. A smaller model is a quality trade-off Throttle does not judge.</dd></div>
+    <div><dt>Answers</dt><dd>Answers not read by hand. A smaller model is a quality trade-off Throttle does not judge.</dd></div>
     <div><dt>GPU price</dt><dd>$1.50/hr <b class="tag">ASSUMED</b> assumed $1.50/hr (laptop, no real bill). Tokens and time are <b class="tag tag-b">MEASURED</b>.</dd></div>
     <div><dt>Workload</dt><dd>3 blocks × 4 requests, concurrency 2, max 64 output tokens, temperature 0, cache: cold</dd></div>
     <div><dt>Baseline repeats</dt><dd>$8.49, $8.68, $8.71, $8.63 (noise bound 5.0%)</dd></div>
@@ -666,7 +666,7 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
 <tr class="ix-detail" id="ix-d10"><td colspan="8"><div class="ix-detail-in">
   <p class="ix-caveat">A deliberately bad baseline (one sequence at a time) on a small model; it shows the measurement, not a saving to expect.</p>
   <dl class="ix-facts">
-    <div><dt>Answers</dt><dd>Not sampled.</dd></div>
+    <div><dt>Answers</dt><dd>Not read by hand.</dd></div>
     <div><dt>GPU price</dt><dd>$1.39/hr <b class="tag">ASSUMED</b> RunPod on-demand rate at run time. Tokens and time are <b class="tag tag-b">MEASURED</b>.</dd></div>
     <div><dt>Workload</dt><dd>3 blocks × 67 requests, concurrency 8, max 128 output tokens, temperature 0, cache: prefix caching disabled</dd></div>
     <div><dt>Baseline repeats</dt><dd>$0.748, $0.746, $0.745</dd></div>
@@ -730,7 +730,6 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
       <nav class="foot-cols" aria-label="Footer">
         <div><h2>Product</h2><ul>
           <li><a href="/#how">How it works</a></li>
-          <li><a href="/#watch">Watch it run</a></li>
           <li><a href="/#compare">Why Throttle</a></li>
           <li><a href="/pricing">Pricing</a></li>
           <li><a href="/#start">Start now</a></li>
@@ -758,7 +757,7 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
 </footer>
 <!--/foot-->
 
-<script src="/assets/js/light.js?v=35162a01" defer></script>
+<script src="/assets/js/light.js?v=3a5460b9" defer></script>
 <script src="/assets/js/cost-index.js?v=23e0f662" defer></script>
 </body>
 </html>

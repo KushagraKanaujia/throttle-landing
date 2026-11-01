@@ -1,8 +1,8 @@
 /* Throttle "Living light": the home page story.
-   1. Hero light field + savings counter   2. Fig. 1 Where the money goes
-   3. How it works, drawn in light          4. See it work (tmux session)
+   1. Hero light field + measured number   2. Fig. 1 (only if #sankey exists)
+   3. How it works, drawn in light          4. Terminal session (only if #tmFlow exists)
    5. Closing band light field
-   All numbers are the sample from `throttle demo` on made-up traffic. */
+   The hero number is a real measurement (see validation/hotaisle-mi300x-20261001). */
 (function () {
   "use strict";
   var d = document, w = window, root = d.documentElement;
@@ -13,8 +13,8 @@
   var easeOut = function (t) { return 1 - Math.pow(1 - t, 3); };
   var easeIO = function (t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
   var hasIO = "IntersectionObserver" in w;
-  var SAVED = 8882.61;
-  function seen(el, fn, opts) {
+  var SAVED = 0;   // used only by the optional Fig. 1 and terminal blocks (not on the page now)
+    function seen(el, fn, opts) {
     if (!el) return;
     if (!hasIO) { fn(true); return; }
     new IntersectionObserver(function (es) { es.forEach(function (e) { fn(e.isIntersecting, e); }); }, opts || {}).observe(el);
@@ -28,11 +28,6 @@
     if (!canvas || !w.LightField) return;
     var copy = $("#heroCopy"), shift = $("#shift"), tagRent = $("#tagRent");
     var FINAL = counter.innerHTML;
-    var fmt = function (v) {
-      var dd = Math.floor(v), c = Math.round((v - dd) * 100);
-      if (c === 100) { dd += 1; c = 0; }
-      return "$" + dd.toLocaleString("en-US") + "<small>." + String(c).padStart(2, "0") + "</small>";
-    };
     var field = null;
     try {
       field = w.LightField({
@@ -55,16 +50,12 @@
         },
         share: function (t, scroll) {
           if (reduce) return 0.62;
-          return 0.46 * easeOut(clamp((t - 0.6) / 7.5, 0, 1)) + scroll * 0.44;   // 46% = the sample's moved share of spend
+          return 0.46 * easeOut(clamp((t - 0.6) / 7.5, 0, 1)) + scroll * 0.44;   // how much of the light reaches home
         },
-        onFrame: function (t) {
-          if (t > 9) return;
-          counter.innerHTML = fmt(SAVED * easeOut(clamp((t - 1.0) / 7.0, 0, 1)));
-        }
+        onFrame: function () {}
       });
     } catch (e) { field = null; }
     if (!field) { root.classList.add("no-gl"); return; }
-    if (!reduce) counter.innerHTML = fmt(0);
 
     var vis = true, covered = false;
     var sync = function () { field.setActive(vis && !covered); };
