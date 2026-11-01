@@ -1,5 +1,5 @@
 // Vercel serverless function: POST /api/assessment
-// Takes a free-savings-assessment request from the landing page and emails it to Kush via Resend.
+// Takes a "start with Throttle" request (plan + contact) from the landing page and emails it to Kush via Resend.
 // No dependencies. Env vars: RESEND_API_KEY, ASSESSMENT_FROM (a sender on a domain verified in Resend,
 // e.g. "Throttle <assessment@throttle-pro.com>"). If either is missing it returns 503 {fallback:"mailto"}
 // and the page opens a prefilled email instead, so no lead is lost.
@@ -11,6 +11,11 @@ const SPEND = {
   '5k-50k': '$5k to $50k a month',
   '50k-500k': '$50k to $500k a month',
   '500k+': '$500k+ a month',
+};
+const PLANS = {
+  'starter': 'Starter, $49.99 a month',
+  'team': 'Team, $99.99 a month',
+  'custom': 'Custom (large company)',
 };
 const EMAIL_RE = /^[^\s@<>()",;:]+@[^\s@<>()",;:]+\.[^\s@<>()",;:]{2,}$/;
 const WINDOW_MS = 10 * 60 * 1000;
@@ -69,9 +74,11 @@ function validate(b) {
   const email = clean(b.email, 254);
   const company = clean(b.company, 200);
   const spend = clean(b.spend, 20);
+  const plan = clean(b.plan, 20);
   if (!email || !EMAIL_RE.test(email)) return { error: 'Please enter a valid work email.' };
   if (spend && !SPEND[spend]) return { error: 'Unknown spend range.' };
-  return { email, company, spend };
+  if (plan && !PLANS[plan]) return { error: 'Unknown plan.' };
+  return { email, company, spend, plan };
 }
 
 function send(res, status, obj, wantsHtml) {
@@ -111,8 +118,9 @@ async function handler(req, res) {
   if (!key || !from) return send(res, 503, { fallback: 'mailto' }, wantsHtml);
 
   const text = [
-    'New free savings assessment request from throttle-pro.com',
+    'New Throttle sign-up request from throttle-pro.com',
     '',
+    'Plan: ' + (v.plan ? PLANS[v.plan] : 'not given'),
     'Work email: ' + v.email,
     'Company: ' + (v.company || 'not given'),
     'Monthly AI API spend: ' + (v.spend ? SPEND[v.spend] : 'not given'),
@@ -128,7 +136,7 @@ async function handler(req, res) {
         from,
         to: [TO],
         reply_to: v.email,
-        subject: 'Assessment request: ' + (v.company || v.email),
+        subject: (v.plan ? PLANS[v.plan].split(',')[0] : 'Sign-up') + ' request: ' + (v.company || v.email),
         text,
       }),
     });
