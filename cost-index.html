@@ -4,23 +4,23 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Throttle Index: what tokens really cost</title>
-<meta name="description" content="Measured cost per million output tokens for real serving changes on real hardware, with 95% confidence intervals, run-to-run noise bounds and the cases where a cheaper token came with broken answers.">
+<meta name="description" content="Real runs on real GPUs: which serving changes really cut the cost per token, and which only looked cheaper because the answers broke.">
 <meta name="author" content="Kushagra Kanaujia">
 <meta name="theme-color" content="#070D22">
 <link rel="canonical" href="https://www.throttle-pro.com/cost-index">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Throttle">
 <meta property="og:title" content="The Throttle Index: what tokens really cost">
-<meta property="og:description" content="Measured cost per million output tokens for real serving changes on real hardware, with 95% confidence intervals, run-to-run noise bounds and the cases where a cheaper token came with broken answers.">
+<meta property="og:description" content="Real runs on real GPUs: which serving changes really cut the cost per token, and which only looked cheaper because the answers broke.">
 <meta property="og:url" content="https://www.throttle-pro.com/cost-index">
 <meta property="og:image" content="https://www.throttle-pro.com/assets/media/index-og.png">
 <meta property="og:image:width" content="1600">
 <meta property="og:image:height" content="900">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="The Throttle Index: what tokens really cost">
-<meta name="twitter:description" content="Measured cost per million output tokens for real serving changes on real hardware, with 95% confidence intervals, run-to-run noise bounds and the cases where a cheaper token came with broken answers.">
+<meta name="twitter:description" content="Real runs on real GPUs: which serving changes really cut the cost per token, and which only looked cheaper because the answers broke.">
 <meta name="twitter:image" content="https://www.throttle-pro.com/assets/media/index-og.png">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Dataset", "name": "The Throttle Index", "description": "Measured cost per million output tokens for real serving changes on real hardware, with 95% confidence intervals, run-to-run noise bounds and the cases where a cheaper token came with broken answers.", "url": "https://www.throttle-pro.com/cost-index", "license": "https://creativecommons.org/licenses/by/4.0/", "creator": {"@type": "Organization", "name": "Throttle", "url": "https://www.throttle-pro.com/"}, "distribution": [{"@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": "https://www.throttle-pro.com/assets/data/throttle-index.json"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Dataset", "name": "The Throttle Index", "description": "Real runs on real GPUs: which serving changes really cut the cost per token, and which only looked cheaper because the answers broke.", "url": "https://www.throttle-pro.com/cost-index", "license": "https://creativecommons.org/licenses/by/4.0/", "creator": {"@type": "Organization", "name": "Throttle", "url": "https://www.throttle-pro.com/"}, "distribution": [{"@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": "https://www.throttle-pro.com/assets/data/throttle-index.json"}]}</script>
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/assets/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
@@ -710,9 +710,9 @@ _Shared with `throttle check --share`. No URLs, hostnames, IPs or keys are inclu
       </div>
     </div>
     <div class="rc-cli">
-      <p class="mono rc-k">Measure your own server today</p>
-      <button class="copy" type="button" data-copy="pipx install throttle-pro" aria-label="Copy the install command: pipx install throttle-pro"><span class="copy-p" aria-hidden="true">$</span><code>pipx install throttle-pro</code><span class="copy-state" aria-live="polite">copy</span></button>
-      <p class="rc-fine">The open-source CLI behind these numbers (MIT). It runs on your machine and only talks to your own endpoint: vLLM, SGLang, Ollama or LMDeploy.</p>
+      <p class="mono rc-k">Try it on your laptop</p>
+      <button class="copy" type="button" data-copy="pip install git+https://github.com/KushagraKanaujia/throttle" aria-label="Copy the install command: pip install git+https://github.com/KushagraKanaujia/throttle"><span class="copy-p" aria-hidden="true">$</span><code>pip install git+https://github.com/KushagraKanaujia/throttle</code><span class="copy-state" aria-live="polite">copy</span></button>
+      <p class="rc-fine">Open source (MIT). Then run <code>throttle demo</code> to watch the whole loop offline: no API key, no GPU, no network.</p>
     </div>
   </div>
 </section>
