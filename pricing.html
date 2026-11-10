@@ -21,7 +21,7 @@
 <meta name="twitter:image" content="https://www.throttle-pro.com/assets/og-stop-renting.png">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Service", "name": "Throttle", "url": "https://www.throttle-pro.com/pricing", "provider": {"@type": "Organization", "name": "Throttle", "url": "https://www.throttle-pro.com/"}, "description": "Throttle tests your AI jobs against cheaper models, closed or open, on your own traffic and moves the ones that pass. Starter $49.99 a month, Team $99.99 a month, custom plans for large companies.", "offers": [{"@type": "Offer", "name": "Starter", "price": "49.99", "priceCurrency": "USD"}, {"@type": "Offer", "name": "Team", "price": "99.99", "priceCurrency": "USD"}]}</script>
 <!--faq-ld-->
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What do the plans cost?", "acceptedAnswer": {"@type": "Answer", "text": "Starter is $49.99 a month for one app. Team is $99.99 a month for all your apps. Large companies get a custom plan."}}, {"@type": "Question", "name": "Do you take a cut of my savings?", "acceptedAnswer": {"@type": "Answer", "text": "No. You pay the flat monthly fee and keep every dollar Throttle saves you."}}, {"@type": "Question", "name": "Can I cancel?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, any time. Your reports and your model stay yours."}}, {"@type": "Question", "name": "Who pays for the GPUs?", "acceptedAnswer": {"@type": "Answer", "text": "You do, in your own cloud. Throttle takes that cost off before it shows savings, so the number you see is what you actually keep."}}, {"@type": "Question", "name": "Can I go back to the API?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, any time. Pin one job, or every job, back to the API. Your app keeps working the whole time."}}, {"@type": "Question", "name": "Is the code open source?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The Throttle code is on GitHub under the MIT license."}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What do the plans cost?", "acceptedAnswer": {"@type": "Answer", "text": "Starter is $49.99 a month for one app. Team is $99.99 a month for all your apps. Large companies get a custom plan."}}, {"@type": "Question", "name": "What counts as one app?", "acceptedAnswer": {"@type": "Answer", "text": "One repo or service. If your AI calls live in three services, that is three apps, and Team covers all of them."}}, {"@type": "Question", "name": "The code is open source. What do I pay for?", "acceptedAnswer": {"@type": "Answer", "text": "The free MIT code is the full command line tool and the GitHub Action. You can run all of it yourself. A paid plan adds Kush setting Throttle up with you on your own traffic, and help from him when you need it. Custom adds a security review and a contract. See Security for what runs where."}}, {"@type": "Question", "name": "Do you take a cut of my savings?", "acceptedAnswer": {"@type": "Answer", "text": "No. You pay the flat monthly fee and keep every dollar Throttle saves you."}}, {"@type": "Question", "name": "Can I cancel?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, any time. Your reports and your model stay yours."}}, {"@type": "Question", "name": "Who pays for the GPUs?", "acceptedAnswer": {"@type": "Answer", "text": "You do, in your own cloud. Throttle takes that cost off before it shows savings, so the number you see is what you actually keep."}}, {"@type": "Question", "name": "Can I go back to the API?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, any time. Pin one job, or every job, back to the API. Your app keeps working the whole time."}}, {"@type": "Question", "name": "Is the code open source?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The Throttle code is on GitHub under the MIT license."}}]}</script>
 <!--/faq-ld-->
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/assets/favicon-32.png" type="image/png" sizes="32x32">
@@ -93,7 +93,7 @@
         <span class="ph-line" aria-hidden="true"></span>
         <p class="ph-n mono">Starter</p>
         <h3>For one app.</h3>
-        <p>Throttle finds the AI jobs in one app, tests each one against cheaper models on your own traffic, leaves a note on every AI change, and moves what passes when you approve. Fallback to the API is always on.</p>
+        <p>Throttle finds the AI jobs in one app, tests each one against cheaper models on your own traffic, leaves a note on every AI change, and moves what passes when you approve. Fallback to the API is always on. One app means one repo or service.</p>
         <span class="ph-t">$49.99 / month</span>
         <a class="tlink" href="/?plan=starter#start">Start Starter <i aria-hidden="true">&rarr;</i></a>
       </li>
@@ -101,7 +101,7 @@
         <span class="ph-line" aria-hidden="true"></span>
         <p class="ph-n mono">Team</p>
         <h3>For every app your team runs.</h3>
-        <p>Everything in Starter, for all your apps. Throttle tests again when new models come out, keeps a log of every decision, and you get direct help from Kush when you need it.</p>
+        <p>Everything in Starter, for all your apps. Re-test any job against a new model in one command. Throttle keeps a log of every decision, and you get direct help from Kush when you need it.</p>
         <span class="ph-t">$99.99 / month</span>
         <a class="tlink" href="/?plan=team#start">Start Team <i aria-hidden="true">&rarr;</i></a>
       </li>
@@ -142,6 +142,8 @@
     </div>
     <div class="faq">
       <details><summary>What do the plans cost?</summary><p>Starter is $49.99 a month for one app. Team is $99.99 a month for all your apps. Large companies get a custom plan.</p></details>
+      <details><summary>What counts as one app?</summary><p>One repo or service. If your AI calls live in three services, that is three apps, and Team covers all of them.</p></details>
+      <details><summary>The code is open source. What do I pay for?</summary><p>The free MIT code is the full command line tool and the GitHub Action. You can run all of it yourself. A paid plan adds Kush setting Throttle up with you on your own traffic, and help from him when you need it. Custom adds a security review and a contract. See <a href="/security">Security</a> for what runs where.</p></details>
       <details><summary>Do you take a cut of my savings?</summary><p>No. You pay the flat monthly fee and keep every dollar Throttle saves you.</p></details>
       <details><summary>Can I cancel?</summary><p>Yes, any time. Your reports and your model stay yours.</p></details>
       <details><summary>Who pays for the GPUs?</summary><p>You do, in your own cloud. Throttle takes that cost off before it shows savings, so the number you see is what you actually keep.</p></details>
