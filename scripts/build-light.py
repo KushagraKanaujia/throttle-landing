@@ -19,7 +19,7 @@ import hashlib, html, json, pathlib, re
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 PART = ROOT / "scripts/partials-light"
 DATA = json.loads((ROOT / "assets/data/demo-report.json").read_text())
-PAGES = ["index.html", "pricing.html", "cost-index.html"] + sorted(
+PAGES = ["index.html", "pricing.html", "cost-index.html", "security.html", "privacy.html"] + sorted(
     str(p.relative_to(ROOT)) for d in ("blog", "guides") for p in (ROOT / d).glob("*.html"))
 
 STATE = {
