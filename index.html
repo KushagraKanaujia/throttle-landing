@@ -32,7 +32,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,200..600,0..100;1,9..144,200..600,0..100&amp;display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/light.css?v=68d73967">
+<link rel="stylesheet" href="/assets/css/light.css?v=473102c1">
 <script>document.documentElement.classList.add("js");if(matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("rm")</script>
 </head>
 <body>
@@ -453,16 +453,29 @@
         <label class="pp"><input type="radio" name="plan" value="team"><span class="pp-b"><span class="pp-n mono">Team</span><span class="pp-p">$99.99<small>/mo</small></span><span class="pp-d">Every app you run</span></span></label>
         <label class="pp"><input type="radio" name="plan" value="custom"><span class="pp-b"><span class="pp-n mono">Custom</span><span class="pp-p">Let&rsquo;s talk</span><span class="pp-d">Large companies</span></span></label>
       </fieldset>
+      <div class="start-opt">
+        <label class="start-f"><span class="start-k">Company <small>optional</small></span>
+          <input type="text" name="company" autocomplete="organization" placeholder="Acme" maxlength="200">
+        </label>
+        <label class="start-f"><span class="start-k">Monthly AI API spend <small>optional</small></span>
+          <select name="spend">
+            <option value="">Choose one</option>
+            <option value="lt5k">Under $5k</option>
+            <option value="5k-20k">$5k-20k</option>
+            <option value="20k-100k">$20k-100k</option>
+            <option value="100k+">$100k+</option>
+          </select>
+        </label>
+      </div>
       <div class="start-row">
         <label class="start-email"><span class="sr">Work email</span>
           <input type="email" name="email" required autocomplete="email" placeholder="you@company.com" maxlength="254">
         </label>
         <button class="cta" type="submit">Start now <i aria-hidden="true">&rarr;</i></button>
       </div>
-      <input type="hidden" name="company" value=""><input type="hidden" name="spend" value="">
       <div class="hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
       <p class="form-msg" role="status" aria-live="polite"></p>
-      <p class="start-alt">Prefer email? <a href="mailto:kush@throttle-pro.com?subject=Start%20with%20Throttle">kush@throttle-pro.com</a></p>
+      <p class="start-alt">Prefer email? <a href="mailto:kush@throttle-pro.com?subject=Start%20with%20Throttle">kush@throttle-pro.com</a>. What happens to these details: <a href="/privacy">Privacy</a> &middot; <a href="/security">Security</a></p>
     </form>
   </div>
 </section>
@@ -549,7 +562,7 @@
 <!--/foot-->
 
 <script src="/assets/js/field.js?v=89dc8645" defer></script>
-<script src="/assets/js/light.js?v=3a5460b9" defer></script>
+<script src="/assets/js/light.js?v=e18cc69b" defer></script>
 <script src="/assets/js/story.js?v=4e2eb55c" defer></script>
 </body>
 </html>
