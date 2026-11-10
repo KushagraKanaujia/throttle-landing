@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Throttle: Stop renting your AI</title>
-<meta name="description" content="Throttle lives in your code. When your team adds or changes an AI feature, it tests the job against other models, closed or open, on your own traffic, moves it when one does as well for less, and falls back if not. Your data stays in your cloud. From $49.99 a month.">
+<meta name="description" content="Cut your OpenAI and Anthropic bill. Throttle tests each AI job against cheaper models on your own traffic and moves it only when it passes. From $49.99/mo.">
 <meta name="theme-color" content="#070D22">
 <link rel="canonical" href="https://www.throttle-pro.com/">
 <meta property="og:type" content="website">
@@ -23,7 +23,7 @@
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Throttle", "applicationCategory": "DeveloperApplication", "operatingSystem": "Linux, macOS", "url": "https://www.throttle-pro.com/", "description": "Throttle lives in your code. When your team adds or changes an AI feature, it tests whether your own open model does the job as well as OpenAI or Anthropic, moves it if so, falls back if not, and saves every miss as a lesson. Your model runs in your own cloud.", "offers": [{"@type": "Offer", "name": "Starter", "price": "49.99", "priceCurrency": "USD"}, {"@type": "Offer", "name": "Team", "price": "99.99", "priceCurrency": "USD"}], "license": "https://opensource.org/licenses/MIT", "codeRepository": "https://github.com/KushagraKanaujia/throttle"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Throttle", "url": "https://www.throttle-pro.com/", "logo": "https://www.throttle-pro.com/assets/brand/icon-app.svg", "founder": {"@type": "Person", "name": "Kushagra Kanaujia"}, "sameAs": ["https://github.com/KushagraKanaujia/throttle", "https://pypi.org/project/throttle-pro/"]}</script>
 <!--faq-ld-->
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Does it need access to my code?", "acceptedAnswer": {"@type": "Answer", "text": "It uses a GitHub Action that reads where your code calls an AI API. That is how it finds your AI jobs and comments on pull requests. It runs in your own CI, and your prompts and data stay in your cloud."}}, {"@type": "Question", "name": "Where does my model run?", "acceptedAnswer": {"@type": "Answer", "text": "In your own cloud, on GPUs you control. Your prompts and answers never come to us, and Throttle never stores your API keys."}}, {"@type": "Question", "name": "What if my model gets something wrong?", "acceptedAnswer": {"@type": "Answer", "text": "If your model errors, times out or sends a broken answer (cut off, empty, bad JSON or a bad tool call), that request goes to OpenAI or Anthropic automatically, so your users still get an answer. The miss is saved as a lesson. Training your model on lessons is coming"}}, {"@type": "Question", "name": "Do I have to approve every move?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. A job moves only after it passes its tests and you approve it. You can pin any job to the API or undo a move, and every decision is logged. Letting passing jobs move on their own is coming"}}, {"@type": "Question", "name": "What does it cost?", "acceptedAnswer": {"@type": "Answer", "text": "Starter is $49.99 a month for one app. Team is $99.99 a month for all your apps. Large companies get a custom plan. No cut of your savings. See the plans."}}, {"@type": "Question", "name": "Which models does it test?", "acceptedAnswer": {"@type": "Answer", "text": "Any model behind an OpenAI-compatible endpoint, closed or open: a hosted API model with your key, or an open model you serve with vLLM, SGLang, Ollama or LMDeploy. Every one runs the same tests on the same requests your app sent to OpenAI or Anthropic. The savings math is built for models you own; for cheaper API models it is coming"}}, {"@type": "Question", "name": "I already use a gateway or an eval tool. Do I still need this?", "acceptedAnswer": {"@type": "Answer", "text": "Keep them. A gateway carries your requests and an eval tool runs the tests you write. Throttle answers a different question: which model should do each job this week, on your traffic, and it moves the job when the answer changes. See how it compares."}}, {"@type": "Question", "name": "Is Throttle running at real companies yet?", "acceptedAnswer": {"@type": "Answer", "text": "We are setting up our first teams now. Every number on this page comes from our own runs on rented GPUs and our own machines, with the raw data on GitHub."}}, {"@type": "Question", "name": "Is it open source?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The Throttle code is on GitHub under the MIT license."}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Does it need access to my code?", "acceptedAnswer": {"@type": "Answer", "text": "It uses a GitHub Action that reads where your code calls an AI API. That is how it finds your AI jobs and comments on pull requests. It runs in your own CI, and your prompts and data stay in your cloud."}}, {"@type": "Question", "name": "Where does my model run?", "acceptedAnswer": {"@type": "Answer", "text": "In your own cloud, on GPUs you control. Your prompts and answers never come to us, and Throttle never stores your API keys. See what leaves your cloud."}}, {"@type": "Question", "name": "What if my model gets something wrong?", "acceptedAnswer": {"@type": "Answer", "text": "If your model errors, times out or sends a broken answer (cut off, empty, bad JSON or a bad tool call), that request goes to OpenAI or Anthropic automatically, so your users still get an answer. The miss is saved as a lesson. Training your model on lessons is not built yet."}}, {"@type": "Question", "name": "Do I have to approve every move?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. A job moves only after it passes its tests and you approve it. You can pin any job to the API or undo a move, and every decision is logged. Letting passing jobs move on their own is not built yet."}}, {"@type": "Question", "name": "What does it cost?", "acceptedAnswer": {"@type": "Answer", "text": "Starter is $49.99 a month for one app. Team is $99.99 a month for all your apps. Large companies get a custom plan. No cut of your savings. See the plans."}}, {"@type": "Question", "name": "Which models does it test?", "acceptedAnswer": {"@type": "Answer", "text": "Any model behind an OpenAI-compatible endpoint, closed or open: a hosted API model with your key, or an open model you serve with vLLM, SGLang, Ollama or LMDeploy. Every one runs the same tests on the same requests your app sent to OpenAI or Anthropic. The savings math is built for models you own; for cheaper API models it is not built yet."}}, {"@type": "Question", "name": "I already use a gateway or an eval tool. Do I still need this?", "acceptedAnswer": {"@type": "Answer", "text": "Keep them. A gateway carries your requests and an eval tool runs the tests you write. Throttle answers a different question: which model should do each job this week, on your traffic, and it moves the job when the answer changes. See how it compares."}}, {"@type": "Question", "name": "Is Throttle running at real companies yet?", "acceptedAnswer": {"@type": "Answer", "text": "We are setting up our first teams now. Every Throttle result on this page comes from our own runs. Outside stats are linked to their source. Our runs used rented GPUs and our own machines, and the raw data is on GitHub."}}, {"@type": "Question", "name": "Is it open source?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The Throttle code is on GitHub under the MIT license."}}]}</script>
 <!--/faq-ld-->
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/assets/favicon-32.png" type="image/png" sizes="32x32">
@@ -89,8 +89,8 @@
 
     <div class="home" id="home">
       <p class="mono home-k"><span>Measured by Throttle</span><i class="dot"></i></p>
-      <p class="counter num" id="counter" aria-label="32 percent cheaper per token">32<small>%</small></p>
-      <p class="sub">cheaper per token, answers still right &middot; Qwen2.5-72B on an AMD MI300X</p>
+      <p class="counter num" id="counter" aria-label="32 percent cheaper per token from a serving change">32<small>%</small></p>
+      <p class="sub">cheaper per token from a serving change (pre-quantized FP8 vs BF16), same answers, on our own MI300X run &middot; Qwen2.5-72B</p>
     </div>
     <span class="cue" aria-hidden="true"><i></i></span>
   </div>
@@ -113,7 +113,7 @@
       <li class="rcpt-i good">
         <p class="rcpt-n num">32<small>%</small></p>
         <div><p class="mono rcpt-k">Cheaper &middot; verified</p>
-        <p class="rcpt-t">A properly quantized FP8 checkpoint of the same 72B model: $1.67 to $1.13 per million tokens, with correct answers.</p></div>
+        <p class="rcpt-t">A pre-quantized FP8 checkpoint of the same 72B model, against BF16: $1.67 to $1.13 per million tokens, with correct answers.</p></div>
       </li>
       <li class="rcpt-i">
         <p class="rcpt-n num">27<small>%</small></p>
@@ -134,7 +134,7 @@
         <li class="beat is-on" data-beat="0">
           <span class="b-n mono">01</span>
           <h3>Set up once.</h3>
-          <p>Point your API base URL at Throttle and add the GitHub Action. Throttle sees every call your app makes to OpenAI or Anthropic. Nothing else changes.</p>
+          <p>Run the Throttle proxy in your cloud and point your API base URL at it. Add the GitHub Action. Throttle sees every call your app makes to OpenAI or Anthropic. Nothing else changes.</p>
         </li>
         <li class="beat" data-beat="1">
           <span class="b-n mono">02</span>
@@ -144,7 +144,7 @@
         <li class="beat" data-beat="2">
           <span class="b-n mono">03</span>
           <h3>Tests before it moves. Falls back if not.</h3>
-          <p>Other models, closed or open, answer the same requests in the background, your own model among them. If one does the job as well for less, you approve and the job moves. If it errors or gives a broken answer, that request goes straight back to the API.</p>
+          <p>Other models, closed or open, answer the same requests in the background, your own model among them. Grading uses a judge model you pick, with your own key. If one does the job as well for less, you approve and the job moves. If it errors or gives a broken answer, that request goes straight back to the API.</p>
         </li>
         <li class="beat" data-beat="3">
           <span class="b-n mono">04</span>
@@ -179,7 +179,7 @@
     <dl class="stats" aria-label="The numbers behind it">
       <div class="stat"><dt class="st-n num">52<small>%</small></dt><dd><span>of teams run offline evals on a test set. Just over half.</span><a class="st-src mono" href="https://www.langchain.com/state-of-agent-engineering" target="_blank" rel="noopener">LangChain, 1,340 teams <i aria-hidden="true">&nearr;</i></a></dd></div>
       <div class="stat"><dt class="st-n num">45<small>%</small></dt><dd><span>average gross margin on AI products in 2025.</span><a class="st-src mono" href="https://www.iconiq.com/growth/reports/state-of-ai-2026" target="_blank" rel="noopener">ICONIQ State of AI 2026 <i aria-hidden="true">&nearr;</i></a></dd></div>
-      <div class="stat"><dt class="st-n num">32<small>%</small></dt><dd><span>of model pairs where the model with the lower list price cost more in real use, by up to 28x.</span><a class="st-src mono" href="https://arxiv.org/abs/2603.23971" target="_blank" rel="noopener">Chen, Zaharia, Stoica et al. 2026 <i aria-hidden="true">&nearr;</i></a></dd></div>
+      <div class="stat"><dt class="st-n num">32<small>%</small></dt><dd><span>of model pairs in an outside study where the model with the lower list price cost more in real use, by up to 28x. Not the same 32% as our FP8 run above.</span><a class="st-src mono" href="https://arxiv.org/abs/2603.23971" target="_blank" rel="noopener">Chen, Zaharia, Stoica et al. 2026 <i aria-hidden="true">&nearr;</i></a></dd></div>
       <div class="stat"><dt class="st-n num">16<small>%</small></dt><dd><span>of Sonnet 4 requests hit in the worst hour of a bug that Anthropic&rsquo;s own evals &ldquo;simply didn&rsquo;t capture&rdquo;.</span><a class="st-src mono" href="https://www.anthropic.com/engineering/a-postmortem-of-three-recent-issues" target="_blank" rel="noopener">Anthropic postmortem <i aria-hidden="true">&nearr;</i></a></dd></div>
     </dl>
 
@@ -423,7 +423,7 @@
         <h3 class="mono"><a href="/blog">Blog</a></h3>
         <ul>
           <li><a href="/blog/i-changed-nothing-27-percent-more-expensive">I changed nothing and my LLM server got 27% more expensive</a></li>
-          <li><a href="/blog/one-vllm-flag-counterbalanced-benchmark">One vLLM flag, &minus;68.6% cost per token</a></li>
+          <li><a href="/blog/one-vllm-flag-counterbalanced-benchmark">How to benchmark a vLLM flag so the result holds up</a></li>
           <li><a href="/blog/cost-per-million-tokens-self-hosted-llm">How to measure cost per million tokens on a self-hosted LLM</a></li>
         </ul>
         <h3 class="mono"><a href="/guides">Guides</a></h3>
@@ -489,13 +489,13 @@
     </div>
     <div class="faq">
       <details><summary>Does it need access to my code?</summary><p>It uses a GitHub Action that reads where your code calls an AI API. That is how it finds your AI jobs and comments on pull requests. It runs in your own CI, and your prompts and data stay in your cloud.</p></details>
-      <details><summary>Where does my model run?</summary><p>In your own cloud, on GPUs you control. Your prompts and answers never come to us, and Throttle never stores your API keys.</p></details>
+      <details><summary>Where does my model run?</summary><p>In your own cloud, on GPUs you control. Your prompts and answers never come to us, and Throttle never stores your API keys. <a href="/security">See what leaves your cloud</a>.</p></details>
       <details><summary>What if my model gets something wrong?</summary><p>If your model errors, times out or sends a broken answer (cut off, empty, bad JSON or a bad tool call), that request goes to OpenAI or Anthropic automatically, so your users still get an answer. The miss is saved as a lesson. Training your model on lessons is <span class="soon">coming</span></p></details>
       <details><summary>Do I have to approve every move?</summary><p>Yes. A job moves only after it passes its tests and you approve it. You can pin any job to the API or undo a move, and every decision is logged. Letting passing jobs move on their own is <span class="soon">coming</span></p></details>
       <details><summary>What does it cost?</summary><p>Starter is $49.99 a month for one app. Team is $99.99 a month for all your apps. Large companies get a custom plan. No cut of your savings. <a href="/pricing">See the plans</a>.</p></details>
       <details><summary>Which models does it test?</summary><p>Any model behind an OpenAI-compatible endpoint, closed or open: a hosted API model with your key, or an open model you serve with vLLM, SGLang, Ollama or LMDeploy. Every one runs the same tests on the same requests your app sent to OpenAI or Anthropic. The savings math is built for models you own; for cheaper API models it is <span class="soon">coming</span></p></details>
       <details><summary>I already use a gateway or an eval tool. Do I still need this?</summary><p>Keep them. A gateway carries your requests and an eval tool runs the tests you write. Throttle answers a different question: which model should do each job this week, on your traffic, and it moves the job when the answer changes. <a href="#compare">See how it compares</a>.</p></details>
-      <details><summary>Is Throttle running at real companies yet?</summary><p>We are setting up our first teams now. Every number on this page comes from our own runs on rented GPUs and our own machines, with the raw data on <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a>.</p></details>
+      <details><summary>Is Throttle running at real companies yet?</summary><p>We are setting up our first teams now. Every Throttle result on this page comes from our own runs. Outside stats are linked to their source. Our runs used rented GPUs and our own machines, and the raw data is on <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a>.</p></details>
       <details><summary>Is it open source?</summary><p>Yes. The Throttle code is on <a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a> under the MIT license.</p></details>
     </div>
   </div>
