@@ -176,6 +176,16 @@
   if (form) {
     var msg = $(".form-msg", form), sub = $('button[type="submit"]', form);
     var TO = "kush@throttle-pro.com";
+    /* Stripe Payment Links for the paid plans. Empty = no checkout yet (the form just emails Kush).
+       In Stripe, set each link's after-payment redirect to https://www.throttle-pro.com/?paid=1#start */
+    var PAY = { starter: "", team: "" };
+    var checkout = function (v) {
+      var link = PAY[v.plan];
+      if (!link || !/^https:\/\/buy\.stripe\.com\/[A-Za-z0-9_]+$/.test(link)) return false;
+      say("Taking you to secure checkout&hellip;", true);
+      w.location.href = link + "?prefilled_email=" + encodeURIComponent(v.email);
+      return true;
+    };
     var say = function (html, ok) { msg.innerHTML = html; msg.classList.toggle("ok", !!ok); };
     var sayText = function (text) { msg.textContent = text; msg.classList.remove("ok"); };
     var mailto = function (v) {
@@ -190,6 +200,7 @@
     var wanted = /[?&]plan=(starter|team|custom)\b/.exec(location.search);
     if (wanted) { var r = $('input[name="plan"][value="' + wanted[1] + '"]', form); if (r) r.checked = true; }
     var back = /[?&]assessment=(sent|error)/.exec(location.search);
+    if (/[?&]paid=1\b/.test(location.search)) say("Payment received. Thank you. Kush will email you within a day to set you up.", true);
     if (back) say(back[1] === "sent" ? "Thanks. We got it and will email you soon." : 'That did not go through. Please write to <a href="mailto:' + TO + '">' + TO + "</a>.", back[1] === "sent");
     form.addEventListener("submit", function (ev) {
       ev.preventDefault();
@@ -197,6 +208,7 @@
       var pk = $('input[name="plan"]:checked', form);
       var v = { plan: pk ? pk.value : "", email: form.email.value.trim(), company: (form.company && form.company.value || "").trim(), spend: form.spend ? form.spend.value : "", website: form.website.value };
       var fallback = function () {
+        if (checkout(v)) return;
         var href = mailto(v);
         say('Opening your email app with your details filled in. If nothing opens, <a href="' + href + '">click here</a> or write to <a href="mailto:' + TO + '">' + TO + "</a>.");
         sub.disabled = false;
@@ -206,7 +218,7 @@
       fetch(form.getAttribute("action"), {
         method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify(v)
       }).then(function (r) {
-        if (r.status === 200) { form.email.value = ""; sub.disabled = false; say("Thanks. Kush will email you within a day to set you up.", true); }
+        if (r.status === 200) { if (checkout(v)) return; form.email.value = ""; sub.disabled = false; say("Thanks. Kush will email you within a day to set you up.", true); }
         // 400 means the server read the form and found something to fix: show its words, do not open email
         else if (r.status === 400) return r.json().then(function (j) {
           sub.disabled = false;
