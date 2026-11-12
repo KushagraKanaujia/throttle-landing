@@ -3,14 +3,16 @@
 // No dependencies. Env vars: RESEND_API_KEY, ASSESSMENT_FROM (a sender on a domain verified in Resend,
 // e.g. "Throttle <assessment@throttle-pro.com>"). If either is missing it returns 503 {fallback:"mailto"}
 // and the page opens a prefilled email instead, so no lead is lost.
+// Only accepts POSTs from the site itself (Origin or Referer must be throttle-pro.com or localhost),
+// with a JSON or form-encoded body.
 'use strict';
 
 const TO = 'kush@throttle-pro.com';
 const SPEND = {
   'lt5k': 'Under $5k a month',
-  '5k-50k': '$5k to $50k a month',
-  '50k-500k': '$50k to $500k a month',
-  '500k+': '$500k+ a month',
+  '5k-20k': '$5k to $20k a month',
+  '20k-100k': '$20k to $100k a month',
+  '100k+': '$100k+ a month',
 };
 const PLANS = {
   'starter': 'Starter, $49.99 a month',
@@ -21,6 +23,27 @@ const EMAIL_RE = /^[^\s@<>()",;:]+@[^\s@<>()",;:]+\.[^\s@<>()",;:]{2,}$/;
 const WINDOW_MS = 10 * 60 * 1000;
 const MAX_PER_WINDOW = 5;
 const MAX_BODY = 8 * 1024;
+const ALLOWED_ORIGINS = new Set(['https://www.throttle-pro.com', 'https://throttle-pro.com']);
+const LOCAL_ORIGIN_RE = /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d{1,5})?$/;
+const ALLOWED_TYPES = new Set(['application/json', 'application/x-www-form-urlencoded']);
+
+function mediaType(req) {
+  return String(req.headers['content-type'] || '').split(';')[0].trim().toLowerCase();
+}
+
+function originAllowed(o) {
+  return ALLOWED_ORIGINS.has(o) || LOCAL_ORIGIN_RE.test(o);
+}
+
+// The form only ever posts from the site itself. Browsers send Origin on every POST; Referer is the
+// fallback for the rare client that drops Origin. A request with neither, or from anywhere else, is refused.
+function fromSite(req) {
+  const origin = req.headers.origin;
+  if (origin !== undefined) return originAllowed(String(origin));
+  const ref = req.headers.referer;
+  if (ref === undefined) return false;
+  try { return originAllowed(new URL(String(ref)).origin); } catch (e) { return false; }
+}
 
 // Naive per-IP rate limit. Lives only as long as this function instance stays warm, which is fine
 // for stopping a burst from one script. Not a real defence; the honeypot does most of the work.
@@ -61,9 +84,10 @@ async function readBody(req) {
   if (Buffer.isBuffer(body)) body = body.toString('utf8');
   if (typeof body === 'string') {
     if (type.includes('application/x-www-form-urlencoded')) return Object.fromEntries(new URLSearchParams(body));
-    return body ? JSON.parse(body) : {};
+    body = body ? JSON.parse(body) : {};
   }
-  return body && typeof body === 'object' ? body : {};
+  // Only a plain JSON object counts; null, numbers and arrays become an empty body (and fail validation).
+  return body && typeof body === 'object' && !Array.isArray(body) ? body : {};
 }
 
 function clean(s, max) {
@@ -76,8 +100,9 @@ function validate(b) {
   const spend = clean(b.spend, 20);
   const plan = clean(b.plan, 20);
   if (!email || !EMAIL_RE.test(email)) return { error: 'Please enter a valid work email.' };
-  if (spend && !SPEND[spend]) return { error: 'Unknown spend range.' };
-  if (plan && !PLANS[plan]) return { error: 'Unknown plan.' };
+  // Object.hasOwn, not SPEND[spend]: keys like "toString" or "__proto__" must not pass.
+  if (spend && !Object.hasOwn(SPEND, spend)) return { error: 'Unknown spend range.' };
+  if (plan && !Object.hasOwn(PLANS, plan)) return { error: 'Unknown plan.' };
   return { email, company, spend, plan };
 }
 
@@ -96,11 +121,14 @@ function send(res, status, obj, wantsHtml) {
 }
 
 async function handler(req, res) {
-  const wantsHtml = String(req.headers['content-type'] || '').includes('application/x-www-form-urlencoded');
+  const type = mediaType(req);
+  const wantsHtml = type === 'application/x-www-form-urlencoded';
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return send(res, 405, { error: 'Method not allowed' });
   }
+  if (!ALLOWED_TYPES.has(type)) return send(res, 415, { error: 'Send JSON or a form.' });
+  if (!fromSite(req)) return send(res, 403, { error: 'Forbidden.' }, wantsHtml);
 
   let body;
   try { body = await readBody(req); } catch (e) { return send(res, 400, { error: 'Bad request body.' }, wantsHtml); }

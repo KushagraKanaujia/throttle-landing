@@ -109,10 +109,12 @@
 .read-cta{padding:clamp(88px,10vw,140px) 0;background:linear-gradient(180deg,var(--navy-deep),#0A1433)}
 .rc-in{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:clamp(40px,7vw,120px);align-items:end}
 .read-cta .body-l{margin:24px 0 32px}
-.rc-cli{padding:26px;border:1px solid var(--line);border-radius:8px;background:rgba(5,10,26,.5)}
+.rc-cli{min-width:0;max-width:100%;padding:26px;border:1px solid var(--line);border-radius:8px;background:rgba(5,10,26,.5)}
 .rc-k{color:var(--gold);margin-bottom:16px}
-.copy{display:flex;align-items:center;gap:12px;width:100%;height:52px;padding:0 16px;border:1px solid rgba(216,180,106,.32);border-radius:6px;background:rgba(243,238,227,.03);cursor:pointer;text-align:left;font:400 15px/1 var(--mono);color:var(--ivory);transition:border-color .25s,background .25s}
-.copy code{flex:1;font-size:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.copy{display:flex;align-items:center;gap:12px;width:100%;min-width:0;max-width:100%;height:52px;padding:0 16px;border:1px solid rgba(216,180,106,.32);border-radius:6px;background:rgba(243,238,227,.03);cursor:pointer;text-align:left;font:400 15px/1 var(--mono);color:var(--ivory);transition:border-color .25s,background .25s}
+/* the install command is longer than a phone is wide: it scrolls inside the button, never the page */
+.copy code{flex:1;min-width:0;font-size:inherit;white-space:nowrap;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+.copy code::-webkit-scrollbar{display:none}
 .copy-p{color:var(--gold)}
 .copy-state{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ivory-3)}
 .copy:hover{border-color:var(--gold);background:rgba(216,180,106,.06)}
@@ -213,7 +215,7 @@
   .e-k,.e-m{padding-top:0}
   .e-m{flex-direction:row;align-items:center;justify-content:flex-start;gap:16px;text-align:left}
   .e-m i{margin:0 0 0 auto}
-  .rc-in{grid-template-columns:1fr;align-items:start}
+  .rc-in{grid-template-columns:minmax(0,1fr);align-items:start}
   .ix-prose{grid-template-columns:1fr}
   .ix-prose > *{grid-column:1!important;grid-row:auto!important}
   .ix-prose h2:nth-of-type(2){margin-top:56px}

@@ -19,7 +19,7 @@ import hashlib, html, json, pathlib, re
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 PART = ROOT / "scripts/partials-light"
 DATA = json.loads((ROOT / "assets/data/demo-report.json").read_text())
-PAGES = ["index.html", "pricing.html", "cost-index.html"] + sorted(
+PAGES = ["index.html", "pricing.html", "cost-index.html", "security.html", "privacy.html"] + sorted(
     str(p.relative_to(ROOT)) for d in ("blog", "guides") for p in (ROOT / d).glob("*.html"))
 
 STATE = {
@@ -75,7 +75,9 @@ def faq_ld(page):
     qs = re.findall(r"<details><summary>(.*?)</summary><p>(.*?)</p></details>", page, re.S)
     if not qs:
         return ""
-    strip = lambda s: html.unescape(re.sub(r"<[^>]+>", "", s)).strip()
+    # a visible "coming" badge reads as a bare "is coming" in plain text; say it as a full sentence
+    soon = lambda s: re.sub(r'<span class="soon">coming</span>\.?', "not built yet.", s)
+    strip = lambda s: html.unescape(re.sub(r"<[^>]+>", "", soon(s))).strip()
     ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
         {"@type": "Question", "name": strip(q), "acceptedAnswer": {"@type": "Answer", "text": strip(a)}} for q, a in qs]}
     return '<script type="application/ld+json">' + json.dumps(ld, ensure_ascii=False) + "</script>"

@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Security and data flow · Throttle</title>
+<meta name="description" content="What Throttle runs, what leaves your cloud, and what it stores, with a link to the open source code for each line. No telemetry. Keys never stored.">
+<meta name="author" content="Kushagra Kanaujia">
+<meta name="theme-color" content="#070D22">
+<link rel="canonical" href="https://www.throttle-pro.com/security">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Throttle">
+<meta property="og:title" content="Security and data flow · Throttle">
+<meta property="og:description" content="What Throttle runs, what leaves your cloud, and what it stores, with a link to the open source code for each line. No telemetry. Keys never stored.">
+<meta property="og:url" content="https://www.throttle-pro.com/security">
+<meta property="og:image" content="https://www.throttle-pro.com/assets/og-stop-renting.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Security and data flow · Throttle">
+<meta name="twitter:description" content="What Throttle runs, what leaves your cloud, and what it stores, with a link to the open source code for each line. No telemetry. Keys never stored.">
+<meta name="twitter:image" content="https://www.throttle-pro.com/assets/og-stop-renting.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Security", "url": "https://www.throttle-pro.com/security", "description": "What Throttle runs, what leaves your cloud, and what it stores, with a link to the open source code for each line. No telemetry. Keys never stored.", "dateModified": "2026-11-09", "publisher": {"@type": "Organization", "name": "Throttle", "url": "https://www.throttle-pro.com/"}}</script>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/assets/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,200..600,0..100;1,9..144,200..600,0..100&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/light.css?v=473102c1">
+<link rel="stylesheet" href="/assets/css/read.css?v=b798c527">
+<script>document.documentElement.classList.add("js");if(matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("rm")</script>
+</head>
+<body>
+<!--nav-->
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav" id="nav" data-nav>
+  <a class="logo" href="/" aria-label="Throttle home"><img class="lg-d" src="/assets/brand/wordmark-dark.svg" alt="Throttle" width="118" height="28"><img class="lg-l" src="/assets/brand/wordmark-light.svg" alt="" width="118" height="28"></a>
+  <nav class="links" aria-label="Main">
+    <a href="/#how">How it works</a>
+    <a href="/pricing">Pricing</a>
+    <a href="/blog">Blog</a>
+    <a href="/guides">Guides</a>
+    <a href="/cost-index">Cost Index</a>
+  </nav>
+  <div class="nav-r">
+    <a class="cta cta-sm" href="/#start">Start now <i aria-hidden="true">&rarr;</i></a>
+    <button class="menu" type="button" aria-expanded="false" aria-controls="sheet" data-menu><span class="sr">Menu</span><i aria-hidden="true"></i></button>
+  </div>
+</header>
+<div class="sheet" id="sheet" hidden>
+  <nav aria-label="Menu">
+    <a href="/#how">How it works</a>
+    <a href="/pricing">Pricing</a>
+    <a href="/blog">Blog</a>
+    <a href="/guides">Guides</a>
+    <a href="/cost-index">Cost Index</a>
+  </nav>
+  <a class="cta" href="/#start">Start now <i aria-hidden="true">&rarr;</i></a>
+</div>
+<!--/nav-->
+
+<main id="main">
+<article class="art">
+  <header class="art-head">
+    <div class="wrap art-head-in">
+      <p class="crumbs mono"><a href="/">Throttle</a><span aria-hidden="true">/</span><span>Security</span></p>
+      <h1>What Throttle runs, what it sends, and what it keeps.</h1>
+      <p class="lede">Throttle is open source, so you do not have to take this page on trust. Each line links to the code that does it.</p>
+      <p class="byline"><span class="by-a"><img src="/assets/brand/icon-dark.svg" alt="" width="28" height="28"><span><b>Kushagra Kanaujia</b><span>Founder, Throttle</span></span></span><span class="by-m mono"><span>Updated <time datetime="2026-11-09">Nov 9, 2026</time></span></span></p>
+    </div>
+  </header>
+  <div class="art-body" data-light>
+    <div class="prose">
+<p>Throttle is software you run, not a service you send data to. This page says what each part of it does with your data, and links every line to the code that does it. It was checked against the code on <code>main</code> (commit <code>64cb03e</code>) on Nov 9, 2026.</p>
+
+<h2 id="short">The short version</h2>
+<ul>
+<li><b>It runs in your infrastructure.</b> A proxy you run in your cloud, a GitHub Action in your CI, and a command line tool. Nothing runs on our servers.</li>
+<li><b>Throttle the company receives none of your prompts, answers or keys.</b> The code has no Throttle server address, no telemetry and no license check.</li>
+<li><b>Your data is stored on your machine,</b> in <code>~/.throttle/own</code>, with emails, phone numbers, card numbers and secrets masked by default.</li>
+<li><b>Keys are read from environment variables and never stored.</b></li>
+<li><b>If a model you moved errors or sends a broken answer,</b> the request goes to the API you already use.</li>
+</ul>
+
+<h2 id="where">What runs where</h2>
+<div class="table-scroll"><table>
+<thead><tr><th>Part</th><th>Where it runs</th><th>What it talks to</th><th>Code</th></tr></thead>
+<tbody>
+<tr><td>The proxy (<code>throttle capture</code>)</td><td>A machine you run, in your cloud. It listens on <code>127.0.0.1</code> (localhost) by default.</td><td>The OpenAI or Anthropic API your app already calls. With <code>--route</code>, also the model you approved for a job.</td><td><a href="https://github.com/KushagraKanaujia/throttle/blob/main/src/throttle/own/capture.py" target="_blank" rel="noopener"><code>capture.py</code></a> <a href="https://github.com/KushagraKanaujia/throttle/blob/main/src/throttle/own/route.py" target="_blank" rel="noopener"><code>route.py</code></a></td></tr>
+<tr><td>The GitHub Action</td><td>Your CI runner, on pull requests.</td><td>GitHub, to post one comment with the token you give it. With first looks turned on, also the API, your model and your judge.</td><td><a href="https://github.com/KushagraKanaujia/throttle/blob/main/.github/actions/throttle-pr/action.yml" target="_blank" rel="noopener"><code>action.yml</code></a> <a href="https://github.com/KushagraKanaujia/throttle/blob/main/src/throttle/own/github.py" target="_blank" rel="noopener"><code>github.py</code></a> <a href="https://github.com/KushagraKanaujia/throttle/blob/main/src/throttle/own/scan.py" target="_blank" rel="noopener"><code>scan.py</code></a></td></tr>
+<tr><td>The command line tool</td><td>Your machine or server.</td><td>Only the endpoints you pass it: the models you test and your judge.</td><td><a href="https://github.com/KushagraKanaujia/throttle/blob/main/src/throttle/own/shadow.py" target="_blank" rel="noopener"><code>shadow.py</code></a> <a href="https://github.com/KushagraKanaujia/throttle/blob/main/src/throttle/own/evaluate.py" target="_blank" rel="noopener"><code>evaluate.py</code></a> <a href="https://github.com/KushagraKanaujia/throttle/blob/main/src/throttle/own/judge.py" target="_blank" rel="noopener"><code>judge.py</code></a></td></tr>
+</tbody></table></div>
+<p>You point your app&rsquo;s API base URL at the proxy. It sends every request on to the API, unchanged and with your app&rsquo;s own headers, and sends the answer back unchanged. It caches nothing. If you bind it to an address other than localhost, it warns you that anyone who can reach that port can send traffic through it, because the proxy has no login of its own. Keep it on a private network.</p>
+
+<h2 id="leaves">What leaves your infrastructure</h2>
+<ul>
+<li><b>To the API you already use:</b> the same requests your app sends today, with your app&rsquo;s own key. The proxy only passes them through (<a href="https://github.com/KushagraKanaujia/throttle/blob/main/src/throttle/own/capture.py" target="_blank" rel="noopener"><code>capture.py</code></a>).</li>
+<li><b>To the models you test:</b> when you run <code>throttle shadow</code>, captured requests, after redaction, go to each model you name. If one of them is a hosted API model, that provider sees the requests sent to it. A model you serve yourself keeps them in your cloud (<a href="https://github.com/KushagraKanaujia/throttle/blob/main/src/throttle/own/shadow.py" target="_blank" rel="noopener"><code>shadow.py</code></a>).</li>
+<li><b>To the judge:</b> grading uses a judge model you pick, OpenAI or Anthropic or any compatible endpoint you host, with your own key. The judge sees the redacted conversation and the two answers it compares. <code>--judge-max-usd</code> caps what it spends (<a href="https://github.com/KushagraKanaujia/throttle/blob/main/src/throttle/own/judge.py" target="_blank" rel="noopener"><code>judge.py</code></a>, <a href="https://github.com/KushagraKanaujia/throttle/blob/main/src/throttle/own/evaluate.py" target="_blank" rel="noopener"><code>evaluate.py</code></a>).</li>
+<li><b>To a moved job&rsquo;s model:</b> after you approve a move, that job&rsquo;s live requests go to the model you approved (<a href="https://github.com/KushagraKanaujia/throttle/blob/main/src/throttle/own/route.py" target="_blank" rel="noopener"><code>route.py</code></a>).</li>
+<li><b>To GitHub:</b> the Action posts or edits one comment on the pull request, using the token you give it. The workflow token works with <code>pull-requests: write</code> (<a href="https://github.com/KushagraKanaujia/throttle/blob/main/src/throttle/own/github.py" target="_blank" rel="noopener"><code>github.py</code></a>).</li>
+<li><b>First looks, if you turn them on:</b> for a brand-new AI job, the Action sends the prompt template found in your code to your judge to write a few made-up inputs, then sends those to the API, to your model and to the judge. It is capped per pull request (<a href="https://github.com/KushagraKanaujia/throttle/blob/main/src/throttle/own/firstlook.py" target="_blank" rel="noopener"><code>firstlook.py</code></a>).</li>
+<li><b>To Throttle:</b> nothing. There is no Throttle server in the loop.</li>
+</ul>
+
+<h2 id="stored">What is stored, and where</h2>
+<p>Everything is plain files in one folder on the machine running Throttle: <code>~/.throttle/own</code> by default, or the folder you set with <code>$THROTTLE_OWN_DIR</code> or <code>--dir</code> (<a href="https://github.com/KushagraKanaujia/throttle/blob/main/src/throttle/own/records.py" target="_blank" rel="noopener"><code>records.py</code></a>).</p>
+<div class="table-scroll"><table>
+<thead><tr><th>File</th><th>What it holds</th></tr></thead>
+<tbody>
+<tr><td><code>capture/2026-11.jsonl</code></td><td>Each API call the proxy saw, after redaction, one file per month.</td></tr>
+<tr><td><code>shadow/&lt;model&gt;.jsonl</code></td><td>Each tested model&rsquo;s answers. These are never sent to your users.</td></tr>
+<tr><td><code>evals/</code></td><td>Test results and the judge&rsquo;s verdicts.</td></tr>
+<tr><td><code>routes.json</code></td><td>The moves you approved. It stores the name of the environment variable that holds a key, never the key.</td></tr>
+<tr><td><code>jobs/registry.json</code></td><td>Each AI job in your code, its state, and a log of every decision.</td></tr>
+<tr><td><code>ledger/</code></td><td>The savings record, month by month.</td></tr>
+</tbody></table></div>
+<p>Auth headers are never written to disk. To delete everything, delete the folder.</p>
+
+<h3 id="redaction">Redaction modes</h3>
+<p>Pick one with <code>throttle capture --redact</code> (<a href="https://github.com/KushagraKanaujia/throttle/blob/main/src/throttle/own/redact.py" target="_blank" rel="noopener"><code>redact.py</code></a>):</p>
+<div class="table-scroll"><table>
+<thead><tr><th>Mode</th><th>What is stored</th></tr></thead>
+<tbody>
+<tr><td><code>mask</code> (default)</td><td>Request and answer bodies, with emails, phone numbers, US social security numbers, card numbers (Luhn-checked), IP addresses and secrets (API keys, tokens, JWTs, passwords) replaced by placeholders like <code>&lt;EMAIL&gt;</code>. Inline images and audio become <code>&lt;IMAGE&gt;</code> or <code>&lt;AUDIO&gt;</code>.</td></tr>
+<tr><td><code>hash</code></td><td>Like <code>mask</code>, plus a salted hash so repeats of one value can be matched, like <code>&lt;EMAIL:3f2a9c&gt;</code>. Set the salt with <code>THROTTLE_OWN_SALT</code>.</td></tr>
+<tr><td><code>metadata</code></td><td>No bodies at all. Only the model, token counts and timing. You still see spend per job, but nothing can be tested.</td></tr>
+<tr><td><code>off</code></td><td>Bodies exactly as sent.</td></tr>
+</tbody></table></div>
+<p>Redaction is pattern matching. It does not catch names, street addresses, dates of birth, or free-text medical or financial details. If that content cannot sit on your disk, use <code>metadata</code>.</p>
+
+<h2 id="keys">Keys and telemetry</h2>
+<ul>
+<li>Keys for the models you test, for the judge and for a moved job&rsquo;s model are read from environment variables you name, like <code>--judge-key-env</code>. They are never printed or stored (<a href="https://github.com/KushagraKanaujia/throttle/blob/main/src/throttle/own/judge.py" target="_blank" rel="noopener"><code>judge.py</code></a>).</li>
+<li>The Action takes the <em>name</em> of a secret&rsquo;s environment variable, never the key itself (<a href="https://github.com/KushagraKanaujia/throttle/blob/main/.github/actions/throttle-pr/action.yml" target="_blank" rel="noopener"><code>action.yml</code></a>).</li>
+<li>No telemetry. Throttle does not report usage, errors or anything else to us.</li>
+</ul>
+
+<h2 id="fallback">Fallback to the API</h2>
+<p>A job moves to another model only after it passes its tests and you approve it. You can override a failed test with <code>throttle route approve --force</code>; that move is marked FORCED everywhere and its savings are not counted. After that, any doubtful answer goes back to the API: the original request is sent on unchanged, so your users still get an answer. It falls back when the model cannot be reached, times out, returns an HTTP error or a bad response, cuts the answer off, sends an empty answer, sends broken JSON or JSON that misses the schema you asked for, or calls a tool that does not exist or with bad arguments. Every fallback is logged with its reason (<a href="https://github.com/KushagraKanaujia/throttle/blob/main/src/throttle/own/route.py" target="_blank" rel="noopener"><code>route.py</code></a>).</p>
+<p>You can pin any job to the API or undo a move at any time (<a href="https://github.com/KushagraKanaujia/throttle/blob/main/src/throttle/own/jobs.py" target="_blank" rel="noopener"><code>jobs.py</code></a>).</p>
+
+<h2 id="nothing-to-shut-down">Nothing to shut down</h2>
+<p>Your data, your models, your CI. Throttle is a tool you run, so there is no account to close and no data of yours on our side to get back. To stop, point your API base URL back at the API and remove the Action. The code is MIT licensed, so it keeps working whether or not you pay us.</p>
+
+<h2 id="audits">Audits</h2>
+<p>No SOC 2 yet. Throttle is a young company and has not been audited. The MIT code is the proof: your team can read every line that touches your data, run it in your own cloud, and pin the exact commit it reviewed, in the Action and in <code>pip install</code>.</p>
+
+<h2 id="website">This website</h2>
+<p>The signup form is the only place Throttle the company gets data from you. <a href="/privacy">Privacy</a> says what it sends and where.</p>
+
+<h2 id="report">Report a security issue</h2>
+<p>Email <a href="mailto:kush@throttle-pro.com?subject=Security">kush@throttle-pro.com</a> with &ldquo;Security&rdquo; in the subject. Please do not open a public GitHub issue for a vulnerability. The policy is in <a href="https://github.com/KushagraKanaujia/throttle/blob/main/SECURITY.md" target="_blank" rel="noopener"><code>SECURITY.md</code></a>.</p>
+    </div>
+  </div>
+</article>
+<!--read-cta-->
+<section class="read-cta" aria-labelledby="rc-h">
+  <div class="wrap rc-in">
+    <div class="rc-main">
+      <h2 id="rc-h" class="h2">Stop renting your <em>AI.</em></h2>
+      <p class="body-l">Throttle tests every AI job in your app against other models, closed or open, on your own traffic. When one does the job as well for less, the job moves. If it errors or gives a broken answer, the request falls back.</p>
+      <div class="hero-actions">
+        <a class="cta" href="/#start">Start now <i aria-hidden="true">&rarr;</i></a>
+        <a class="ghost" href="/#how">How it works</a>
+      </div>
+    </div>
+    <div class="rc-cli">
+      <p class="mono rc-k">Try it on your laptop</p>
+      <button class="copy" type="button" data-copy="pip install throttle-pro" aria-label="Copy the install command: pip install throttle-pro"><span class="copy-p" aria-hidden="true">$</span><code>pip install throttle-pro</code><span class="copy-state" aria-live="polite">copy</span></button>
+      <p class="rc-fine">Open source (MIT). Then run <code>throttle demo</code> to watch the whole loop offline: no API key, no GPU, no network.</p>
+    </div>
+  </div>
+</section>
+<!--/read-cta-->
+</main>
+
+<!--foot-->
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <a class="logo" href="/" aria-label="Throttle home"><img src="/assets/brand/wordmark-dark.svg" alt="Throttle" width="118" height="28" loading="lazy"></a>
+        <p class="foot-line">Stop renting your AI.</p>
+      </div>
+      <nav class="foot-cols" aria-label="Footer">
+        <div><h2>Product</h2><ul>
+          <li><a href="/#how">How it works</a></li>
+          <li><a href="/#compare">Why Throttle</a></li>
+          <li><a href="/pricing">Pricing</a></li>
+          <li><a href="/#start">Start now</a></li>
+        </ul></div>
+        <div><h2>Read</h2><ul>
+          <li><a href="/blog">Blog</a></li>
+          <li><a href="/guides">Guides</a></li>
+          <li><a href="/cost-index">Cost Index</a></li>
+        </ul></div>
+        <div><h2>Company</h2><ul>
+          <li><a href="https://github.com/KushagraKanaujia/throttle" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="/security">Security</a></li>
+          <li><a href="/privacy">Privacy</a></li>
+          <li><a href="mailto:kush@throttle-pro.com">kush@throttle-pro.com</a></li>
+        </ul></div>
+      </nav>
+    </div>
+    <div class="foot-b">
+      <span>&copy; 2026 Throttle &middot; Open source, MIT</span>
+      <div class="badges">
+        <a href="https://www.producthunt.com/products/throttle-3?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-throttle-4" target="_blank" rel="noopener noreferrer"><img alt="Throttle on Product Hunt" width="157" height="34" loading="lazy" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1260050&amp;theme=dark&amp;t=1790246355863"></a>
+        <a href="https://fazier.com/launches/www.throttle-pro.com" target="_blank" rel="noopener noreferrer"><img alt="Throttle on Fazier" width="79" height="34" loading="lazy" src="https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=launched&amp;theme=dark"></a>
+        <a href="https://dang.ai" target="_blank" rel="dofollow noopener"><img alt="Verified on DANG!" width="94" height="34" loading="lazy" src="https://assets.dang.ai/badges/dang-verified-dark.png"></a>
+      </div>
+    </div>
+  </div>
+</footer>
+<!--/foot-->
+
+<script src="/assets/js/light.js?v=e18cc69b" defer></script>
+</body>
+</html>

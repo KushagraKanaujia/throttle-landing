@@ -177,6 +177,7 @@
     var msg = $(".form-msg", form), sub = $('button[type="submit"]', form);
     var TO = "kush@throttle-pro.com";
     var say = function (html, ok) { msg.innerHTML = html; msg.classList.toggle("ok", !!ok); };
+    var sayText = function (text) { msg.textContent = text; msg.classList.remove("ok"); };
     var mailto = function (v) {
       var sel = form.spend;
       var spendTxt = sel && sel.options && sel.selectedIndex > 0 ? sel.options[sel.selectedIndex].text : "not given";
@@ -206,6 +207,11 @@
         method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify(v)
       }).then(function (r) {
         if (r.status === 200) { form.email.value = ""; sub.disabled = false; say("Thanks. Kush will email you within a day to set you up.", true); }
+        // 400 means the server read the form and found something to fix: show its words, do not open email
+        else if (r.status === 400) return r.json().then(function (j) {
+          sub.disabled = false;
+          sayText(j && typeof j.error === "string" && j.error ? j.error : "Please check the form and try again.");
+        }, function () { sub.disabled = false; sayText("Please check the form and try again."); });
         else fallback();
       }, fallback);
     });
